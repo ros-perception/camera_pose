@@ -1,0 +1,39 @@
+<launch>
+
+  <group ns="calibration_config" >
+
+    <group ns="cal_steps" clear_params="true">
+      <group ns="01 - Checkerboard Locations">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free1.yaml" />
+        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks.yaml" />
+        <param name="output_filename" type="string" value="system1.yaml" />
+      </group>
+
+      <group ns="02 - Adding Arm and Head Locations">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free2.yaml" />
+        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks.yaml" />
+        <param name="output_filename" type="string" value="system2.yaml" />
+      </group>
+
+      <group ns="03 - Adding Stereo Baselines">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free3.yaml" />
+        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks.yaml" />
+        <param name="output_filename" type="string" value="system3.yaml" />
+      </group>
+
+      <group ns="04 - Adding Tilt Laser">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free4.yaml" />
+        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks.yaml" />
+        <param name="output_filename" type="string" value="system4.yaml" />
+      </group>
+
+    </group>
+
+    <param name="initial_system" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/system.yaml" />
+
+  </group>
+
+  <node pkg="pr2_calibration_estimation" type="proto1.py" name="cal_estimator" output="screen"
+        args="$(env BAG) $(find pr2_calibration_launch)/results" />
+
+</launch>

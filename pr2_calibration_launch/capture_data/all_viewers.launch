@@ -1,0 +1,7 @@
+<launch>
+
+ <include file="$(find pr2_calibration_launch)/capture_data/double_stereo_viewer.launch" />
+
+ <include file="$(find pr2_calibration_launch)/capture_data/laser_view.launch" />
+
+</launch>

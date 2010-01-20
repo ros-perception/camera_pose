@@ -1,0 +1,23 @@
+<launch>
+  <node type="image_cb_detector_action_old"
+        pkg="image_cb_detector"
+        name="cb_detector">
+    <remap from="image" to="image_rect_throttle" />
+  </node>
+
+  <node type="image_annotator"
+        pkg="laser_cb_detector"
+        name="narrow_left_cb_annotator"
+        output="screen">
+    <remap from="annotated" to="image_rect_annotated" />
+    <remap from="image" to="image_rect_throttle" />
+    <param name="marker_size" type="int" value="4" />
+  </node>
+
+  <node type="monocam_settler_action"
+        pkg="monocam_settler"
+        name="monocam_settler"
+        output="screen">
+  </node>
+
+</launch>

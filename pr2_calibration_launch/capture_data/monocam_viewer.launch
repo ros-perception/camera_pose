@@ -1,0 +1,10 @@
+<launch>
+
+  <node type="image_view"
+        pkg="image_view"
+        name="annotated_viewer">
+    <remap from="image" to="image_rect_annotated" />
+    <param name="autosize" type="bool" value="True" />
+  </node>
+
+</launch>

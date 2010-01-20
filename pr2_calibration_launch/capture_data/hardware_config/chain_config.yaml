@@ -1,0 +1,69 @@
+
+# ----- Right Arm -----
+right_arm_chain:
+  settler_config:  /right_arm_chain/settler_config
+
+  configs:
+    tight_tol:
+      settler:
+        joint_names:
+        - r_shoulder_pan_joint
+        - r_shoulder_lift_joint
+        - r_upper_arm_roll_joint
+        - r_elbow_flex_joint
+        - r_forearm_roll_joint
+        - r_wrist_flex_joint
+        - r_wrist_roll_joint
+        tolerances:
+        - 0.002
+        - 0.002
+        - 0.002
+        - 0.002
+        - 0.002
+        - 0.002
+        - 0.002
+        max_step:   1.0
+        cache_size: 1500
+
+
+# ----- left Arm -----
+left_arm_chain:
+  settler_config:  /left_arm_chain/settler_config
+
+  configs:
+    tight_tol:
+      settler:
+        joint_names:
+        - l_shoulder_pan_joint
+        - l_shoulder_lift_joint
+        - l_upper_arm_roll_joint
+        - l_elbow_flex_joint
+        - l_forearm_roll_joint
+        - l_wrist_flex_joint
+        - l_wrist_roll_joint
+        tolerances:
+        - 0.002
+        - 0.002
+        - 0.002
+        - 0.002
+        - 0.002
+        - 0.002
+        - 0.002
+        max_step:   1.0
+        cache_size: 1500
+
+# ----- Head -----
+head_chain:
+  settler_config:  /head_chain/settler_config
+
+  configs:
+    tight_tol:
+      settler:
+        joint_names:
+        - head_pan_joint
+        - head_tilt_joint
+        tolerances:
+        - 0.002
+        - 0.002
+        max_step:   1.0
+        cache_size: 1500

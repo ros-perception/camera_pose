@@ -1,0 +1,32 @@
+<launch>
+
+  <group ns="calibration_config" >
+
+    <group ns="cal_steps">
+      <group ns="01 - Checkerboard Locations">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_prf/free1.yaml" />
+        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_prf/blocks.yaml" />
+        <param name="output_filename" type="string" value="system1.yaml" />
+      </group>
+
+      <group ns="02 - Adding Arm and Head Locations">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_prf/free2.yaml" />
+        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_prf/blocks.yaml" />
+        <param name="output_filename" type="string" value="system2.yaml" />
+      </group>
+
+      <group ns="03 - Adding Stereo Baselines and Tilting Laser">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_prf/free3.yaml" />
+        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_prf/blocks.yaml" />
+        <param name="output_filename" type="string" value="system3.yaml" />
+      </group>
+    </group>
+
+    <param name="initial_system" textfile="$(find pr2_calibration_launch)/estimate_params/config_prf/system.yaml" />
+
+  </group>
+
+  <node pkg="pr2_calibration_estimation" type="proto1.py" name="cal_estimator" output="screen"
+        args="$(env BAG) $(find pr2_calibration_launch)/results" />
+
+</launch>
