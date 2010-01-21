@@ -15,7 +15,6 @@
   <depend package="laser_joint_projector" />
 
   <!--  Camera Stuff -->
-  <depend package="camera_trigger_test"/>
   <depend package="stereo_image_proc"/>
   <depend package="image_cb_detector"/>
   <depend package="monocam_settler"/>

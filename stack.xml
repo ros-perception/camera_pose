@@ -10,7 +10,6 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/pr2_calibration</url>
   <depend stack="common_msgs" /> <!-- geometry_msgs, sensor_msgs -->
-  <depend stack="drivers" /> <!-- camera_trigger_test -->
   <depend stack="geometry" /> <!-- kdl, tf -->
   <depend stack="image_pipeline" /> <!-- stereo_image_proc, image_view -->
   <depend stack="pr2_apps" /> <!-- pr2_teleop -->
