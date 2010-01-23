@@ -1,5 +1,5 @@
 camera_measurements:
-- {cam_id: forarm_right_rect, config: small_cb_4x5}
+- {cam_id: forearm_right_rect, config: small_cb_4x5}
 joint_commands:
 - controller: head_traj_controller
   segments:
