@@ -3,7 +3,7 @@
   <node type="pr2_exec.py"
         pkg="pr2_calibration_executive"
         name="calibration_exec"
-        args="$(find pr2_calibration_launch)/capture_data/samples_pre $(find pr2_calibration_launch)/capture_data/hardware_config"
+        args="$(find pr2_calibration_launch)/capture_data/samples_pr2_beta $(find pr2_calibration_launch)/capture_data/hardware_config"
         output="screen">
 
     <remap from="narrow_left_rect/camera_info" to="narrow_stereo/left/camera_info"/>
