@@ -2,8 +2,8 @@
 
   <node type="propagate_config_ref_positions.py" pkg="pr2_calibration_propagation" output="screen" name="propagate_config"
         args="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/system.yaml
-              $(find pr2_calibration_launch)/results/system3.yaml
-              /etc/ros/urdf/robot_uncalibrated_2010_01_19.xml
+              $(find pr2_calibration_launch)/results/system4.yaml
+              /etc/ros/urdf/robot_uncalibrated.xml
               $(find pr2_calibration_launch)/results/robot_calibrated.xml" />
 
 </launch>

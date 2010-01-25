@@ -4,7 +4,7 @@
 if [ "$1" = ""]; then
     echo "Usage: ./write_cam_intrinsics [bagfile]"
 else
-    config=`rospack find pr2_calibration_launch`/results/system3.yaml
+    config=`rospack find pr2_calibration_launch`/results/system4.yaml
 
     echo "Bagfile: [$1]"
     echo "Config File: [$config]"
