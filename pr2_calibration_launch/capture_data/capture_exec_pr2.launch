@@ -26,6 +26,16 @@
     <remap from="wide_right_rect/image"       to="wide_stereo/right/image_raw"/>
     <remap from="wide_right_rect/features"    to="wide_stereo/right/features"/>
 
+    <remap from="forearm_right_rect/camera_info" to="forearm_camera_r/camera_info"/>
+    <remap from="forearm_right_rect/image_rect"  to="forearm_camera_r/image_rect"/>
+    <remap from="forearm_right_rect/image"       to="forearm_camera_r/image_raw"/>
+    <remap from="forearm_right_rect/features"    to="forearm_camera_r/features"/>
+
+    <remap from="forearm_left_rect/camera_info" to="forearm_camera_l/camera_info"/>
+    <remap from="forearm_left_rect/image_rect"  to="forearm_camera_l/image_rect"/>
+    <remap from="forearm_left_rect/image"       to="forearm_camera_l/image_raw"/>
+    <remap from="forearm_left_rect/features"    to="forearm_camera_l/features"/>
+
     <remap from="tilt_laser/image_features" to="tilt_laser/laser_checkerboard"/>
     <remap from="tilt_laser/laser_interval" to="tilt_laser/laser_checkerboard_interval"/>
     <remap from="tilt_laser/snapshot"       to="tilt_laser/dense_laser_snapshot"/>
