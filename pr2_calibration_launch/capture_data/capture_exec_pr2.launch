@@ -45,6 +45,9 @@
   </node>
 
   <node type="rosrecord" pkg="rosrecord" name="robot_measurement_recorder" output="screen"
-        args="-f $(find pr2_calibration_launch)/results/cal_measurements robot_measurement" />
+        args="-F /tmp/pr2_calibration/cal_measurements robot_measurement">
+    <!-- Hack to create the directory -->
+    <param name="mkdir_tmp" command="mkdir -p /tmp/pr2_calibration" />
+  </node>
 
 </launch>

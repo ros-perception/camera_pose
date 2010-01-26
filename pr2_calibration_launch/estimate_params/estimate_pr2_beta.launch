@@ -34,6 +34,6 @@
   </group>
 
   <node pkg="pr2_calibration_estimation" type="proto1.py" name="cal_estimator" output="screen"
-        args="$(env BAG) $(find pr2_calibration_launch)/results" />
+        args="/tmp/pr2_calibration/cal_measurements.bag /tmp/pr2_calibration/" />
 
 </launch>
