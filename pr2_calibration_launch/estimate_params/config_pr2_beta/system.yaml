@@ -48,6 +48,14 @@
     left_arm_tip_adj:       [   0, 0, 0, 0, -pi/2, 0]  # Doesn't correspond to URDF! From tip of right arm chain to a more natural coordinate frame (x forward, y left, z up)
     left_arm_cb:            [   .25, 0, 0, pi/2, 0, 0]  # Doesn't correspond to URDF! From r_wrist_roll joint to checkerboard in hand
 
+    # Forearm camera frames
+    l_forearm_roll_adj: [0, .321, 0, 1.2091995761561452, -1.2091995761561452, -1.2091995761561452]
+    l_forearm_cam_frame_joint: [0.15, 0, 0.07, -1.4821898202742554, -0.6139431255689368, -0.6139431255689368]
+    l_forearm_cam_optical_frame_joint: [0, 0, 0, -1.2091995761561452, 1.2091995761561452, -1.2091995761561452]
+
+    r_forearm_roll_adj: [0, .321, 0, 1.2091995761561452, -1.2091995761561452, -1.2091995761561452]
+    r_forearm_cam_frame_joint: [0.15, 0, 0.07, 1.4821898202742554, -0.6139431255689368, 0.6139431255689368]
+    r_forearm_cam_optical_frame_joint: [0, 0, 0, -1.2091995761561452, 1.2091995761561452, -1.2091995761561452]
 
   rectified_cams:
     wide_left_rect:

@@ -58,12 +58,16 @@ bool fk(KDL::Tree* tree, FkTest::Request& req, FkTest::Response& resp)
 
   KDL::ChainFkSolverPos_recursive solver(my_chain);
 
-  KDL::JntArray joints(req.joint_positions.size());
-  for (unsigned int i=0; i<req.joint_positions.size(); i++)
+  KDL::JntArray joints(my_chain.getNrOfJoints());
+  for (unsigned int i=0; i<my_chain.getNrOfJoints(); i++)
     joints(i) = req.joint_positions[i];
 
   KDL::Frame out_frame;
-  solver.JntToCart(joints, out_frame);
+  if (solver.JntToCart(joints, out_frame))
+  {
+    ROS_ERROR("Error running KDL solver");
+    return false;
+  }
 
   resp.pos.resize(3);
 

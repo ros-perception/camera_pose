@@ -122,6 +122,58 @@ class TestPR2Fk(LoadData):
 
         self.run_test(full_chain, 'torso_lift_link', 'r_wrist_roll_link', cmds)
 
+    def test_right_forearm_roll_fk(self):
+        print ""
+
+        config_str = '''
+        before_chain: [r_shoulder_pan_joint]
+        chain_id:     right_arm_chain
+        after_chain:  [r_forearm_roll_adj]
+        dh_link_num:  4
+        '''
+
+        full_chain = FullChainRobotParams(yaml.load(config_str))
+        full_chain.update_config(self.robot_params)
+
+        cmds = self.loadCommands('r_arm_commands')
+
+        self.run_test(full_chain, 'torso_lift_link', 'r_forearm_roll_link', cmds)
+
+    def test_right_forearm_cam_fk(self):
+        print ""
+
+        config_str = '''
+        before_chain: [r_shoulder_pan_joint]
+        chain_id:     right_arm_chain
+        after_chain:  [r_forearm_roll_adj, r_forearm_cam_frame_joint]
+        dh_link_num:  4
+        '''
+
+        full_chain = FullChainRobotParams(yaml.load(config_str))
+        full_chain.update_config(self.robot_params)
+
+        cmds = self.loadCommands('r_arm_commands')
+
+        self.run_test(full_chain, 'torso_lift_link', 'r_forearm_cam_frame', cmds)
+
+    def test_right_forearm_cam_optical_fk(self):
+        print ""
+
+        config_str = '''
+        before_chain: [r_shoulder_pan_joint]
+        chain_id:     right_arm_chain
+        after_chain:  [r_forearm_roll_adj, r_forearm_cam_frame_joint, r_forearm_cam_optical_frame_joint]
+        dh_link_num:  4
+        '''
+
+        full_chain = FullChainRobotParams(yaml.load(config_str))
+        full_chain.update_config(self.robot_params)
+
+        cmds = self.loadCommands('r_arm_commands')
+
+        self.run_test(full_chain, 'torso_lift_link', 'r_forearm_cam_optical_frame', cmds)
+
+
 if __name__ == '__main__':
     import rostest
     rospy.init_node("fk_test")
