@@ -19,7 +19,7 @@
      - [ 0, 0, 0, 0 ]    # Wrist roll
 
     head_chain:
-     - [ 1, 0, 0, 0 ]          # Head Pan
+     - [ 0, 0, 0, 0 ]          # Head Pan
      - [ 0, 0, 0, 0 ]          # Head Tilt
 
   tilting_lasers:
@@ -38,14 +38,22 @@
     double_stereo_frame_joint:         [ 0, 0, 0, 0, 0, 0 ]
     wide_stereo_frame_joint:           [ 0, 0, 0, 0, 0, 0 ]
     narrow_stereo_frame_joint:         [ 0, 0, 0, 0, 0, 0 ]
-    wide_stereo_optical_frame_joint:   [ 1, 1, 1, 1, 1, 1 ]
-    narrow_stereo_optical_frame_joint: [ 1, 1, 1, 1, 1, 1 ]
+    wide_stereo_optical_frame_joint:   [ 0, 0, 0, 0, 0, 0 ]
+    narrow_stereo_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
+
+    l_forearm_roll_adj:                [ 0, 0, 0, 0, 0, 0 ]
+    l_forearm_cam_frame_joint:         [ 1, 1, 1, 1, 1, 1 ]
+    l_forearm_cam_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
+
+    r_forearm_roll_adj:                [ 0, 0, 0, 0, 0, 0 ]
+    r_forearm_cam_frame_joint:         [ 1, 1, 1, 1, 1, 1 ]
+    r_forearm_cam_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
 
     right_arm_tip_adj:                 [ 0, 0, 0, 0, 0, 0 ]
     right_arm_cb:                      [ 0, 0, 0, 0, 0, 0 ]
 
-    left_arm_tip_adj:                 [ 0, 0, 0, 0, 0, 0 ]
-    left_arm_cb:                      [ 0, 0, 0, 0, 0, 0 ]
+    left_arm_tip_adj:                  [ 0, 0, 0, 0, 0, 0 ]
+    left_arm_cb:                       [ 0, 0, 0, 0, 0, 0 ]
 
   rectified_cams:
     wide_left_rect:
@@ -55,6 +63,10 @@
     narrow_left_rect:
       baseline_shift: 0
     narrow_right_rect:
+      baseline_shift: 0
+    forearm_left_rect:
+      baseline_shift: 0
+    forearm_right_rect:
       baseline_shift: 0
 
   checkerboards:

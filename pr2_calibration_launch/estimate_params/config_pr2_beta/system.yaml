@@ -66,6 +66,10 @@
       baseline_shift: 0.0
     narrow_right_rect:
       baseline_shift: 0.0
+    forearm_left_rect:
+      baseline_shift: 0.0
+    forearm_right_rect:
+      baseline_shift: 0.0
 
   checkerboards:
     small_cb_4x5:

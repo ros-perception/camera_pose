@@ -27,6 +27,12 @@
         <param name="output_filename" type="string" value="system4.yaml" />
       </group>
 
+      <group ns="05 - Positioning Forearm Cameras">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free5.yaml" />
+        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks_forearm_cams.yaml" />
+        <param name="output_filename" type="string" value="system5.yaml" />
+      </group>
+
     </group>
 
     <param name="initial_system" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/system.yaml" />
