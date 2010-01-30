@@ -253,7 +253,7 @@ if __name__ == '__main__':
                 if len(tag_split) == 1:
                     oldlineending = ""
                 else:
-                    oldlineending = tag_split[1]
+                    oldlineending = "/>".join(tag_split[1:])
 
                 ref_pos_text = ""
                 rising_text = ""
@@ -268,7 +268,7 @@ if __name__ == '__main__':
                 if calibration_falling is not None:
                     falling_text = "falling=\"%.10f\"" % (calibration_falling + joint_offsets[joint_name])
 
-                newline = "\t<calibration %s %s %s/>" % (ref_pos_text, rising_text, falling_text)
+                newline = "\t<calibration %s %s %s/>" % (ref_pos_text, rising_text, falling_text) + oldlineending
                 print "    calibration old line:", joint_lines[calibration_ind].strip()
                 print "    calibration new line:", newline.strip()
                 joint_lines[calibration_ind] = newline
