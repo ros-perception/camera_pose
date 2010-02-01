@@ -71,8 +71,8 @@ class ErrorCalc:
         return full_param_vec
 
     def calculate_error(self, opt_param_vec):
-        print "x ",
-        sys.stdout.flush()
+        # print "x ",
+        # sys.stdout.flush()
 
         full_param_vec = self.calculate_full_param_vec(opt_param_vec)
 
@@ -88,6 +88,10 @@ class ErrorCalc:
         error_vec = numpy.concatenate(errors, 0)
 
         error_array = numpy.array(error_vec).T[0]
+
+        rms_error = numpy.sqrt( numpy.mean(error_array**2) )
+        print "%.3f " % rms_error,
+        sys.stdout.flush()
 
         return error_array.copy()
 
