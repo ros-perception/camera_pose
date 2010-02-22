@@ -87,14 +87,15 @@ class CamManager:
         self._cam_info_sub = message_filters.Subscriber(cam_id + "/camera_info", sensor_msgs.msg.CameraInfo)
         self._features_sub = message_filters.Subscriber(cam_id + "/features", calibration_msgs.msg.CalibrationPattern)
         self._image_sub    = message_filters.Subscriber(cam_id + "/image",    sensor_msgs.msg.Image)
+        self._image_rect_sub=message_filters.Subscriber(cam_id + "/image_rect", sensor_msgs.msg.Image)
 
-        self._verbose_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub, self._image_sub], 10)
+        self._verbose_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub, self._image_sub, self._image_rect_sub], 10)
         self._minimal_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub], 10)
 
         self._verbose_sync.registerCallback(self.verbose_callback)
         self._minimal_sync.registerCallback(self.minimal_callback)
 
-    def verbose_callback(self, cam_info, features, image):
+    def verbose_callback(self, cam_info, features, image, image_rect):
         self._lock.acquire()
         if self._mode is "verbose":
             # Populate measurement message
@@ -105,6 +106,7 @@ class CamManager:
             msg.cam_info = cam_info
             msg.verbose = True
             msg.image = image
+            msg.image = image_rect
             msg.features = features
             self._callback(self._cam_id, msg, *self._cb_args)
         self._lock.release()
