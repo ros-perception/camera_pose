@@ -106,7 +106,7 @@ class CamManager:
             msg.cam_info = cam_info
             msg.verbose = True
             msg.image = image
-            msg.image = image_rect
+            msg.image_rect = image_rect
             msg.features = features
             self._callback(self._cam_id, msg, *self._cb_args)
         self._lock.release()
