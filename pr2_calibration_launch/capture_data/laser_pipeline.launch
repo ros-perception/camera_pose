@@ -9,6 +9,12 @@
           args="laser_tilt_controller"
           name="laser_profile_commander" />
 
+   <node pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters tilt_hokuyo_node" name="tilt_reconfigure">
+      <param name="min_ang" type="double" value="-0.829"/>
+      <param name="max_ang" type="double" value="0.829"/>
+      <param name="intensity" value="true" />
+   </node>
+
    <group ns="tilt_laser">
       <!-- Dense Laser Snapshotter -->
       <node type="dense_laser_snapshotter"
