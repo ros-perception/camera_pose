@@ -116,3 +116,5 @@ except EOFError:
     print "Exiting"
 
 time.sleep(1)
+
+print "Calibration data collection has completed! You can now kill this node, along with any other calibration nodes that are running."
