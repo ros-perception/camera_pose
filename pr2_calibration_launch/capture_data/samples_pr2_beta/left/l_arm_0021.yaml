@@ -18,6 +18,7 @@ joint_commands:
 joint_measurements:
 - {chain_id: head_chain, config: tight_tol}
 - {chain_id: left_arm_chain, config: tight_tol}
+- {chain_id: right_arm_chain, config: tight_tol}
 laser_measurements: []
 sample_id: l_arm_0021
 target: {chain_id: left_arm_chain, target_id: small_cb_4x5}
