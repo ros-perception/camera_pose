@@ -2,35 +2,146 @@
 
   <group ns="calibration_config" >
 
+    <group ns="blocks" clear_params="true">
+      <param name="head_cameras"    textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks.yaml" />
+      <param name="forearm_cameras" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks_forearm_cams.yaml" />
+    </group>
+
     <group ns="cal_steps" clear_params="true">
-      <group ns="01 - Checkerboard Locations">
-        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free1.yaml" />
-        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks.yaml" />
-        <param name="output_filename" type="string" value="system1.yaml" />
+      <group ns="01a - Right Arm Checkerboard Locations">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free1a_right.yaml" />
+        <rosparam>
+          blocks:
+          - NarrowLeft-RightArm
+          - NarrowRight-RightArm
+          - WideLeft-RightArm
+          - WideRight-RightArm
+        </rosparam>
+        <param name="output_filename" type="string" value="system1a.yaml" />
       </group>
 
-      <group ns="02 - Adding Arm and Head Locations">
+      <group ns="01b - Left Arm Checkerboard Locations">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free1b_left.yaml" />
+        <rosparam>
+          blocks:
+          - NarrowLeft-LeftArm
+          - NarrowRight-LeftArm
+          - WideLeft-LeftArm
+          - WideRight-LeftArm
+        </rosparam>
+        <param name="output_filename" type="string" value="system1b.yaml" />
+      </group>
+
+      <group ns="02  - Adding Arm Joint Offsets and Stereocam Locations">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free2.yaml" />
-        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks.yaml" />
+        <rosparam>
+          blocks:
+          - NarrowLeft-RightArm
+          - NarrowRight-RightArm
+          - WideLeft-RightArm
+          - WideRight-RightArm
+
+          - NarrowLeft-LeftArm
+          - NarrowRight-LeftArm
+          - WideLeft-LeftArm
+          - WideRight-LeftArm
+
+          - NarrowLeft-TiltLaser
+          - NarrowRight-TiltLaser
+          - WideLeft-TiltLaser
+          - WideRight-TiltLaser
+        </rosparam>
         <param name="output_filename" type="string" value="system2.yaml" />
       </group>
 
-      <group ns="03 - Adding Stereo Baselines">
+      <group ns="03  - Adding Stereo Baselines">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free3.yaml" />
-        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks.yaml" />
+        <rosparam>
+          blocks:
+          - NarrowLeft-RightArm
+          - NarrowRight-RightArm
+          - WideLeft-RightArm
+          - WideRight-RightArm
+
+          - NarrowLeft-LeftArm
+          - NarrowRight-LeftArm
+          - WideLeft-LeftArm
+          - WideRight-LeftArm
+
+          - NarrowLeft-TiltLaser
+          - NarrowRight-TiltLaser
+          - WideLeft-TiltLaser
+          - WideRight-TiltLaser
+        </rosparam>
         <param name="output_filename" type="string" value="system3.yaml" />
       </group>
 
-      <group ns="04 - Adding Tilt Laser">
+      <group ns="04  - Adding Tilt Laser Position">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free4.yaml" />
-        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks.yaml" />
+        <rosparam>
+          blocks:
+          - NarrowLeft-RightArm
+          - NarrowRight-RightArm
+          - WideLeft-RightArm
+          - WideRight-RightArm
+
+          - NarrowLeft-LeftArm
+          - NarrowRight-LeftArm
+          - WideLeft-LeftArm
+          - WideRight-LeftArm
+
+          - NarrowLeft-TiltLaser
+          - NarrowRight-TiltLaser
+          - WideLeft-TiltLaser
+          - WideRight-TiltLaser
+        </rosparam>
         <param name="output_filename" type="string" value="system4.yaml" />
       </group>
 
-      <group ns="05 - Positioning Forearm Cameras">
-        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free5.yaml" />
-        <param name="blocks"      textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/blocks_forearm_cams.yaml" />
-        <param name="output_filename" type="string" value="system5.yaml" />
+      <group ns="05a - Positioning the Left Forearm Camera">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free5a_left.yaml" />
+        <rosparam>
+          blocks:
+          - LeftForearm-LeftArm
+        </rosparam>
+        <param name="output_filename" type="string" value="system5a.yaml" />
+      </group>
+
+      <group ns="05b - Positioning the Right Forearm Camera">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free5b_right.yaml" />
+        <rosparam>
+          blocks:
+          - RightForearm-RightArm
+        </rosparam>
+        <param name="output_filename" type="string" value="system5b.yaml" />
+      </group>
+
+      <group ns="06  - Polishing Step">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free6.yaml" />
+        <rosparam>
+          blocks:
+          - NarrowLeft-RightArm
+          - NarrowRight-RightArm
+          - WideLeft-RightArm
+          - WideRight-RightArm
+
+          - NarrowLeft-LeftArm
+          - NarrowRight-LeftArm
+          - WideLeft-LeftArm
+          - WideRight-LeftArm
+
+          - NarrowLeft-TiltLaser
+          - NarrowRight-TiltLaser
+          - WideLeft-TiltLaser
+          - WideRight-TiltLaser
+
+          - LeftForearm-LeftArm
+          - LeftForearm-RightArm
+          - RightForearm-LeftArm
+          - RightForearm-RightArm
+
+        </rosparam>
+        <param name="output_filename" type="string" value="system_calibrated.yaml" />
       </group>
 
     </group>
@@ -39,7 +150,7 @@
 
   </group>
 
-  <node pkg="pr2_calibration_estimation" type="proto1.py" name="cal_estimator" output="screen"
+  <node pkg="pr2_calibration_estimation" type="multi_step_estimator.py" name="cal_estimator" output="screen"
         args="/tmp/pr2_calibration/cal_measurements.bag /tmp/pr2_calibration/" />
 
 </launch>

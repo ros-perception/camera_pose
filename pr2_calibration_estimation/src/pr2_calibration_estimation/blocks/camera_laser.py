@@ -66,6 +66,8 @@ class CameraLaserBundler:
                 cur_M_laser = M_robot.M_laser[ [ x.laser_id  for x in M_robot.M_laser ].index(cur_config["laser_id"]) ]
                 cur_M_chain = M_robot.M_chain[ [ x.chain_id  for x in M_robot.M_chain ].index(cur_config["full_camera_chain"]["chain_id"]) ]
                 cur_block = CameraLaserRobotParamsBlock(cur_M_cam, cur_M_laser, cur_M_chain, cur_config)
+                cur_block.block_type = 'camera_laser'
+                cur_block.block_id = cur_config["block_id"]
                 cur_block.error_scalar = cur_config["error_scalar"]
                 blocks.append(cur_block)
             else:

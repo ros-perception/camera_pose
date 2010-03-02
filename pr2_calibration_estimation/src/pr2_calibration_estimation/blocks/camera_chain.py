@@ -75,6 +75,8 @@ class CameraChainBundler:
                 cur_block = CameraChainRobotParamsBlock(cur_config,
                                                         M_cam, M_camera_chain, M_target_chain,
                                                         M_robot.target_id)
+                cur_block.block_type = 'camera_chain'
+                cur_block.block_id = cur_config["block_id"]
                 cur_block.error_scalar = cur_config["error_scalar"]
                 blocks.append(cur_block)
             else:
