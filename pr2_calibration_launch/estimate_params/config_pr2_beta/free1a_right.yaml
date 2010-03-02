@@ -7,7 +7,7 @@
      - [ 0, 0, 0, 0 ]    # Elbow Flex
      - [ 0, 0, 0, 0 ]    # Forearm Roll
      - [ 0, 0, 0, 0 ]    # Wrist flex
-     - [ 0, 0, 0, 0 ]    # Wrist roll
+     - [ 1, 0, 0, 0 ]    # Wrist roll
 
     left_arm_chain:
      - [ 0, 0, 0, 0 ]    # Shoulder Pan
@@ -42,15 +42,15 @@
     narrow_stereo_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
 
     l_forearm_roll_adj:                [ 0, 0, 0, 0, 0, 0 ]
-    l_forearm_cam_frame_joint:         [ 1, 1, 1, 1, 1, 1 ]
+    l_forearm_cam_frame_joint:         [ 0, 0, 0, 0, 0, 0 ]
     l_forearm_cam_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
 
     r_forearm_roll_adj:                [ 0, 0, 0, 0, 0, 0 ]
-    r_forearm_cam_frame_joint:         [ 1, 1, 1, 1, 1, 1 ]
+    r_forearm_cam_frame_joint:         [ 0, 0, 0, 0, 0, 0 ]
     r_forearm_cam_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
 
     right_arm_tip_adj:                 [ 0, 0, 0, 0, 0, 0 ]
-    right_arm_cb:                      [ 0, 0, 0, 0, 0, 0 ]
+    right_arm_cb:                      [ 1, 1, 1, 0, 1, 1 ]
 
     left_arm_tip_adj:                  [ 0, 0, 0, 0, 0, 0 ]
     left_arm_cb:                       [ 0, 0, 0, 0, 0, 0 ]

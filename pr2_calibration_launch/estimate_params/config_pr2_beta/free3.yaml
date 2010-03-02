@@ -20,7 +20,7 @@
 
     head_chain:
      - [ 1, 0, 0, 0 ]          # Head Pan
-     - [ 1, 0, 0, 0 ]          # Head Tilt
+     - [ 0, 0, 0, 0 ]          # Head Tilt
 
   tilting_lasers:
     tilt_laser:
