@@ -127,6 +127,13 @@ class TestTiltingLaser(unittest.TestCase):
         self.assertAlmostEqual(numpy.linalg.norm(z-target_pts[0:3,:]), 0.0, 6)
         self.assertAlmostEqual(numpy.linalg.norm(r), 0.0, 6)
 
+
+        # Test Sparsity
+        sparsity = block.build_sparsity_dict()
+        self.assertEqual(sparsity['tilting_lasers']['laserA']['before_chain'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['tilting_lasers']['laserA']['after_chain'],  [1,1,1,1,1,1])
+
+
 if __name__ == '__main__':
     import rostest
     rostest.unitrun('pr2_calibration_estimation', 'test_TiltingLaserBundler',   TestTiltingLaserBundler,   coverage_packages=['pr2_calibration_estimation.sensors.tilting_laser_sensor'])

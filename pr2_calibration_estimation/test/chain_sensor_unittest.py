@@ -185,6 +185,18 @@ class TestChainSensor(unittest.TestCase):
         self.assertAlmostEqual(numpy.linalg.norm(target-z), 0.0, 6)
         self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12,0])), 0.0, 6)
 
+    def test_sparsity(self):
+        config, robot_params = self.load()
+        block = ChainSensor(config,
+                            ChainMeasurement(chain_id="chainA",
+                                             chain_state=JointState(position=[numpy.pi / 2.0]) ),
+                            "boardA")
+        block.update_config(robot_params)
+        sparsity = block.build_sparsity_dict()
+        self.assertEqual(sparsity['transforms']['transformA'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['transforms']['transformB'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['dh_chains']['chainA'], [[1,1,1,1]])
+
 if __name__ == '__main__':
     import rostest
     rostest.unitrun('pr2_calibration_estimation', 'test_ChainBundler', TestChainBundler)

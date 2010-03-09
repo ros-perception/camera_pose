@@ -98,3 +98,12 @@ class TiltingLaserSensor:
         return target_pts[0:3,:]
         #return target_pts
 
+    # Build a dictionary that defines which parameters will in fact affect this measurement
+    def build_sparsity_dict(self):
+        sparsity = dict()
+
+        sparsity['tilting_lasers'] = {}
+        sparsity['tilting_lasers'][self.sensor_id] = {'before_chain':[1,1,1,1,1,1],
+                                                      'after_chain':[1,1,1,1,1,1]}
+
+        return sparsity

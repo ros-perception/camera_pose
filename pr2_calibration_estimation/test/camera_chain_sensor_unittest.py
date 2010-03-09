@@ -177,6 +177,12 @@ class TestCameraChainSensor(unittest.TestCase):
                                                           [0,0,1,1] ] ).T), 0.0, 6)
         self.assertAlmostEqual(linalg.norm( r ), 0.0, 6)
 
+        # Test Sparsity
+        sparsity = block.build_sparsity_dict()
+        self.assertEqual(sparsity['transforms']['transformA'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['transforms']['transformB'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['dh_chains']['chainA'], [[1,1,1,1]])
+        self.assertEqual(sparsity['rectified_cameras']['camA']['baseline_shift'], 1)
 
 if __name__ == '__main__':
     import rostest

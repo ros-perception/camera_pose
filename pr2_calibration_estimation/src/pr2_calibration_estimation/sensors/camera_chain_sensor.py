@@ -108,3 +108,23 @@ class CameraChainSensor:
         pixel_pts = self._camera.project(self._M_cam.cam_info.P, cam_frame_pts)
 
         return pixel_pts.T
+
+    # Build a dictionary that defines which parameters will in fact affect this measurement
+    def build_sparsity_dict(self):
+        sparsity = dict()
+        sparsity['transforms'] = {}
+        for cur_transform_name in ( self._config_dict['chain']['before_chain'] + self._config_dict['chain']['after_chain'] ):
+            sparsity['transforms'][cur_transform_name] = [1, 1, 1, 1, 1, 1]
+
+        sparsity['dh_chains'] = {}
+        chain_id = self._config_dict['chain']['chain_id']
+        num_links = self._chain.calc_block._chain._M
+        assert(num_links == len(self._M_chain.chain_state.position))
+        sparsity['dh_chains'][chain_id] = [ [1,1,1,1] ] * num_links
+
+        sparsity['rectified_cameras'] = {}
+        sparsity['rectified_cameras'][self.sensor_id] = {'baseline_shift': 1}
+
+        return sparsity
+
+
