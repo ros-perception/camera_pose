@@ -173,8 +173,12 @@ class TestCameraChainSensor(unittest.TestCase):
 
         self.assertAlmostEqual(linalg.norm( h - matrix( [ [0,1,0,1],
                                                           [0,0,1,1] ] ).T), 0.0, 6)
+        self.assertAlmostEqual(linalg.norm( z - matrix( [ [0,1,0,1],
+                                                          [0,0,1,1] ] ).T), 0.0, 6)
+        self.assertAlmostEqual(linalg.norm( r ), 0.0, 6)
+
+
 if __name__ == '__main__':
     import rostest
     rostest.unitrun('pr2_calibration_estimation', 'test_CameraChainBundler',          TestCameraChainBundler,          coverage_packages=['pr2_calibration_estimation.blocks.camera_chain'])
     rostest.unitrun('pr2_calibration_estimation', 'test_CameraChainSensor',           TestCameraChainSensor, coverage_packages=['pr2_calibration_estimation.blocks.camera_chain'])
-    #rostest.unitrun('pr2_calibration_estimation', 'test_CameraChainCalcBlock',        TestCameraChainCalcBlock,        coverage_packages=['pr2_calibration_estimation.blocks.camera_chain'])
