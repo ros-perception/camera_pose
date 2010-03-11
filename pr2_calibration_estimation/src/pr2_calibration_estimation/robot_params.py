@@ -80,8 +80,9 @@ def deflate_primitive_dict(param_vec, primitive_dict):
 # of the target vector that corresponds to this primitive
 def update_primitive_free(target_list, config_dict, free_dict):
     for key, elem in config_dict.items():
-        free = elem.calc_free(free_dict[key])
-        target_list[elem.start:elem.end] = free
+        if key in free_dict.keys():
+            free = elem.calc_free(free_dict[key])
+            target_list[elem.start:elem.end] = free
 
 # Given a parameter vector, Compute the configuration of all the primitives of a given type
 def primitive_params_to_config(param_vec, primitive_dict):
