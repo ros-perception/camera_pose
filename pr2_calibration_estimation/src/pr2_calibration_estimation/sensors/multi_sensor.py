@@ -33,6 +33,7 @@
 # author: Vijay Pradeep
 
 from pr2_calibration_estimation.sensors import tilting_laser_sensor, chain_sensor, camera_chain_sensor
+from numpy import concatenate
 
 class MultiSensor:
     '''
@@ -41,6 +42,8 @@ class MultiSensor:
     '''
     def __init__(self, sensor_configs):
         self._sensor_configs = sensor_configs
+        self.sensors = []
+        self.checkerboard = "NONE"
 
     def sensors_from_message(self, msg):
         sensors = []
@@ -74,3 +77,14 @@ class MultiSensor:
         self.checkerboard = msg.target_id
 
 
+    def update_config(self, robot_params):
+        for sensor in self.sensors:
+            sensor.update_config(robot_params)
+
+    def compute_residual(self, target_pts):
+        r_list = [sensor.compute_residual(target_pts) for sensor in self.sensors]
+        r = concatenate(r_list,0)
+        return r
+
+    def get_residual_length(self):
+        return sum([sensor.get_residual_length() for sensor in self.sensors])

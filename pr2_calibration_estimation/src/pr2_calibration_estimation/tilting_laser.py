@@ -64,6 +64,7 @@ class TiltingLaser:
                 "after_joint"  : self._before_joint.params_to_config(param_vec[6:12,0])}
 
     def calc_free(self, free_config):
+        #import code; code.interact(local=locals())
         assert( 'before_joint' in free_config )
         assert( 'after_joint'  in free_config )
 

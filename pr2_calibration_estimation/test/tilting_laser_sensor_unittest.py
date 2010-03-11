@@ -130,8 +130,8 @@ class TestTiltingLaser(unittest.TestCase):
 
         # Test Sparsity
         sparsity = block.build_sparsity_dict()
-        self.assertEqual(sparsity['tilting_lasers']['laserA']['before_chain'], [1,1,1,1,1,1])
-        self.assertEqual(sparsity['tilting_lasers']['laserA']['after_chain'],  [1,1,1,1,1,1])
+        self.assertEqual(sparsity['tilting_lasers']['laserA']['before_joint'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['tilting_lasers']['laserA']['after_joint'],  [1,1,1,1,1,1])
 
 
 if __name__ == '__main__':

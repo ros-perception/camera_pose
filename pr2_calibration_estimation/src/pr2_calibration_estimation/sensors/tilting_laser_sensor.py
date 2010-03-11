@@ -42,7 +42,7 @@
 #      \
 #       tilting_laser
 
-from numpy import reshape
+from numpy import reshape, array
 
 import roslib; roslib.load_manifest('pr2_calibration_estimation')
 import rospy
@@ -82,8 +82,12 @@ class TiltingLaserSensor:
         assert(z_mat.shape[0] == 3)
         assert(h_mat.shape[0] == 3)
         assert(z_mat.shape[1] == z_mat.shape[1])
-        r = reshape(h_mat.T - z_mat.T, [-1,1])
+        r = array(reshape(h_mat.T - z_mat.T, [-1,1]))[:,0]
         return r
+
+    def get_residual_length(self):
+        N = len(self._M_laser.joint_points)
+        return N*3
 
     # Get the laser measurement.
     # Returns a 3xN matrix of points in cartesian space
@@ -103,7 +107,7 @@ class TiltingLaserSensor:
         sparsity = dict()
 
         sparsity['tilting_lasers'] = {}
-        sparsity['tilting_lasers'][self.sensor_id] = {'before_chain':[1,1,1,1,1,1],
-                                                      'after_chain':[1,1,1,1,1,1]}
+        sparsity['tilting_lasers'][self.sensor_id] = {'before_joint':[1,1,1,1,1,1],
+                                                      'after_joint':[1,1,1,1,1,1]}
 
         return sparsity

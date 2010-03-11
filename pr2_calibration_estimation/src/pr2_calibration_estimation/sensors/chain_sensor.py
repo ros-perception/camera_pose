@@ -43,7 +43,7 @@
 #       before_chain_Ts -- target_chain -- after_chain_Ts -- checkerboard
 
 import numpy
-from numpy import reshape
+from numpy import reshape, array
 import roslib; roslib.load_manifest('pr2_calibration_estimation')
 import rospy
 from pr2_calibration_estimation.full_chain import FullChainRobotParams
@@ -90,8 +90,13 @@ class ChainSensor:
         assert(h_mat.shape == z_mat.shape)
         assert(h_mat.shape[0] == 4)
         r_mat = h_mat[0:3,:] - z_mat[0:3,:]
-        r = reshape(r_mat.T, [-1,1])
+        r = array(reshape(r_mat.T, [-1,1]))[:,0]
         return r
+
+    def get_residual_length(self):
+        pts = self._checkerboard.generate_points()
+        N = pts.shape[1]
+        return N*3
 
     def get_measurement(self):
         # Get the target's model points in the frame of the tip of the target chain

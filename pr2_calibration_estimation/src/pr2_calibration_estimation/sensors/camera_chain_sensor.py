@@ -42,7 +42,7 @@
 
 
 import numpy
-from numpy import matrix, reshape
+from numpy import matrix, reshape, array
 
 import roslib; roslib.load_manifest('pr2_calibration_estimation')
 import rospy
@@ -89,8 +89,12 @@ class CameraChainSensor:
         assert(z_mat.shape[1] == 2)
         assert(h_mat.shape[1] == 2)
         assert(z_mat.shape[0] == z_mat.shape[0])
-        r = reshape(h_mat - z_mat, [-1,1])
+        r = array(reshape(h_mat - z_mat, [-1,1]))[:,0]
         return r
+
+    def get_residual_length(self):
+        N = len(self._M_cam.image_points)
+        return N*2
 
     # Get the observed measurement in a Nx2 Matrix
     def get_measurement(self):
