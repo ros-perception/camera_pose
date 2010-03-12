@@ -44,6 +44,8 @@ import yaml
 import os.path
 import numpy
 
+from numpy import matrix
+
 from pr2_calibration_estimation.robot_params import RobotParams
 from pr2_calibration_estimation.sensors.multi_sensor import MultiSensor
 from pr2_calibration_estimation.opt_runner import opt_runner
@@ -133,7 +135,7 @@ if __name__ == '__main__':
             msg_count+=1
     f.close()
 
-    prev_pose_guesses = numpy.zeros([msg_count,6])
+    previous_pose_guesses = numpy.zeros([msg_count,6])
 
     # Specify which system the first calibration step should use.
     # Normally this would be set at the end of the calibration loop, but for the first step,
@@ -165,6 +167,12 @@ if __name__ == '__main__':
                 ms.sensors_from_message(msg)
                 multisensors.append(ms)
         f.close()
+        # Trim to be only one multisensor. Should speed everything up
+        #n = 1
+        #multisensors = multisensors[0:n]
+        #previous_pose_guesses = previous_pose_guesses[0:n,:]
+        #prev_pose_guesses[0,:] = [0.77632974794489384, 0.14975580480288297, 0.30955463556376145, 2.1701217322169963,  -0.3694191607337215, 2.118866565372064]
+        print "Initial Pose Guess: ", previous_pose_guesses
 
         print "Executing step with the following Sensors:"
         for cur_sensor_type, cur_sensor_list in cur_sensors.items():
@@ -177,21 +185,29 @@ if __name__ == '__main__':
                 print "   - %s (%u)" % (cur_sensor_id, count)
             print ""
 
+        print "Sensor breakdown:"
+        for ms in multisensors:
+            print "- %s" % ", ".join([s.sensor_id for s in ms.sensors])
+
         if len(multisensors) == 0:
             rospy.logwarn("No error blocks were generated for this optimization step. Skipping this step.  This will result in a miscalibrated sensor")
             output_dict = previous_system
-            output_poses = prev_pose_guesses
+            output_poses = previous_pose_guesses
         else:
             free_dict = yaml.load(cur_step["free_params"])
-            output_dict, output_poses = opt_runner(previous_system, prev_pose_guesses, free_dict, multisensors)
+            output_dict, output_poses, J = opt_runner(previous_system, previous_pose_guesses, free_dict, multisensors)
 
         out_f = open(output_dir + "/" + cur_step["output_filename"] + ".yaml", 'w')
         yaml.dump(output_dict, out_f)
         out_f.close()
 
         out_f = open(output_dir + "/" + cur_step["output_filename"] + "_poses.yaml", 'w')
-        yaml.dump([list(pose) for pose in list(output_poses)], out_f)
+        yaml.dump([list([float(x) for x in pose]) for pose in list(output_poses)], out_f)
         out_f.close()
+
+
+        cov_x = matrix(J).T * matrix(J)
+        numpy.savetxt(output_dir + "/" + cur_step["output_filename"] + "_cov.txt", cov_x, fmt="% 9.3f")
 
         previous_system = output_dict
         previous_pose_guesses = output_poses

@@ -37,7 +37,7 @@ import roslib; roslib.load_manifest('pr2_calibration_estimation')
 from pr2_calibration_estimation.robot_params import RobotParams
 from pr2_calibration_estimation.single_transform import SingleTransform
 import numpy
-from numpy import array, matrix, zeros, cumsum, concatenate
+from numpy import array, matrix, zeros, cumsum, concatenate, reshape
 import scipy.optimize
 import sys
 
@@ -62,8 +62,8 @@ class ErrorCalc:
         return full_param_vec
 
     def calculate_error(self, opt_all_vec):
-        # print "x ",
-        # sys.stdout.flush()
+        print "x ",
+        sys.stdout.flush()
 
         opt_param_vec, full_pose_arr = self.split_all(opt_all_vec)
 
@@ -85,9 +85,15 @@ class ErrorCalc:
         #import code; code.interact(local=locals())
         r_vec = concatenate(r_list)
 
+        rms_error = numpy.sqrt( numpy.mean(r_vec**2) )
+        print "%.3f " % rms_error,
+        sys.stdout.flush()
+
         return array(r_vec)
 
     def calculate_jacobian(self, opt_all_vec):
+        sys.stdout.write("J-")
+        sys.stdout.flush()
         #import scipy.optimize.slsqp.approx_jacobian as approx_jacobian
         #J = approx_jacobian(opt_param_vec, self.calculate_error, 1e-6)
 
@@ -126,6 +132,9 @@ class ErrorCalc:
             assert(J_ms_pose.shape[1] == 6)
             J_ms_pose[:,:] = self.multisensor_pose_jacobian(opt_param_vec, full_pose_arr[i,:], ms)
             #import code; code.interact(local=locals())
+
+        print "-J",
+        sys.stdout.flush()
 
         return J
 
@@ -220,29 +229,34 @@ def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors):
     # Construct the initial guess
     expanded_param_vec = robot_params.deflate()
     free_list = robot_params.calc_free(free_dict)
-    opt_param_vec = expanded_param_vec[numpy.where(free_list)].copy()
+    opt_param_vec = array(expanded_param_vec[numpy.where(free_list)].T)[0]
 
     assert(pose_guess_arr.shape[1] == 6)
     assert(pose_guess_arr.shape[0] == len(multisensors))
     opt_pose_vec = reshape(pose_guess_arr, [-1])
 
+    #import code; code.interact(local=locals())
+
     opt_all = numpy.concatenate([opt_param_vec, opt_pose_vec])
 
+
     x, cov_x, infodict, mesg, iter = scipy.optimize.leastsq(error_calc.calculate_error, opt_all, Dfun=error_calc.calculate_jacobian, full_output=1)
+
+    J = error_calc.calculate_jacobian(x)
 
     # A hacky way to inflate x back into robot params
     opt_param_vec, pose_vec = error_calc.split_all(x)
     expanded_param_vec = error_calc.calculate_full_param_vec(opt_param_vec)
     opt_pose_arr = reshape(pose_vec, [-1, 6])
 
-    output_dict = error_calc._robot_params.params_to_config(full_param_vec)
+    output_dict = error_calc._robot_params.params_to_config(expanded_param_vec)
 
     # Compute the rms error
     final_error = error_calc.calculate_error(x)
     rms_error = numpy.sqrt( numpy.mean(final_error**2) )
     print "RMS Error: %f" % rms_error
 
-    return output_dict, opt_pose_arr
+    return output_dict, opt_pose_arr, J
 
 
 

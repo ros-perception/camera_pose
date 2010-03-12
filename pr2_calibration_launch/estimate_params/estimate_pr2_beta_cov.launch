@@ -1,0 +1,54 @@
+<launch>
+
+  <group ns="calibration_config" >
+
+    <group ns="sensors" clear_params="true">
+      <param name="all"    textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/sensors.yaml" />
+    </group>
+
+    <group ns="cal_steps" clear_params="true">
+      <group ns="01 - Checkerboard Locations">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/free1.yaml" />
+        <rosparam>
+          sensors:
+          #- narrow_left_rect
+          #- narrow_right_rect
+          #- wide_left_rect
+          #- wide_right_rect
+          #- forearm_left_rect
+          #- forearm_right_rect
+          - tilt_laser
+          - left_arm_chain
+          - right_arm_chain
+        </rosparam>
+        <param name="output_filename" type="string" value="system1" />
+      </group>
+
+      
+      <group ns="02 - Checkerboard Locations">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/free1.yaml" />
+        <rosparam>
+          sensors:
+          - narrow_left_rect
+          - narrow_right_rect
+          - wide_left_rect
+          - wide_right_rect
+          - forearm_left_rect
+          - forearm_right_rect
+          - tilt_laser
+          - left_arm_chain
+          - right_arm_chain
+        </rosparam>
+        <param name="output_filename" type="string" value="system2" />
+      </group>
+      
+    </group>
+
+    <param name="initial_system" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/system.yaml" />
+
+  </group>
+
+  <node pkg="pr2_calibration_estimation" type="multi_step_cov_estimator.py" name="cal_estimator" output="screen"
+        args="/tmp/pr2_calibration/cal_measurements.bag /tmp/pr2_calibration/" respawn="False"/>
+
+</launch>
