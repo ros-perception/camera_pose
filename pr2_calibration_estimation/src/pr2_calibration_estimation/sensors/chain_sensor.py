@@ -43,10 +43,11 @@
 #       before_chain_Ts -- target_chain -- after_chain_Ts -- checkerboard
 
 import numpy
-from numpy import reshape, array
+from numpy import reshape, array, zeros, diag, matrix
 import roslib; roslib.load_manifest('pr2_calibration_estimation')
 import rospy
 from pr2_calibration_estimation.full_chain import FullChainRobotParams
+from sensor_msgs.msg import JointState
 
 class ChainBundler:
     def __init__(self, valid_configs):
@@ -93,17 +94,41 @@ class ChainSensor:
         r = array(reshape(r_mat.T, [-1,1]))[:,0]
         return r
 
+    def compute_cov(self):
+        # ------ Start Populating Here -------
+        epsilon = 1e-8
+
+        num_joints = len(self._M_chain.chain_state.position)
+        Jt = zeros([num_joints, self.get_residual_length()])
+
+        x = JointState()
+        x.position = self._M_chain.chain_state.position[:]
+
+        f0 = reshape(array(self._calc_fk_target_pts(x)[0:3,:].T), [-1])
+        for i in range(num_joints):
+            x.position = self._M_chain.chain_state.position[:]
+            x.position[i] += epsilon
+            fTest = reshape(array(self._calc_fk_target_pts(x)[0:3,:].T), [-1])
+            Jt[i] = (fTest - f0)/epsilon
+        cov_angles = diag(self._full_chain.calc_block._chain._cov_dict['joint_angles'])
+        #import code; code.interact(local=locals())
+        cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
+        return cov
+
     def get_residual_length(self):
         pts = self._checkerboard.generate_points()
         N = pts.shape[1]
         return N*3
 
     def get_measurement(self):
+        return self._calc_fk_target_pts(self._M_chain.chain_state)
+
+    def _calc_fk_target_pts(self, chain_state):
         # Get the target's model points in the frame of the tip of the target chain
         target_pts_tip = self._checkerboard.generate_points()
 
         # Target pose in root frame
-        target_pose_root = self._full_chain.calc_block.fk(self._M_chain.chain_state)
+        target_pose_root = self._full_chain.calc_block.fk(chain_state)
 
         # Transform points into the root frame
         target_pts_root = target_pose_root * target_pts_tip

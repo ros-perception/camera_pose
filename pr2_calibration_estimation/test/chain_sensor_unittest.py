@@ -120,7 +120,10 @@ class TestChainSensor(unittest.TestCase):
         robot_params.configure( yaml.load('''
             dh_chains:
               chainA:
-              - [ 0, 0, 1, 0 ]
+                dh:
+                - [ 0, 0, 1, 0 ]
+                cov:
+                  joint_angles: [1]
             tilting_lasers: {}
             rectified_cams: {}
             transforms:
@@ -134,6 +137,20 @@ class TestChainSensor(unittest.TestCase):
                 spacing_y: 1
             ''' ) )
         return config, robot_params
+
+    def test_cov(self):
+        config, robot_params = self.load()
+        block = ChainSensor(config,
+                            ChainMeasurement(chain_id="chainA",
+                                             chain_state=JointState(position=[0]) ),
+                            "boardA")
+        block.update_config(robot_params)
+        cov = block.compute_cov()
+
+        self.assertAlmostEqual(cov[0,0], 0.0, 6)
+        self.assertAlmostEqual(cov[1,0], 0.0, 6)
+        self.assertAlmostEqual(cov[1,1], 1.0, 6)
+        self.assertAlmostEqual(cov[4,4], 4.0, 6)
 
     def test_update1(self):
         config, robot_params = self.load()
@@ -158,7 +175,7 @@ class TestChainSensor(unittest.TestCase):
         print "target=\n",target
 
         self.assertAlmostEqual(numpy.linalg.norm(target-z), 0.0, 6)
-        self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12,0])), 0.0, 6)
+        self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12])), 0.0, 6)
 
     def test_update2(self):
         config, robot_params = self.load()
@@ -183,7 +200,7 @@ class TestChainSensor(unittest.TestCase):
         print "target=\n",target
 
         self.assertAlmostEqual(numpy.linalg.norm(target-z), 0.0, 6)
-        self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12,0])), 0.0, 6)
+        self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12])), 0.0, 6)
 
     def test_sparsity(self):
         config, robot_params = self.load()

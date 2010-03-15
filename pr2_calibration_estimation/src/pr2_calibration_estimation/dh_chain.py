@@ -37,14 +37,18 @@ import rospy
 class DhChain:
     def __init__(self, config = [[0,0,0,0]]):
         # Determine number of links
-        self._M = len(config)
+
         #import code; code.interact(local=locals())
+        self._M = len(config['dh'])
         rospy.logdebug("Initializing dh chain with [%u] links", self._M)
 
-        param_mat = numpy.matrix([ [eval(str(x)) for x in y] for y in config], float)
+        param_mat = numpy.matrix([ [eval(str(x)) for x in y] for y in config['dh']], float)
         assert(self._M*4 == param_mat.size)
         self._length = param_mat.size       # The number of params needed to configure this chain
         self._config = param_mat            # Mx4 matrix. Each row is a link, containing [theta, alpha, a, d]
+
+        self._cov_dict = config['cov']
+        assert( len(self._cov_dict['joint_angles']) == self._M)
 
     def calc_free(self, free_config):
         assert( len(free_config) == self._M )
@@ -62,7 +66,10 @@ class DhChain:
     def params_to_config(self, param_vec):
         assert(param_vec.shape == (self._M * 4, 1))
         param_mat = reshape( param_vec.T, (-1,4))
-        return param_mat.tolist()
+        config_dict = {}
+        config_dict['dh'] = param_mat.tolist()
+        config_dict['cov'] = self._cov_dict
+        return config_dict
 
     # Convert column vector of params into config
     def inflate(self, param_vec):
