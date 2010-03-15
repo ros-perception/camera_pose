@@ -42,7 +42,7 @@
 #      \
 #       tilting_laser
 
-from numpy import reshape, array
+from numpy import reshape, array, zeros, matrix, diag
 
 import roslib; roslib.load_manifest('pr2_calibration_estimation')
 import rospy
@@ -95,6 +95,32 @@ class TiltingLaserSensor:
         # Get the laser points in a 4xN homogenous matrix
         laser_pts_root = self._tilting_laser.project_to_3D([x.position for x in self._M_laser.joint_points])
         return laser_pts_root[0:3,:]
+
+    def calculate_cov(self, target_pts):
+        epsilon = 1e-8
+
+        Jt = zeros([3, self.get_residual_length()])
+
+        import copy
+        x = [copy.copy(x.position) for x in self._M_laser.joint_points]
+
+        f0 = reshape(array(self._tilting_laser.project_to_3D(x)[0:3,:].T), [-1])
+        for i in range(3):
+            x = [copy.copy(x.position) for x in self._M_laser.joint_points]
+            for cur_pt in x:
+                cur_pt[i] += epsilon
+            fTest = reshape(array(self._tilting_laser.project_to_3D(x)[0:3,:].T), [-1])
+            Jt[i] = (fTest - f0)/epsilon
+
+        num_pts = len(x)
+        cov_sensor = [self._tilting_laser._cov_dict['tilt'],
+                      self._tilting_laser._cov_dict['bearing'],
+                      self._tilting_laser._cov_dict['range']]
+
+        #import code; code.interact(local=locals())
+        cov = matrix(Jt).T * matrix(diag(cov_sensor)) * matrix(Jt)
+        return cov
+
 
     # Returns the pixel coordinates of the laser points after being projected into the camera
     # Returns a 4xN matrix of the target points

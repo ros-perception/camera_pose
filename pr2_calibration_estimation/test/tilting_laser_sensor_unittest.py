@@ -87,23 +87,47 @@ def loadSystem():
             laserA:
                 before_joint: [0, 0, 0, 0, 0, 0]
                 after_joint:  [0, 0, 0, 0, 0, 0]
+                cov:
+                  bearing: 1
+                  range:   1
+                  tilt:    1
         rectified_cams: {}
         transforms: {}
         checkerboards: {}
         ''' ) )
 
-    P = [ 1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1, 0 ]
-
-    return config, robot_params, P
+    return config, robot_params
 
 
 class TestTiltingLaser(unittest.TestCase):
 
+    def test_cov(self):
+        print ""
+        config, robot_params = loadSystem()
+
+        joint_points = [ JointState(position=[0,pi/2,1]),
+                         JointState(position=[pi/2,0,2]) ]
+
+        sensor = TiltingLaserSensor(config, LaserMeasurement(laser_id="laserA",
+                                                             joint_points=joint_points))
+
+        sensor.update_config(robot_params)
+
+        cov = sensor.calculate_cov(None)
+
+        print "Cov:"
+        print cov
+
+        self.assertAlmostEqual(cov[0,0], 1.0, 6)
+        self.assertAlmostEqual(cov[1,1], 1.0, 6)
+        self.assertAlmostEqual(cov[2,2], 0.0, 6)
+        self.assertAlmostEqual(cov[3,3], 4.0, 6)
+        self.assertAlmostEqual(cov[4,4], 4.0, 6)
+        self.assertAlmostEqual(cov[5,5], 1.0, 6)
+
     def test_tilting_laser_1(self):
         print ""
-        config, robot_params, P = loadSystem()
+        config, robot_params = loadSystem()
 
         joint_points = [ JointState(position=[0,0,0]),
                          JointState(position=[0,pi/2,1]),

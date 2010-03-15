@@ -50,6 +50,11 @@ class TiltingLaser:
         self._before_joint = SingleTransform()
         self._after_joint  = SingleTransform()
 
+        if 'cov' in config.keys():
+            self._cov_dict = config['cov']
+        else:
+            self._cov_dict = {}
+
         param_vec = self.dict_to_params(config)
         self.inflate(param_vec)
 
@@ -61,7 +66,8 @@ class TiltingLaser:
     def params_to_config(self, param_vec):
         assert(param_vec.shape == (12,1))
         return {"before_joint" : self._before_joint.params_to_config(param_vec[0:6, 0]),
-                "after_joint"  : self._before_joint.params_to_config(param_vec[6:12,0])}
+                "after_joint"  : self._before_joint.params_to_config(param_vec[6:12,0]),
+                "cov"          : self._cov_dict}
 
     def calc_free(self, free_config):
         #import code; code.interact(local=locals())
