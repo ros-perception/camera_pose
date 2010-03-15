@@ -94,8 +94,7 @@ class ChainSensor:
         r = array(reshape(r_mat.T, [-1,1]))[:,0]
         return r
 
-    def compute_cov(self):
-        # ------ Start Populating Here -------
+    def compute_cov(self, target_pts):
         epsilon = 1e-8
 
         num_joints = len(self._M_chain.chain_state.position)

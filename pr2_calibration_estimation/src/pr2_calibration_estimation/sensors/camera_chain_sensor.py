@@ -42,11 +42,12 @@
 
 
 import numpy
-from numpy import matrix, reshape, array
+from numpy import matrix, reshape, array, zeros, diag
 
 import roslib; roslib.load_manifest('pr2_calibration_estimation')
 import rospy
 from pr2_calibration_estimation.full_chain import FullChainRobotParams
+from sensor_msgs.msg import JointState
 
 class CameraChainBundler:
     def __init__(self, valid_configs):
@@ -105,13 +106,42 @@ class CameraChainSensor:
     # target_pts: 4xN matrix, storing feature points of the target, in homogeneous coords
     # Returns: target points projected into pixel coordinates, in a Nx2 matrix
     def compute_expected(self, target_pts):
+        return self._compute_expected(self._M_chain.chain_state, target_pts)
+
+    def _compute_expected(self, chain_state, target_pts):
         # Camera pose in root frame
-        camera_pose_root = self._chain.calc_block.fk(self._M_chain.chain_state)
+        camera_pose_root = self._chain.calc_block.fk(chain_state)
         cam_frame_pts = camera_pose_root.I * target_pts
         # Do the camera projection
         pixel_pts = self._camera.project(self._M_cam.cam_info.P, cam_frame_pts)
 
         return pixel_pts.T
+
+    def compute_cov(self, target_pts):
+        epsilon = 1e-8
+
+        num_joints = len(self._M_chain.chain_state.position)
+        Jt = zeros([num_joints, self.get_residual_length()])
+
+        x = JointState()
+        x.position = self._M_chain.chain_state.position[:]
+
+        f0 = reshape(array(self._compute_expected(x, target_pts)), [-1])
+        for i in range(num_joints):
+            x.position = self._M_chain.chain_state.position[:]
+            x.position[i] += epsilon
+            fTest = reshape(array(self._compute_expected(x, target_pts)), [-1])
+            Jt[i] = (fTest - f0)/epsilon
+        cov_angles = diag(self._chain.calc_block._chain._cov_dict['joint_angles'])
+        chain_cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
+        cam_cov = matrix(zeros(chain_cov.shape))
+        for k in range(cam_cov.shape[0]/2):
+            cam_cov[2*k  , 2*k]   = self._camera._cov_dict['u']
+            cam_cov[2*k+1, 2*k+1] = self._camera._cov_dict['v']
+
+        #import code; code.interact(local=locals())
+        cov = chain_cov + cam_cov
+        return cov
 
     # Build a dictionary that defines which parameters will in fact affect this measurement
     def build_sparsity_dict(self):

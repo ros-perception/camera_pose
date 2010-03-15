@@ -30,6 +30,7 @@ rosbuild_add_pyunit(test/single_transform_unittest.py)
 rosbuild_add_pyunit(test/tilting_laser_unittest.py)
 
 rosbuild_add_pyunit(test/chain_sensor_unittest.py)
+rosbuild_add_pyunit(test/camera_chain_sensor_unittest.py)
 
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_pr2_fk.launch)
 

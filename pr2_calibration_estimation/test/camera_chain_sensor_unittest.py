@@ -125,13 +125,20 @@ class TestCameraChainSensor(unittest.TestCase):
         robot_params.configure( yaml.load('''
             dh_chains:
               chainA:
-              - [ 0, 0, 1, 0 ]
+                dh:
+                  - [ 0, 0, 1, 0 ]
+                cov:
+                  joint_angles: [1.0]
               chainB:
-              - [ 0, 0, 2, 0 ]
+                dh:
+                  - [ 0, 0, 2, 0 ]
+                cov:
+                  joint_angles: [1.0]
             tilting_lasers: {}
             rectified_cams:
               camA:
                 baseline_shift: 0.0
+                cov: {u: 1.0, v: 1.0}
             transforms:
                 transformA: [0, 0, 0, 0, 0, 0]
                 transformB: [0, 0, 0, 0, 0, 0]
@@ -145,6 +152,35 @@ class TestCameraChainSensor(unittest.TestCase):
               0, 0, 1, 0 ]
 
         return config, robot_params, P
+
+    def test_cov(self):
+        config, robot_params, P = self.load()
+
+        camera_points      = [ ImagePoint(0, 0),
+                               ImagePoint(1, 0) ]
+
+        sensor = CameraChainSensor(config,
+                                   CameraMeasurement(camera_id="camA",
+                                                     cam_info=CameraInfo(P=P),
+                                                     image_points=camera_points),
+                                   ChainMeasurement(chain_id="chainA",
+                                                    chain_state=JointState(position=[0])) )
+        sensor.update_config(robot_params)
+
+        target = matrix([[1, 2],
+                         [0, 0],
+                         [1, 1],
+                         [1, 1]])
+
+        cov = sensor.compute_cov(target)
+        print "\ncov:\n", cov
+
+        self.assertAlmostEqual(cov[0,0], 1.0, 6)
+        self.assertAlmostEqual(cov[1,0], 0.0, 6)
+        self.assertAlmostEqual(cov[2,0], 0.0, 6)
+        self.assertAlmostEqual(cov[3,0], 0.0, 6)
+        self.assertAlmostEqual(cov[1,1], 2.0, 6)
+        self.assertAlmostEqual(cov[3,3], 5.0, 6)
 
     def test_update(self):
         config, robot_params, P = self.load()

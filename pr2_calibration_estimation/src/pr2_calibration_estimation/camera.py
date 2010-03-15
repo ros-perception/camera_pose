@@ -43,6 +43,7 @@ class RectifiedCamera:
     def __init__(self, config={"baseline_shift":0}):
         rospy.logdebug("Initializng rectified camera")
         self._baseline_shift = config["baseline_shift"]
+        self._cov_dict = config['cov']
 
     def calc_free(self, free_config):
         assert( 'baseline_shift' in free_config )
@@ -50,7 +51,9 @@ class RectifiedCamera:
 
     def params_to_config(self, param_vec):
         assert(param_vec.shape == (1,1))
-        return {"baseline_shift": float(param_vec[0,0])}
+        param_dict = {"baseline_shift": float(param_vec[0,0])}
+        param_dict['cov'] = self._cov_dict
+        return param_dict
 
     # Convert column vector of params into config, expects a 1x1 matrix
     def inflate(self, param_vec):
