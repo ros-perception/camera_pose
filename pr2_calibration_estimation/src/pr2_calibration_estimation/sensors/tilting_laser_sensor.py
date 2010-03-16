@@ -86,28 +86,28 @@ class TiltingLaserSensor:
         return r
 
     def compute_residual_scaled(self, target_pts):
-        import scipy.linalg
         r = self.compute_residual(target_pts)
+        gamma_sqrt = self.compute_marginal_gamma_sqrt(target_pts)
+        r_scaled = gamma_sqrt * matrix(r).T
+        return array(r_scaled.T)[0]
+
+    def compute_marginal_gamma_sqrt(self, target_pts):
+        import scipy.linalg
+        # ----- Populate Here -----
         cov = self.compute_cov(target_pts)
-        num_pts = len(r)/3
-        r_scaled = zeros(r.shape)
+        gamma = matrix(zeros(cov.shape))
+        num_pts = self.get_residual_length()/3
 
         for k in range(num_pts):
             #print "k=%u" % k
             first = 3*k
             last = 3*k+3
             sub_cov = matrix(cov[first:last, first:last])
-            sub_r = matrix(r[first:last]).T
-            #import code; code.interact(local=locals())
             sub_cov_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov))
             sub_cov_sqrt = real(sub_cov_sqrt_full)
             assert(scipy.linalg.norm(sub_cov_sqrt_full - sub_cov_sqrt) < 1e-6)
-            sub_gamma =sub_cov_sqrt.I
-            sub_r_scaled = sub_gamma * sub_r
-            r_scaled[first:last] = array(sub_r_scaled.T)[0]
-
-        #import code; code.interact(local=locals())
-        return r_scaled
+            gamma[first:last, first:last] = sub_cov_sqrt.I
+        return gamma
 
     def get_residual_length(self):
         N = len(self._M_laser.joint_points)

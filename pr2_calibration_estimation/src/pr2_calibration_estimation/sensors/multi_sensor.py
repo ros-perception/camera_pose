@@ -34,6 +34,23 @@
 
 from pr2_calibration_estimation.sensors import tilting_laser_sensor, chain_sensor, camera_chain_sensor
 from numpy import concatenate
+from numpy import zeros, cumsum, matrix
+
+def block_diag(m_list):
+    '''
+    Given a list of matricies.  Combine into a larger, block diagonal matrix. This really should
+    exist in numpy
+    '''
+    # Must be square
+    for m in m_list:
+        assert(m.shape[0] == m.shape[1])
+    m_sizes = [m.shape[0] for m in m_list ]
+    end_ind   = list(cumsum(m_sizes))
+    start_ind = [0] + end_ind[0:-1]
+    result = zeros( [end_ind[-1], end_ind[-1] ] )
+    for first, last, m in zip(start_ind, end_ind, m_list):
+        result[first:last, first:last] = m
+    return matrix(result)
 
 class MultiSensor:
     '''
@@ -90,6 +107,11 @@ class MultiSensor:
         r_list = [sensor.compute_residual_scaled(target_pts) for sensor in self.sensors]
         r = concatenate(r_list,0)
         return r
+
+    def compute_marginal_gamma_sqrt(self, target_pts):
+        gamma_sqrt_list = [sensor.compute_marginal_gamma_sqrt(target_pts) for sensor in self.sensors]
+        gamma_sqrt = block_diag(gamma_sqrt_list)
+        return gamma_sqrt
 
     def get_residual_length(self):
         return sum([sensor.get_residual_length() for sensor in self.sensors])

@@ -95,39 +95,28 @@ class CameraChainSensor:
 
 
     def compute_residual_scaled(self, target_pts):
-        import scipy.linalg
         r = self.compute_residual(target_pts)
+        gamma_sqrt = self.compute_marginal_gamma_sqrt(target_pts)
+        r_scaled = gamma_sqrt * matrix(r).T
+        return array(r_scaled.T)[0]
+
+    def compute_marginal_gamma_sqrt(self, target_pts):
+        import scipy.linalg
+        # ----- Populate Here -----
         cov = self.compute_cov(target_pts)
-        num_pts = len(r)/2
-        r_scaled = zeros(r.shape)
+        gamma = matrix(zeros(cov.shape))
+        num_pts = self.get_residual_length()/2
 
         for k in range(num_pts):
             #print "k=%u" % k
             first = 2*k
             last = 2*k+2
             sub_cov = matrix(cov[first:last, first:last])
-            sub_r = matrix(r[first:last]).T
-            #import code; code.interact(local=locals())
             sub_cov_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov))
             sub_cov_sqrt = real(sub_cov_sqrt_full)
             assert(scipy.linalg.norm(sub_cov_sqrt_full - sub_cov_sqrt) < 1e-6)
-            sub_gamma =sub_cov_sqrt.I
-            sub_r_scaled = sub_gamma * sub_r
-            r_scaled[first:last] = array(sub_r_scaled.T)[0]
-
-        #import code; code.interact(local=locals())
-        return r_scaled
-
-    #def compute_residual_scaled(self, target_pts):
-    #    import scipy.linalg
-    #    r = self.compute_residual(target_pts)
-    #    cov = self.compute_cov(target_pts)
-    #    cov_sqrt_full = scipy.linalg.sqrtm(cov)
-    #    cov_sqrt = real(cov_sqrt_full)
-    #    assert(scipy.linalg.norm(cov_sqrt_full - cov_sqrt) < 1e-6)
-    #    gamma = matrix(cov_sqrt).I
-    #    r_scaled = array(gamma * matrix(r).T).T[0]
-    #    return r_scaled
+            gamma[first:last, first:last] = sub_cov_sqrt.I
+        return gamma
 
     def get_residual_length(self):
         N = len(self._M_cam.image_points)
@@ -164,12 +153,12 @@ class CameraChainSensor:
 
         f0 = reshape(array(self._compute_expected(x, target_pts)), [-1])
         for i in range(num_joints):
-            x.position = self._M_chain.chain_state.position[:]
+            x.position = [cur_pos for cur_pos in self._M_chain.chain_state.position]
             x.position[i] += epsilon
             fTest = reshape(array(self._compute_expected(x, target_pts)), [-1])
             Jt[i] = (fTest - f0)/epsilon
         cov_angles = diag(self._chain.calc_block._chain._cov_dict['joint_angles'])
-        chain_cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
+        chain_cov = matrix(Jt).T * matrix(cov_angles) * matrix(Jt)
         cam_cov = matrix(zeros(chain_cov.shape))
         for k in range(cam_cov.shape[0]/2):
             cam_cov[2*k  , 2*k]   = self._camera._cov_dict['u']

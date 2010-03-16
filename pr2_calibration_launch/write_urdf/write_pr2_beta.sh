@@ -1,6 +1,6 @@
 #! /bin/bash
 
-original_system=`rospack find pr2_calibration_launch`/estimate_params/config_pr2_beta/system.yaml
+original_system=`rospack find pr2_calibration_launch`/estimate_params/config_pr2_beta/cov/system.yaml
 final_system=/tmp/pr2_calibration/system_calibrated.yaml
 urdf_in=/etc/ros/urdf/robot.xml
 urdf_out=robot_calibrated.xml

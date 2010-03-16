@@ -171,7 +171,8 @@ class ErrorCalc:
         x0 = opt_param_vec
         epsilon = 1e-6
         target_points = target_pose_T * self._robot_params.checkerboards[target_id].generate_points()
-        f0 = sensor.compute_residual_scaled(target_points)
+        f0 = sensor.compute_residual(target_points)
+        gamma_sqrt = sensor.compute_marginal_gamma_sqrt(target_points)
         Jt = numpy.zeros([len(x0),len(f0)])
         dx = numpy.zeros(len(x0))
         for i in numpy.where(opt_sparsity_vec)[0]:
@@ -182,10 +183,11 @@ class ErrorCalc:
             sensor.update_config(self._robot_params)
             #import code; code.interact(local=locals())
             target_points = target_pose_T * self._robot_params.checkerboards[target_id].generate_points()
-            Jt[i] = (sensor.compute_residual_scaled(target_points) - f0)/epsilon
+            Jt[i] = (sensor.compute_residual(target_points) - f0)/epsilon
             dx[i] = 0.0
         J = Jt.transpose()
-        return J
+        J_scaled = gamma_sqrt * J
+        return J_scaled
 
     def multisensor_pose_jacobian(self, opt_param_vec, pose_param_vec, multisensor):
         # Update the primitives with the new set of parameters
@@ -198,18 +200,22 @@ class ErrorCalc:
         # based on code from scipy.slsqp
         x0 = pose_param_vec
         epsilon = 1e-6
-        f0 = multisensor.compute_residual_scaled(SingleTransform(x0).transform * local_cb_points)
+        world_pts = SingleTransform(x0).transform * local_cb_points
+        f0 = multisensor.compute_residual(world_pts)
+        gamma_sqrt = multisensor.compute_marginal_gamma_sqrt(world_pts)
+
         Jt = numpy.zeros([len(x0),len(f0)])
         dx = numpy.zeros(len(x0))
         for i in range(len(x0)):
             dx[i] = epsilon
             test_vec = x0 + dx
-            fTest = multisensor.compute_residual_scaled(SingleTransform(test_vec).transform * local_cb_points)
+            fTest = multisensor.compute_residual(SingleTransform(test_vec).transform * local_cb_points)
             Jt[i] = (fTest - f0)/epsilon
             #import code; code.interact(local=locals())
             dx[i] = 0.0
         J = Jt.transpose()
-        return J
+        J_scaled = gamma_sqrt * J
+        return J_scaled
 
 def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors):
     """
@@ -241,6 +247,8 @@ def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors):
 
 
     x, cov_x, infodict, mesg, iter = scipy.optimize.leastsq(error_calc.calculate_error, opt_all, Dfun=error_calc.calculate_jacobian, full_output=1)
+    #x = opt_all
+    #error_calc.calculate_error(x)
 
     J = error_calc.calculate_jacobian(x)
 
@@ -251,10 +259,31 @@ def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors):
 
     output_dict = error_calc._robot_params.params_to_config(expanded_param_vec)
 
+
+    errors_dict = {}
+    # Compute the error for each sensor type
+    for ms, k in zip(multisensors, range(len(multisensors))):
+        cb = error_calc._robot_params.checkerboards[ms.checkerboard]
+        cb_pose_vec = opt_pose_arr[k]
+        target_pts = SingleTransform(cb_pose_vec).transform * cb.generate_points()
+        for sensor in ms.sensors:
+            r_sensor = sensor.compute_residual(target_pts)
+            if sensor.sensor_id not in errors_dict.keys():
+                errors_dict[sensor.sensor_id] = []
+            errors_dict[sensor.sensor_id].append(r_sensor)
+
+    print ""
+    print "Errors Breakdown:"
+    for sensor_id, error_list in errors_dict.items():
+        error_cat = numpy.concatenate(error_list)
+        rms_error = numpy.sqrt( numpy.mean(error_cat**2) )
+        print "  %s: %.6f" % (sensor_id, rms_error)
+
+
     # Compute the rms error
-    final_error = error_calc.calculate_error(x)
-    rms_error = numpy.sqrt( numpy.mean(final_error**2) )
-    print "RMS Error: %f" % rms_error
+    #final_error = error_calc.calculate_error(x)
+    #rms_error = numpy.sqrt( numpy.mean(final_error**2) )
+    #print "RMS Error: %f" % rms_error
 
     return output_dict, opt_pose_arr, J
 

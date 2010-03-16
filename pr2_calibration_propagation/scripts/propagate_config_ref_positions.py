@@ -43,7 +43,7 @@ def mixed_to_float(mixed):
 #calculate calibration offsets (whicharm = 'left' or 'right')
 def find_dh_param_offsets(chain_name):
     offsets = []
-    for (default_params, calib_params) in zip(system_default['dh_chains'][chain_name], system_calibrated['dh_chains'][chain_name]):
+    for (default_params, calib_params) in zip(system_default['dh_chains'][chain_name]['dh'], system_calibrated['dh_chains'][chain_name]['dh']):
         #print "default_params[0]:", default_params[0], "calib_params[0]:", calib_params[0]
         diff = mixed_to_float(calib_params[0]) - mixed_to_float(default_params[0])
         if epsEq(diff, 0):

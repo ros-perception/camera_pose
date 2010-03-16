@@ -172,7 +172,7 @@ if __name__ == '__main__':
         #multisensors = multisensors[0:n]
         #previous_pose_guesses = previous_pose_guesses[0:n,:]
         #prev_pose_guesses[0,:] = [0.77632974794489384, 0.14975580480288297, 0.30955463556376145, 2.1701217322169963,  -0.3694191607337215, 2.118866565372064]
-        print "Initial Pose Guess: ", previous_pose_guesses
+        #print "Initial Pose Guess: ", previous_pose_guesses
 
         print "Executing step with the following Sensors:"
         for cur_sensor_type, cur_sensor_list in cur_sensors.items():
@@ -185,9 +185,9 @@ if __name__ == '__main__':
                 print "   - %s (%u)" % (cur_sensor_id, count)
             print ""
 
-        print "Sensor breakdown:"
-        for ms in multisensors:
-            print "- %s" % ", ".join([s.sensor_id for s in ms.sensors])
+        print "Sensor breakdown (By Sample):"
+        for k,ms in zip(range(len(multisensors)), multisensors):
+            print " % 2u) %s" % (k, ", ".join([s.sensor_id for s in ms.sensors]))
 
         if len(multisensors) == 0:
             rospy.logwarn("No error blocks were generated for this optimization step. Skipping this step.  This will result in a miscalibrated sensor")
