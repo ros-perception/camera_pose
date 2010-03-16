@@ -145,7 +145,7 @@ class TestChainSensor(unittest.TestCase):
                                              chain_state=JointState(position=[0]) ),
                             "boardA")
         block.update_config(robot_params)
-        cov = block.compute_cov(None)
+        cov = block.calculate_cov(None)
 
         self.assertAlmostEqual(cov[0,0], 0.0, 6)
         self.assertAlmostEqual(cov[1,0], 0.0, 6)

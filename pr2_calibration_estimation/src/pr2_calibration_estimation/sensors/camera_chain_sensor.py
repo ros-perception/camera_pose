@@ -42,7 +42,7 @@
 
 
 import numpy
-from numpy import matrix, reshape, array, zeros, diag
+from numpy import matrix, reshape, array, zeros, diag, real
 
 import roslib; roslib.load_manifest('pr2_calibration_estimation')
 import rospy
@@ -92,6 +92,42 @@ class CameraChainSensor:
         assert(z_mat.shape[0] == z_mat.shape[0])
         r = array(reshape(h_mat - z_mat, [-1,1]))[:,0]
         return r
+
+
+    def compute_residual_scaled(self, target_pts):
+        import scipy.linalg
+        r = self.compute_residual(target_pts)
+        cov = self.compute_cov(target_pts)
+        num_pts = len(r)/2
+        r_scaled = zeros(r.shape)
+
+        for k in range(num_pts):
+            #print "k=%u" % k
+            first = 2*k
+            last = 2*k+2
+            sub_cov = matrix(cov[first:last, first:last])
+            sub_r = matrix(r[first:last]).T
+            #import code; code.interact(local=locals())
+            sub_cov_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov))
+            sub_cov_sqrt = real(sub_cov_sqrt_full)
+            assert(scipy.linalg.norm(sub_cov_sqrt_full - sub_cov_sqrt) < 1e-6)
+            sub_gamma =sub_cov_sqrt.I
+            sub_r_scaled = sub_gamma * sub_r
+            r_scaled[first:last] = array(sub_r_scaled.T)[0]
+
+        #import code; code.interact(local=locals())
+        return r_scaled
+
+    #def compute_residual_scaled(self, target_pts):
+    #    import scipy.linalg
+    #    r = self.compute_residual(target_pts)
+    #    cov = self.compute_cov(target_pts)
+    #    cov_sqrt_full = scipy.linalg.sqrtm(cov)
+    #    cov_sqrt = real(cov_sqrt_full)
+    #    assert(scipy.linalg.norm(cov_sqrt_full - cov_sqrt) < 1e-6)
+    #    gamma = matrix(cov_sqrt).I
+    #    r_scaled = array(gamma * matrix(r).T).T[0]
+    #    return r_scaled
 
     def get_residual_length(self):
         N = len(self._M_cam.image_points)

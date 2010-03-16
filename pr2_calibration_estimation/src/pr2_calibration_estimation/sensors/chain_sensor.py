@@ -43,7 +43,7 @@
 #       before_chain_Ts -- target_chain -- after_chain_Ts -- checkerboard
 
 import numpy
-from numpy import reshape, array, zeros, diag, matrix
+from numpy import reshape, array, zeros, diag, matrix, real
 import roslib; roslib.load_manifest('pr2_calibration_estimation')
 import rospy
 from pr2_calibration_estimation.full_chain import FullChainRobotParams
@@ -94,6 +94,30 @@ class ChainSensor:
         r = array(reshape(r_mat.T, [-1,1]))[:,0]
         return r
 
+    def compute_residual_scaled(self, target_pts):
+        import scipy.linalg
+        r = self.compute_residual(target_pts)
+        cov = self.compute_cov(target_pts)
+        num_pts = len(r)/3
+        r_scaled = zeros(r.shape)
+
+        for k in range(num_pts):
+            #print "k=%u" % k
+            first = 3*k
+            last = 3*k+3
+            sub_cov = matrix(cov[first:last, first:last])
+            sub_r = matrix(r[first:last]).T
+            #import code; code.interact(local=locals())
+            sub_cov_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov))
+            sub_cov_sqrt = real(sub_cov_sqrt_full)
+            assert(scipy.linalg.norm(sub_cov_sqrt_full - sub_cov_sqrt) < 1e-6)
+            sub_gamma =sub_cov_sqrt.I
+            sub_r_scaled = sub_gamma * sub_r
+            r_scaled[first:last] = array(sub_r_scaled.T)[0]
+
+        #import code; code.interact(local=locals())
+        return r_scaled
+
     def compute_cov(self, target_pts):
         epsilon = 1e-8
 
@@ -105,11 +129,11 @@ class ChainSensor:
 
         f0 = reshape(array(self._calc_fk_target_pts(x)[0:3,:].T), [-1])
         for i in range(num_joints):
-            x.position = self._M_chain.chain_state.position[:]
+            x.position = list(self._M_chain.chain_state.position[:])
             x.position[i] += epsilon
             fTest = reshape(array(self._calc_fk_target_pts(x)[0:3,:].T), [-1])
             Jt[i] = (fTest - f0)/epsilon
-        cov_angles = diag(self._full_chain.calc_block._chain._cov_dict['joint_angles'])
+        cov_angles = self._full_chain.calc_block._chain._cov_dict['joint_angles']
         #import code; code.interact(local=locals())
         cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
         return cov

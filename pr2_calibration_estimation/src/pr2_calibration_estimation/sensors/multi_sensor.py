@@ -86,5 +86,10 @@ class MultiSensor:
         r = concatenate(r_list,0)
         return r
 
+    def compute_residual_scaled(self, target_pts):
+        r_list = [sensor.compute_residual_scaled(target_pts) for sensor in self.sensors]
+        r = concatenate(r_list,0)
+        return r
+
     def get_residual_length(self):
         return sum([sensor.get_residual_length() for sensor in self.sensors])

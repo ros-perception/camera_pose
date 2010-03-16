@@ -80,7 +80,7 @@ class ErrorCalc:
         for multisensor, cb_pose_vec in zip(self._multisensors, list(full_pose_arr)):
             # Process cb pose
             cb_points = SingleTransform(cb_pose_vec).transform * self._robot_params.checkerboards[multisensor.checkerboard].generate_points()
-            r_list.append(multisensor.compute_residual(cb_points))
+            r_list.append(multisensor.compute_residual_scaled(cb_points))
 
         #import code; code.interact(local=locals())
         r_vec = concatenate(r_list)
@@ -171,7 +171,7 @@ class ErrorCalc:
         x0 = opt_param_vec
         epsilon = 1e-6
         target_points = target_pose_T * self._robot_params.checkerboards[target_id].generate_points()
-        f0 = sensor.compute_residual(target_points)
+        f0 = sensor.compute_residual_scaled(target_points)
         Jt = numpy.zeros([len(x0),len(f0)])
         dx = numpy.zeros(len(x0))
         for i in numpy.where(opt_sparsity_vec)[0]:
@@ -182,7 +182,7 @@ class ErrorCalc:
             sensor.update_config(self._robot_params)
             #import code; code.interact(local=locals())
             target_points = target_pose_T * self._robot_params.checkerboards[target_id].generate_points()
-            Jt[i] = (sensor.compute_residual(target_points) - f0)/epsilon
+            Jt[i] = (sensor.compute_residual_scaled(target_points) - f0)/epsilon
             dx[i] = 0.0
         J = Jt.transpose()
         return J
@@ -198,13 +198,13 @@ class ErrorCalc:
         # based on code from scipy.slsqp
         x0 = pose_param_vec
         epsilon = 1e-6
-        f0 = multisensor.compute_residual(SingleTransform(x0).transform * local_cb_points)
+        f0 = multisensor.compute_residual_scaled(SingleTransform(x0).transform * local_cb_points)
         Jt = numpy.zeros([len(x0),len(f0)])
         dx = numpy.zeros(len(x0))
         for i in range(len(x0)):
             dx[i] = epsilon
             test_vec = x0 + dx
-            fTest = multisensor.compute_residual(SingleTransform(test_vec).transform * local_cb_points)
+            fTest = multisensor.compute_residual_scaled(SingleTransform(test_vec).transform * local_cb_points)
             Jt[i] = (fTest - f0)/epsilon
             #import code; code.interact(local=locals())
             dx[i] = 0.0

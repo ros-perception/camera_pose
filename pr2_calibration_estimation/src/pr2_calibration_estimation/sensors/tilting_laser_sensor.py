@@ -42,7 +42,7 @@
 #      \
 #       tilting_laser
 
-from numpy import reshape, array, zeros, matrix, diag
+from numpy import reshape, array, zeros, matrix, diag, real
 
 import roslib; roslib.load_manifest('pr2_calibration_estimation')
 import rospy
@@ -85,6 +85,30 @@ class TiltingLaserSensor:
         r = array(reshape(h_mat.T - z_mat.T, [-1,1]))[:,0]
         return r
 
+    def compute_residual_scaled(self, target_pts):
+        import scipy.linalg
+        r = self.compute_residual(target_pts)
+        cov = self.compute_cov(target_pts)
+        num_pts = len(r)/3
+        r_scaled = zeros(r.shape)
+
+        for k in range(num_pts):
+            #print "k=%u" % k
+            first = 3*k
+            last = 3*k+3
+            sub_cov = matrix(cov[first:last, first:last])
+            sub_r = matrix(r[first:last]).T
+            #import code; code.interact(local=locals())
+            sub_cov_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov))
+            sub_cov_sqrt = real(sub_cov_sqrt_full)
+            assert(scipy.linalg.norm(sub_cov_sqrt_full - sub_cov_sqrt) < 1e-6)
+            sub_gamma =sub_cov_sqrt.I
+            sub_r_scaled = sub_gamma * sub_r
+            r_scaled[first:last] = array(sub_r_scaled.T)[0]
+
+        #import code; code.interact(local=locals())
+        return r_scaled
+
     def get_residual_length(self):
         N = len(self._M_laser.joint_points)
         return N*3
@@ -96,7 +120,7 @@ class TiltingLaserSensor:
         laser_pts_root = self._tilting_laser.project_to_3D([x.position for x in self._M_laser.joint_points])
         return laser_pts_root[0:3,:]
 
-    def calculate_cov(self, target_pts):
+    def compute_cov(self, target_pts):
         epsilon = 1e-8
 
         Jt = zeros([3, self.get_residual_length()])
@@ -106,7 +130,7 @@ class TiltingLaserSensor:
 
         f0 = reshape(array(self._tilting_laser.project_to_3D(x)[0:3,:].T), [-1])
         for i in range(3):
-            x = [copy.copy(x.position) for x in self._M_laser.joint_points]
+            x = [ [y for y in x.position] for x in self._M_laser.joint_points]
             for cur_pt in x:
                 cur_pt[i] += epsilon
             fTest = reshape(array(self._tilting_laser.project_to_3D(x)[0:3,:].T), [-1])
