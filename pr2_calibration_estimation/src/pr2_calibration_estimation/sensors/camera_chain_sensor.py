@@ -102,7 +102,6 @@ class CameraChainSensor:
 
     def compute_marginal_gamma_sqrt(self, target_pts):
         import scipy.linalg
-        # ----- Populate Here -----
         cov = self.compute_cov(target_pts)
         gamma = matrix(zeros(cov.shape))
         num_pts = self.get_residual_length()/2
@@ -112,10 +111,10 @@ class CameraChainSensor:
             first = 2*k
             last = 2*k+2
             sub_cov = matrix(cov[first:last, first:last])
-            sub_cov_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov))
-            sub_cov_sqrt = real(sub_cov_sqrt_full)
-            assert(scipy.linalg.norm(sub_cov_sqrt_full - sub_cov_sqrt) < 1e-6)
-            gamma[first:last, first:last] = sub_cov_sqrt.I
+            sub_gamma_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov.I))
+            sub_gamma_sqrt = real(sub_gamma_sqrt_full)
+            assert(scipy.linalg.norm(sub_gamma_sqrt_full - sub_gamma_sqrt) < 1e-6)
+            gamma[first:last, first:last] = sub_gamma_sqrt
         return gamma
 
     def get_residual_length(self):

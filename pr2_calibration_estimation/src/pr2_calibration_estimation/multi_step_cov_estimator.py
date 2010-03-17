@@ -167,6 +167,8 @@ if __name__ == '__main__':
                 ms.sensors_from_message(msg)
                 multisensors.append(ms)
         f.close()
+        #multisensors = multisensors[:14]
+        #previous_pose_guesses = previous_pose_guesses[0:14,:]
         # Trim to be only one multisensor. Should speed everything up
         #n = 1
         #multisensors = multisensors[0:n]

@@ -103,10 +103,10 @@ class TiltingLaserSensor:
             first = 3*k
             last = 3*k+3
             sub_cov = matrix(cov[first:last, first:last])
-            sub_cov_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov))
-            sub_cov_sqrt = real(sub_cov_sqrt_full)
-            assert(scipy.linalg.norm(sub_cov_sqrt_full - sub_cov_sqrt) < 1e-6)
-            gamma[first:last, first:last] = sub_cov_sqrt.I
+            sub_gamma_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov.I))
+            sub_gamma_sqrt = real(sub_gamma_sqrt_full)
+            assert(scipy.linalg.norm(sub_gamma_sqrt_full - sub_gamma_sqrt) < 1e-6)
+            gamma[first:last, first:last] = sub_gamma_sqrt
         return gamma
 
     def get_residual_length(self):
