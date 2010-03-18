@@ -80,10 +80,10 @@ class TiltingLaserSensor:
     def compute_residual(self, target_pts):
         z_mat = self.get_measurement()
         h_mat = self.compute_expected(target_pts)
-        assert(z_mat.shape[0] == 3)
-        assert(h_mat.shape[0] == 3)
+        assert(z_mat.shape[0] == 4)
+        assert(h_mat.shape[0] == 4)
         assert(z_mat.shape[1] == z_mat.shape[1])
-        r = array(reshape(h_mat.T - z_mat.T, [-1,1]))[:,0]
+        r = array(reshape(h_mat[0:3,:].T - z_mat[0:3,:].T, [-1,1]))[:,0]
         return r
 
     def compute_residual_scaled(self, target_pts):
@@ -119,7 +119,8 @@ class TiltingLaserSensor:
     def get_measurement(self):
         # Get the laser points in a 4xN homogenous matrix
         laser_pts_root = self._tilting_laser.project_to_3D([x.position for x in self._M_laser.joint_points])
-        return laser_pts_root[0:3,:]
+        #return laser_pts_root[0:3,:]
+        return laser_pts_root
 
     def compute_cov(self, target_pts):
         epsilon = 1e-8
@@ -150,8 +151,8 @@ class TiltingLaserSensor:
     # Returns the pixel coordinates of the laser points after being projected into the camera
     # Returns a 4xN matrix of the target points
     def compute_expected(self, target_pts):
-        return target_pts[0:3,:]
-        #return target_pts
+        #return target_pts[0:3,:]
+        return target_pts
 
     # Build a dictionary that defines which parameters will in fact affect this measurement
     def build_sparsity_dict(self):

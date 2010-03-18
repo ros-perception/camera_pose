@@ -217,6 +217,33 @@ class ErrorCalc:
         J_scaled = gamma_sqrt * J
         return J_scaled
 
+def build_opt_vector(robot_params, free_dict, pose_guess_arr):
+    expanded_param_vec = robot_params.deflate()
+    free_list = robot_params.calc_free(free_dict)
+    opt_param_vec = array(expanded_param_vec[numpy.where(free_list)].T)[0]
+
+    assert(pose_guess_arr.shape[1] == 6)
+    opt_pose_vec = reshape(pose_guess_arr, [-1])
+
+    opt_all = numpy.concatenate([opt_param_vec, opt_pose_vec])
+
+    return opt_all
+
+
+def compute_errors_breakdown(error_calc, multisensors, opt_pose_arr):
+    errors_dict = {}
+    # Compute the error for each sensor type
+    for ms, k in zip(multisensors, range(len(multisensors))):
+        cb = error_calc._robot_params.checkerboards[ms.checkerboard]
+        cb_pose_vec = opt_pose_arr[k]
+        target_pts = SingleTransform(cb_pose_vec).transform * cb.generate_points()
+        for sensor in ms.sensors:
+            r_sensor = sensor.compute_residual(target_pts) * numpy.sqrt(sensor.terms_per_sample)    # terms per sample is a hack to find rms distance, instead of a pure rms, based on each term
+            if sensor.sensor_id not in errors_dict.keys():
+                errors_dict[sensor.sensor_id] = []
+            errors_dict[sensor.sensor_id].append(r_sensor)
+    return errors_dict
+
 def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors):
     """
     Runs a single optimization step for the calibration optimization.
@@ -233,18 +260,7 @@ def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors):
     error_calc = ErrorCalc(robot_params, free_dict, multisensors)
 
     # Construct the initial guess
-    expanded_param_vec = robot_params.deflate()
-    free_list = robot_params.calc_free(free_dict)
-    opt_param_vec = array(expanded_param_vec[numpy.where(free_list)].T)[0]
-
-    assert(pose_guess_arr.shape[1] == 6)
-    assert(pose_guess_arr.shape[0] == len(multisensors))
-    opt_pose_vec = reshape(pose_guess_arr, [-1])
-
-    #import code; code.interact(local=locals())
-
-    opt_all = numpy.concatenate([opt_param_vec, opt_pose_vec])
-
+    opt_all = build_opt_vector(robot_params, free_dict, pose_guess_arr)
 
     x, cov_x, infodict, mesg, iter = scipy.optimize.leastsq(error_calc.calculate_error, opt_all, Dfun=error_calc.calculate_jacobian, full_output=1)
     #x = opt_all
@@ -259,18 +275,7 @@ def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors):
 
     output_dict = error_calc._robot_params.params_to_config(expanded_param_vec)
 
-
-    errors_dict = {}
-    # Compute the error for each sensor type
-    for ms, k in zip(multisensors, range(len(multisensors))):
-        cb = error_calc._robot_params.checkerboards[ms.checkerboard]
-        cb_pose_vec = opt_pose_arr[k]
-        target_pts = SingleTransform(cb_pose_vec).transform * cb.generate_points()
-        for sensor in ms.sensors:
-            r_sensor = sensor.compute_residual(target_pts) * numpy.sqrt(sensor.terms_per_sample)    # terms per sample is a hack to find rms distance, instead of a pure rms, based on each term
-            if sensor.sensor_id not in errors_dict.keys():
-                errors_dict[sensor.sensor_id] = []
-            errors_dict[sensor.sensor_id].append(r_sensor)
+    errors_dict = compute_errors_breakdown(error_calc, multisensors, opt_pose_arr)
 
     print ""
     print "Errors Breakdown:"

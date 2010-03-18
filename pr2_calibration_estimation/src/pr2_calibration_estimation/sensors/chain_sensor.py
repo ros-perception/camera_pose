@@ -146,6 +146,10 @@ class ChainSensor:
         return N*3
 
     def get_measurement(self):
+        '''
+        Returns a 4xN matrix with the locations of the checkerboard points in homogenous coords,
+        as per the forward kinematics of the chain
+        '''
         return self._calc_fk_target_pts(self._M_chain.chain_state)
 
     def _calc_fk_target_pts(self, chain_state):

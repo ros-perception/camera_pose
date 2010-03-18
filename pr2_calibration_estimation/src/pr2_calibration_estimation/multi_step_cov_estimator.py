@@ -56,6 +56,68 @@ def usage():
     print " ./proto1.py [bagfile] [output_dir]"
     sys.exit(0)
 
+
+def build_sensor_defs(sensors_dump):
+    '''
+    Given a list of sensor definition dictionaries, merge them into a single dictionary
+    '''
+    # There could be multiple defitions of sensors in the sensors namespace. We
+    # need to merge all of these into a single consistent dictionary
+    all_sensors_dict = dict()
+
+    for cur_sensors_file in sensors_dump:
+        for cur_sensor_type, cur_sensor_list in cur_sensors_file.items():
+            for cur_sensor in cur_sensor_list:
+                # We want sensor_ids to be unique. Thus, we should warn the user if there are duplicate block IDs being loaded
+                if cur_sensor['sensor_id'] in all_sensors_dict.keys():
+                    rospy.logwarn("Loading a duplicate [%s]. Overwriting previous" % cur_sensor['sensor_id'])
+                all_sensors_dict[cur_sensor['sensor_id']] = cur_sensor
+                all_sensors_dict[cur_sensor['sensor_id']]['sensor_type'] = cur_sensor_type
+
+    print "The following error sensors have been loaded:\n"
+    # We want to sort by the types of blocks
+    all_sensor_types = list(set([x['sensor_type'] for x in all_sensors_dict.values()]))
+
+    for cur_sensor_type in all_sensor_types:
+        print "  %s sensors" % cur_sensor_type
+        cur_sensor_ids = [cur_sensor_id for cur_sensor_id,cur_sensor in all_sensors_dict.items() if cur_sensor['sensor_type'] == cur_sensor_type]
+        cur_sensor_ids.sort()
+        for cur_sensor_id in cur_sensor_ids:
+            print "   - %s" % cur_sensor_id
+        print ""
+
+    return all_sensors_dict
+
+def load_calibration_steps(steps_dict):
+    # We want to execute the calibration in alphabetical order, based on the key names
+    step_keys = steps_dict.keys()
+    step_keys.sort()
+    step_list = []
+    for step_name in step_keys:
+        # Add the step name to the dict (since we'll lose this info once we listify)
+        steps_dict[step_name]["name"] = step_name
+        step_list.append(steps_dict[step_name])
+    print "Loaded the calibration steps to execute in the following order:"
+    for cur_step in step_list:
+        print " - %s" % cur_step['name']
+    return step_list
+
+
+def load_requested_sensors(all_sensors_dict, requested_sensors):
+    '''
+    Build a sensor dictionary with the subset of sensors that we request
+    '''
+    all_sensor_types = list(set([x['sensor_type'] for x in all_sensors_dict.values()]))
+    cur_sensors = dict([(x,[]) for x in all_sensor_types])
+    for requested_sensor_id in requested_sensors:
+        # We need to now find requested_sensor_id in our library of sensors
+        if requested_sensor_id in all_sensors_dict.keys():
+            cur_sensor_type = all_sensors_dict[requested_sensor_id]['sensor_type']
+            cur_sensors[cur_sensor_type].append(all_sensors_dict[requested_sensor_id])
+        else:
+            rospy.logerr("Could not find [%s] in block library. Skipping this block")
+    return cur_sensors
+
 if __name__ == '__main__':
     rospy.init_node("multi_step_estimator")
 
@@ -87,44 +149,11 @@ if __name__ == '__main__':
         rospy.logerr("Could not find namespace [%s/%s]. Please populate this namespace with sensors.", (config_param_name, sensors_name))
         sys.exit(1)
     sensors_dump = [yaml.load(x) for x in config[sensors_name].values()]
-
-    # There could be multiple defitions of sensors in the sensors namespace. We
-    # need to merge all of these into a single consistent dictionary
-    all_sensors_dict = dict()
-
-    for cur_sensors_file in sensors_dump:
-        for cur_sensor_type, cur_sensor_list in cur_sensors_file.items():
-            for cur_sensor in cur_sensor_list:
-                # We want sensor_ids to be unique. Thus, we should warn the user if there are duplicate block IDs being loaded
-                if cur_sensor['sensor_id'] in all_sensors_dict.keys():
-                    rospy.logwarn("Loading a duplicate [%s]. Overwriting previous" % cur_sensor['sensor_id'])
-                all_sensors_dict[cur_sensor['sensor_id']] = cur_sensor
-                all_sensors_dict[cur_sensor['sensor_id']]['sensor_type'] = cur_sensor_type
-
-    print "The following error sensors have been loaded into the estimator:\n"
-    # We want to sort by the types of blocks
+    all_sensors_dict = build_sensor_defs(sensors_dump)
     all_sensor_types = list(set([x['sensor_type'] for x in all_sensors_dict.values()]))
 
-    for cur_sensor_type in all_sensor_types:
-        print "  %s sensors" % cur_sensor_type
-        cur_sensor_ids = [cur_sensor_id for cur_sensor_id,cur_sensor in all_sensors_dict.items() if cur_sensor['sensor_type'] == cur_sensor_type]
-        cur_sensor_ids.sort()
-        for cur_sensor_id in cur_sensor_ids:
-            print "   - %s" % cur_sensor_id
-        print ""
-
     # Load all the calibration steps.
-    # We want to execute the calibration in alphabetical order, based on the key names
-    step_keys = config["cal_steps"].keys()
-    step_keys.sort()
-    step_list = []
-    for step_name in step_keys:
-        # Add the step name to the dict (since we'll lose this info once we listify)
-        config["cal_steps"][step_name]["name"] = step_name
-        step_list.append(config["cal_steps"][step_name])
-    print "Executing the calibration steps in the following order:"
-    for cur_step in step_list:
-        print " - %s" % cur_step['name']
+    step_list = load_calibration_steps(config["cal_steps"])
 
     # Count how many checkerboard poses we need to track
     msg_count = 0
@@ -149,14 +178,7 @@ if __name__ == '__main__':
         print "Beginning [%s]" % cur_step["name"]
 
         # Need to load only the sensors that we're interested in
-        cur_sensors = dict([(x,[]) for x in all_sensor_types])
-        for requested_sensor_id in cur_step['sensors']:
-            # We need to now find requested_sensor_id in our library of sensors
-            if requested_sensor_id in all_sensors_dict.keys():
-                cur_sensor_type = all_sensors_dict[requested_sensor_id]['sensor_type']
-                cur_sensors[cur_sensor_type].append(all_sensors_dict[requested_sensor_id])
-            else:
-                rospy.logerr("Could not find [%s] in block library. Skipping this block")
+        cur_sensors = load_requested_sensors(all_sensors_dict, cur_step['sensors'])
 
         # Load all the sensors from bag
         f = open(bag_filename)
@@ -167,16 +189,10 @@ if __name__ == '__main__':
                 ms.sensors_from_message(msg)
                 multisensors.append(ms)
         f.close()
-        #multisensors = multisensors[:14]
-        #previous_pose_guesses = previous_pose_guesses[0:14,:]
-        # Trim to be only one multisensor. Should speed everything up
-        #n = 1
-        #multisensors = multisensors[0:n]
-        #previous_pose_guesses = previous_pose_guesses[0:n,:]
-        #prev_pose_guesses[0,:] = [0.77632974794489384, 0.14975580480288297, 0.30955463556376145, 2.1701217322169963,  -0.3694191607337215, 2.118866565372064]
-        #print "Initial Pose Guess: ", previous_pose_guesses
 
+        # Display sensor count statistics
         print "Executing step with the following Sensors:"
+        # Iterate over sensor definitions for this step
         for cur_sensor_type, cur_sensor_list in cur_sensors.items():
             print "  %s Sensors:" % cur_sensor_type
             cur_sensor_ids = [cur_sensor['sensor_id'] for cur_sensor in cur_sensor_list]
@@ -199,6 +215,7 @@ if __name__ == '__main__':
             free_dict = yaml.load(cur_step["free_params"])
             output_dict, output_poses, J = opt_runner(previous_system, previous_pose_guesses, free_dict, multisensors)
 
+        # Dump results to file
         out_f = open(output_dir + "/" + cur_step["output_filename"] + ".yaml", 'w')
         yaml.dump(output_dict, out_f)
         out_f.close()
@@ -206,7 +223,6 @@ if __name__ == '__main__':
         out_f = open(output_dir + "/" + cur_step["output_filename"] + "_poses.yaml", 'w')
         yaml.dump([list([float(x) for x in pose]) for pose in list(output_poses)], out_f)
         out_f.close()
-
 
         cov_x = matrix(J).T * matrix(J)
         numpy.savetxt(output_dir + "/" + cur_step["output_filename"] + "_cov.txt", cov_x, fmt="% 9.3f")
