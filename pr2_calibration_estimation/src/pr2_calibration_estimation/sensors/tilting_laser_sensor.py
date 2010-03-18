@@ -72,6 +72,7 @@ class TiltingLaserSensor:
         self.sensor_type = "laser"
         self.sensor_id = config_dict["laser_id"]
         self._M_laser = M_laser
+        self.terms_per_sample = 3
 
     def update_config(self, robot_params):
         self._tilting_laser = robot_params.tilting_lasers[ self._config_dict["laser_id"] ]

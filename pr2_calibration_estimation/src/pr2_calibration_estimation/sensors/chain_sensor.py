@@ -81,6 +81,8 @@ class ChainSensor:
 
         self._full_chain = FullChainRobotParams(self._config_dict)
 
+        self.terms_per_sample = 3
+
     def update_config(self, robot_params):
         self._full_chain.update_config(robot_params)
         self._checkerboard = robot_params.checkerboards[ self._target_id ]

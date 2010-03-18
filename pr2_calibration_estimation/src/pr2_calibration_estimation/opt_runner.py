@@ -267,7 +267,7 @@ def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors):
         cb_pose_vec = opt_pose_arr[k]
         target_pts = SingleTransform(cb_pose_vec).transform * cb.generate_points()
         for sensor in ms.sensors:
-            r_sensor = sensor.compute_residual(target_pts)
+            r_sensor = sensor.compute_residual(target_pts) * numpy.sqrt(sensor.terms_per_sample)    # terms per sample is a hack to find rms distance, instead of a pure rms, based on each term
             if sensor.sensor_id not in errors_dict.keys():
                 errors_dict[sensor.sensor_id] = []
             errors_dict[sensor.sensor_id].append(r_sensor)

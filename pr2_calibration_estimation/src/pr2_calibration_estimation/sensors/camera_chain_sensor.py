@@ -79,6 +79,8 @@ class CameraChainSensor:
 
         self._chain = FullChainRobotParams(config_dict["chain"])
 
+        self.terms_per_sample = 2
+
     def update_config(self, robot_params):
         self._camera = robot_params.rectified_cams[ self._config_dict["camera_id"] ]
 
