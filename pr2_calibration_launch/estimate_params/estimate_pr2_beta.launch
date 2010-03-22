@@ -141,12 +141,12 @@
           - RightForearm-RightArm
 
         </rosparam>
-        <param name="output_filename" type="string" value="system_calibrated.yaml" />
+        <param name="output_filename" type="string" value="system_calibrated_old.yaml" />
       </group>
 
     </group>
 
-    <param name="initial_system" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/system.yaml" />
+    <param name="initial_system" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/system.yaml" />
 
   </group>
 
