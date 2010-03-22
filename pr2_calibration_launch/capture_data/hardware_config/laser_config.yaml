@@ -24,3 +24,7 @@ tilt_laser:
       subpixel_window: 4
       subpixel_zero_zone: 1
       flip_horizontal: 1
+
+tilt_laser_6x8:
+  laser_cb_detector_config:  /none
+  configs: []

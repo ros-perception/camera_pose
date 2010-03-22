@@ -42,6 +42,12 @@
     <remap from="tilt_laser/laser_image"    to="tilt_laser/cb_annotated_image"/>
     <remap from="tilt_laser/joint_features" to="tilt_laser/joint_state_features" />
 
+    <remap from="tilt_laser_6x8/image_features" to="tilt_laser_6x8/laser_checkerboard"/>
+    <remap from="tilt_laser_6x8/laser_interval" to="tilt_laser_6x8/laser_checkerboard_interval"/>
+    <remap from="tilt_laser_6x8/snapshot"       to="tilt_laser_6x8/dense_laser_snapshot"/>
+    <remap from="tilt_laser_6x8/laser_image"    to="tilt_laser_6x8/cb_annotated_image"/>
+    <remap from="tilt_laser_6x8/joint_features" to="tilt_laser_6x8/joint_state_features" />
+
   </node>
 
   <node type="rosrecord" pkg="rosrecord" name="robot_measurement_recorder" output="screen"

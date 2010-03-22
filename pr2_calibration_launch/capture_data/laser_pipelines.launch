@@ -19,8 +19,8 @@
        <remap from="laser_tilt_controller/laser_scanner_signal" to="/laser_tilt_controller/laser_scanner_signal"/>
    </node>
 
-   <include file="$(find pr2_calibration_launch)/laser_post_process.launch" ns="tilt_laser"/>
-   <include file="$(find pr2_calibration_launch)/laser_post_process.launch" ns="tilt_laser_6x8"/>
+   <include file="$(find pr2_calibration_launch)/capture_data/laser_post_process.launch" ns="tilt_laser"/>
+   <include file="$(find pr2_calibration_launch)/capture_data/laser_post_process.launch" ns="tilt_laser_6x8"/>
 
    <group ns="tilt_laser">
       <!-- Laser CB Detector -->
@@ -65,6 +65,4 @@
         <param name="max_intensity" type="int" value="5000" />
       </node>
   </group>
-
-
 </launch>
