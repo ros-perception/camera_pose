@@ -116,7 +116,7 @@ try:
 
     # Capture Far Checkerboards
     if not rospy.is_shutdown():
-        full_paths = [samples_dir + "/far/" + x for x in right_sample_names]
+        full_paths = [samples_dir + "/far/" + x for x in far_sample_names]
 
         cur_config = yaml.load(open(full_paths[0]))
         m_robot = executive.capture(cur_config, rospy.Duration(0.01))

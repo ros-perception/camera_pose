@@ -22,12 +22,15 @@
    <include file="$(find pr2_calibration_launch)/capture_data/laser_post_process.launch" ns="tilt_laser"/>
    <include file="$(find pr2_calibration_launch)/capture_data/laser_post_process.launch" ns="tilt_laser_6x8"/>
 
+   <node type="relay" pkg="topic_tools" name="relay_dense_laser" args="dense_laser_snapshot tilt_laser/dense_laser_snapshot" />
+   <node type="relay" pkg="topic_tools" name="relay_dense_laser_6x8" args="dense_laser_snapshot tilt_laser_6x8/dense_laser_snapshot" />
+
    <group ns="tilt_laser">
       <!-- Laser CB Detector -->
       <node type="laser_cb_detector_node"
             pkg="laser_cb_detector"
             name="laser_cb_detector">
-        <remap from="snapshot" to="/dense_laser_snapshot" />
+        <remap from="snapshot" to="dense_laser_snapshot" />
         <remap from="image" to="cb_image" />
 
         <param name="num_x" type="int" value="4" />
@@ -49,11 +52,11 @@
       <node type="laser_cb_detector_node"
             pkg="laser_cb_detector"
             name="laser_cb_detector">
-        <remap from="snapshot" to="/dense_laser_snapshot" />
+        <remap from="snapshot" to="dense_laser_snapshot" />
         <remap from="image" to="cb_image" />
 
-        <param name="num_x" type="int" value="4" />
-        <param name="num_y" type="int" value="5" />
+        <param name="num_x" type="int" value="6" />
+        <param name="num_y" type="int" value="8" />
         <param name="spacing_x" type="double" value=".108" />
         <param name="spacing_y" type="double" value=".108" />
         <param name="width_scaling" type="int" value="2" />
@@ -61,8 +64,8 @@
         <param name="subpixel_window" type="int" value="6" />
         <param name="subpixel_zero_zone" type="int" value="2" />
         <param name="flip_horizontal" type="int" value="1" />
-        <param name="min_intensity" type="int" value="2500" />
-        <param name="max_intensity" type="int" value="5000" />
+        <param name="min_intensity" type="int" value="1500" />
+        <param name="max_intensity" type="int" value="3000" />
       </node>
   </group>
 </launch>

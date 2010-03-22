@@ -7,7 +7,7 @@ joint_commands:
 - controller: head_traj_controller
   segments:
   - duration: 2.0
-    positions: [0.12723450247038656, 0.18137461586725076]
+    positions: [0.0, 0.23]
 - controller: l_arm_controller
   segments:
   - duration: 2.0
