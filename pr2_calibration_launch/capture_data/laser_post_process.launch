@@ -1,100 +1,39 @@
 <launch>
-<!--    <node type="spawner"
-          pkg="pr2_controller_manager"
-          args="$(find pr2_default_controllers)/laser_tilt_controller.xml"
-          name="laser_spawner" />
--->
-    <node type="robot_cal_tilt_profile.py"
-          pkg="pr2_calibration_launch"
-          args="laser_tilt_controller"
-          name="laser_profile_commander" />
-
-   <node pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters tilt_hokuyo_node" name="tilt_reconfigure">
-      <param name="min_ang" type="double" value="-0.829"/>
-      <param name="max_ang" type="double" value="0.829"/>
-      <param name="intensity" value="true" />
+    <!-- ImageAnnotator -->
+   <node type="image_annotator"
+         pkg="laser_cb_detector"
+         name="cb_annotator">
+     <remap from="features" to="laser_checkerboard"/>
+     <remap from="image" to="cb_image" />
+     <remap from="annotated" to="cb_annotated_image" />
    </node>
 
-   <group ns="tilt_laser">
-      <!-- Dense Laser Snapshotter -->
-      <node type="dense_laser_snapshotter"
-            pkg="pr2_dense_laser_snapshotter"
-            name="dense_laser_snapshotter"
-            output="screen">
-          <remap from="scan" to="/tilt_scan"/>
-          <remap from="laser_tilt_controller/laser_scanner_signal" to="/laser_tilt_controller/laser_scanner_signal"/>
-      </node>
-
-      <!-- Laser CB Detector -->
-      <node type="laser_cb_detector_node"
-            pkg="laser_cb_detector"
-            name="laser_cb_detector">
-        <remap from="snapshot" to="dense_laser_snapshot" />
-        <remap from="image" to="cb_image" />
-
-        <param name="num_x" type="int" value="4" />
-        <param name="num_y" type="int" value="5" />
-        <param name="spacing_x" type="double" value=".108" />
-        <param name="spacing_y" type="double" value=".108" />
-        <param name="width_scaling" type="int" value="2" />
-        <param name="height_scaling" type="int" value="2" />
-        <param name="subpixel_window" type="int" value="6" />
-        <param name="subpixel_zero_zone" type="int" value="2" />
-        <param name="flip_horizontal" type="int" value="1" />
-        <param name="min_intensity" type="int" value="2500" />
-        <param name="max_intensity" type="int" value="5000" />
-      </node>
-
-      <!-- ImageAnnotator -->
-      <node type="image_annotator"
-            pkg="laser_cb_detector"
-            name="cb_annotator">
-        <remap from="features" to="laser_checkerboard"/>
-        <remap from="image" to="cb_image" />
-        <remap from="annotated" to="cb_annotated_image" />
-
-      </node>
-
-     <!-- Laser Joint Processor -->
-     <node type="laser_joint_processor_node"
-            pkg="laser_joint_processor"
-            name="laser_joint_processor"  output="screen">
-        <remap from="snapshot" to="dense_laser_snapshot" />
-        <remap from="features" to="laser_checkerboard" />
-        <remap from="joint_features" to="joint_state_features" />
-        <remap from="joint_states" to="/joint_states" />
-        <param name="joint_name_00" type="str" value="laser_tilt_mount_joint" />
-    </node>
-
-    <!-- prototype projector -->
-    <node type="laser_joint_projector_node"
-          pkg="laser_joint_projector"
-          name="joint_projector">
-      <remap from="robot_description" to="/robot_description"/>
-    </node>
-
-    <!-- Interval Calc -->
-    <node type="laser_interval_calc_node"
-          pkg="laser_cb_detector"
-          name="laser_interval_calc"
-          output="screen">
-      <remap from="snapshot" to="dense_laser_snapshot"/>
-      <remap from="features" to="laser_checkerboard"/>
-      <remap from="laser_interval" to="laser_checkerboard_interval"/>
-    </node>
-
-    <!--
-    <node type="pipeline_sync.py"
-          pkg="pipeline_sync"
-          name="laser_sync"
-          args="pr2_calibration_launch/LaserSample"
-          output="log">
+   <!-- Laser Joint Processor -->
+   <node type="laser_joint_processor_node"
+          pkg="laser_joint_processor"
+          name="laser_joint_processor"  output="screen">
       <remap from="snapshot" to="dense_laser_snapshot" />
-      <remap from="laser_image" to="cb_image" />
+      <remap from="features" to="laser_checkerboard" />
       <remap from="joint_features" to="joint_state_features" />
-      <remap from="image_features" to="laser_checkerboard" />
-      <remap from="out" to="laser_sample" />
-    </node> -->
-  </group>
+      <remap from="joint_states" to="/joint_states" />
+      <param name="joint_name_00" type="str" value="laser_tilt_mount_joint" />
+  </node>
+
+  <!-- prototype projector -->
+  <node type="laser_joint_projector_node"
+        pkg="laser_joint_projector"
+        name="joint_projector">
+    <remap from="robot_description" to="/robot_description"/>
+  </node>
+
+  <!-- Interval Calc -->
+  <node type="laser_interval_calc_node"
+        pkg="laser_cb_detector"
+        name="laser_interval_calc"
+        output="screen">
+    <remap from="snapshot" to="dense_laser_snapshot"/>
+    <remap from="features" to="laser_checkerboard"/>
+    <remap from="laser_interval" to="laser_checkerboard_interval"/>
+  </node>
 
 </launch>
