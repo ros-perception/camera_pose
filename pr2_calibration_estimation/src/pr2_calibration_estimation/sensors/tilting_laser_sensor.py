@@ -139,9 +139,10 @@ class TiltingLaserSensor:
             Jt[i] = (fTest - f0)/epsilon
 
         num_pts = len(x)
-        cov_sensor = [self._tilting_laser._cov_dict['tilt'],
-                      self._tilting_laser._cov_dict['bearing'],
-                      self._tilting_laser._cov_dict['range']]
+        std_dev_sensor = [self._tilting_laser._cov_dict['tilt'],
+                          self._tilting_laser._cov_dict['bearing'],
+                          self._tilting_laser._cov_dict['range']]
+        cov_sensor = [x*x for x in std_dev_sensor]
 
         #import code; code.interact(local=locals())
         cov = matrix(Jt).T * matrix(diag(cov_sensor)) * matrix(Jt)

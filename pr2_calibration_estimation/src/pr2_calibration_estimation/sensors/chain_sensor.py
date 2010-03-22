@@ -135,7 +135,7 @@ class ChainSensor:
             x.position[i] += epsilon
             fTest = reshape(array(self._calc_fk_target_pts(x)[0:3,:].T), [-1])
             Jt[i] = (fTest - f0)/epsilon
-        cov_angles = self._full_chain.calc_block._chain._cov_dict['joint_angles']
+        cov_angles = [x*x for x in self._full_chain.calc_block._chain._cov_dict['joint_angles']]
         #import code; code.interact(local=locals())
         cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
         return cov

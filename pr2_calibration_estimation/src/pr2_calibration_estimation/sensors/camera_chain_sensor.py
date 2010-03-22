@@ -158,12 +158,15 @@ class CameraChainSensor:
             x.position[i] += epsilon
             fTest = reshape(array(self._compute_expected(x, target_pts)), [-1])
             Jt[i] = (fTest - f0)/epsilon
-        cov_angles = diag(self._chain.calc_block._chain._cov_dict['joint_angles'])
-        chain_cov = matrix(Jt).T * matrix(cov_angles) * matrix(Jt)
+        cov_angles = [x*x for x in self._chain.calc_block._chain._cov_dict['joint_angles']]
+        chain_cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
         cam_cov = matrix(zeros(chain_cov.shape))
+        # Convert StdDev into variance
+        var_u = self._camera._cov_dict['u'] * self._camera._cov_dict['u']
+        var_v = self._camera._cov_dict['v'] * self._camera._cov_dict['v']
         for k in range(cam_cov.shape[0]/2):
-            cam_cov[2*k  , 2*k]   = self._camera._cov_dict['u']
-            cam_cov[2*k+1, 2*k+1] = self._camera._cov_dict['v']
+            cam_cov[2*k  , 2*k]   = var_u
+            cam_cov[2*k+1, 2*k+1] = var_v
 
         #import code; code.interact(local=locals())
         cov = chain_cov + cam_cov

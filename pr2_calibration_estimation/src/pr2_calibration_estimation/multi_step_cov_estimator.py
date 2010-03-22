@@ -119,7 +119,7 @@ def load_requested_sensors(all_sensors_dict, requested_sensors):
     return cur_sensors
 
 if __name__ == '__main__':
-    rospy.init_node("multi_step_estimator")
+    rospy.init_node("multi_step_cov_estimator")
 
     print "Starting The Multi Step [Covariance] Estimator Node\n"
 

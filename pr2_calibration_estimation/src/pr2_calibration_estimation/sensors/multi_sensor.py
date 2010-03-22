@@ -34,7 +34,7 @@
 
 from pr2_calibration_estimation.sensors import tilting_laser_sensor, chain_sensor, camera_chain_sensor
 from numpy import concatenate
-from numpy import zeros, cumsum, matrix
+from numpy import zeros, cumsum, matrix, array
 
 def block_diag(m_list):
     '''
@@ -100,16 +100,24 @@ class MultiSensor:
 
     def compute_residual(self, target_pts):
         r_list = [sensor.compute_residual(target_pts) for sensor in self.sensors]
+        if len(r_list) == 0:
+            return array([])
+
         r = concatenate(r_list,0)
         return r
 
     def compute_residual_scaled(self, target_pts):
         r_list = [sensor.compute_residual_scaled(target_pts) for sensor in self.sensors]
+        if len(r_list) == 0:
+            return array([])
+
         r = concatenate(r_list,0)
         return r
 
     def compute_marginal_gamma_sqrt(self, target_pts):
         gamma_sqrt_list = [sensor.compute_marginal_gamma_sqrt(target_pts) for sensor in self.sensors]
+        if len(gamma_sqrt_list) == 0:
+            return matrix([])
         gamma_sqrt = block_diag(gamma_sqrt_list)
         return gamma_sqrt
 
