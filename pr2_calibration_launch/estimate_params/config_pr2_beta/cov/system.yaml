@@ -73,22 +73,22 @@
   rectified_cams:
     wide_left_rect:
       baseline_shift: 0.0
-      cov: {u: 1.0, v: 1.0}
+      cov: {u: 0.5, v: 0.5}
     wide_right_rect:
       baseline_shift: 0.0
-      cov: {u: 1.0, v: 1.0}
+      cov: {u: 0.5, v: 0.5}
     narrow_left_rect:
       baseline_shift: 0.0
-      cov: {u: 1.0, v: 1.0}
+      cov: {u: 0.5, v: 0.5}
     narrow_right_rect:
       baseline_shift: 0.0
-      cov: {u: 1.0, v: 1.0}
+      cov: {u: 0.5, v: 0.5}
     forearm_left_rect:
       baseline_shift: 0.0
-      cov: {u: 1.0, v: 1.0}
+      cov: {u: 0.5, v: 0.5}
     forearm_right_rect:
       baseline_shift: 0.0
-      cov: {u: 1.0, v: 1.0}
+      cov: {u: 0.5, v: 0.5}
 
   checkerboards:
     small_cb_4x5:
