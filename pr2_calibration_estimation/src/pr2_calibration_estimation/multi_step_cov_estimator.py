@@ -164,7 +164,10 @@ if __name__ == '__main__':
             msg_count+=1
     f.close()
 
-    previous_pose_guesses = numpy.zeros([msg_count,6])
+    if 'initial_poses' in config.keys():
+        previous_pose_guesses = numpy.array(yaml.load(config['initial_poses']))
+    else:
+        previous_pose_guesses = numpy.zeros([msg_count,6])
 
     # Specify which system the first calibration step should use.
     # Normally this would be set at the end of the calibration loop, but for the first step,
@@ -185,6 +188,10 @@ if __name__ == '__main__':
         multisensors = []
         for topic, msg, t in rosrecord.logplayer(f):
             if topic == "robot_measurement":
+                # Hack to rename laser id
+                for cur_laser in msg.M_laser:
+                    if cur_laser.laser_id == "tilt_laser_6x8":
+                        cur_laser.laser_id = "tilt_laser"
                 ms = MultiSensor(cur_sensors)
                 ms.sensors_from_message(msg)
                 multisensors.append(ms)
@@ -206,6 +213,8 @@ if __name__ == '__main__':
         print "Sensor breakdown (By Sample):"
         for k,ms in zip(range(len(multisensors)), multisensors):
             print " % 2u) %s" % (k, ", ".join([s.sensor_id for s in ms.sensors]))
+
+        print "Pose Guesses:\n", previous_pose_guesses
 
         if len(multisensors) == 0:
             rospy.logwarn("No error blocks were generated for this optimization step. Skipping this step.  This will result in a miscalibrated sensor")
