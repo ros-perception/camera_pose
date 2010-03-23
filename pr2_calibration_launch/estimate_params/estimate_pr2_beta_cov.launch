@@ -1,12 +1,12 @@
 <launch>
 
-  <group ns="calibration_config" >
+  <group ns="calibration_config" clear_params="true">
 
-    <group ns="sensors" clear_params="true">
+    <group ns="sensors">
       <param name="all"    textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/sensors.yaml" />
     </group>
 
-    <group ns="cal_steps" clear_params="true">
+    <group ns="cal_steps">
       <group ns="01 - Checkerboard Locations">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/free1.yaml" />
         <rosparam>

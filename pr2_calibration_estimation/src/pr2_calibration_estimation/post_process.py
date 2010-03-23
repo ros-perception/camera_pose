@@ -103,10 +103,10 @@ if __name__ == '__main__':
     # Build the sensor definition subset for this step
     #sensor_defs = est_helpers.load_requested_sensors(all_sensors_dict, cur_step['sensors'])
 
-    loop_list = [#('tilt_laser', 'narrow_right_rect', {'color':'b', 'marker':'o'}),
-                 #('tilt_laser', 'narrow_left_rect',  {'color':'b', 'marker':'s'}),
+    loop_list = [('tilt_laser', 'narrow_right_rect', {'color':'b', 'marker':'o'}),
+                 ('tilt_laser', 'narrow_left_rect',  {'color':'b', 'marker':'s'}),
                  ('tilt_laser', 'wide_left_rect',    {'color':'r', 'marker':'o'}),
-                 ('tilt_laser', 'wide_right_rect',   {'color':'b', 'marker':'s'})]
+                 ('tilt_laser', 'wide_right_rect',   {'color':'r', 'marker':'s'})]
 
 
     for sensor_id_3d, sensor_id_2d, plot_opts in loop_list:
