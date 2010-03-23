@@ -185,8 +185,8 @@ class CameraChainSensor:
         assert(num_links == len(self._M_chain.chain_state.position))
         sparsity['dh_chains'][chain_id] = [ [1,1,1,1] ] * num_links
 
-        sparsity['rectified_cameras'] = {}
-        sparsity['rectified_cameras'][self.sensor_id] = {'baseline_shift': 1}
+        sparsity['rectified_cams'] = {}
+        sparsity['rectified_cams'][self.sensor_id] = {'baseline_shift': 1}
 
         return sparsity
 
