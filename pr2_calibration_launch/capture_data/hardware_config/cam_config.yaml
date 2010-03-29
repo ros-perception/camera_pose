@@ -162,9 +162,9 @@ wide_right_rect:
 
 # ----- Forearm Camera Left (Rectified)-----
 forearm_left_rect:
-  cb_detector_config:  /forearm_camera_l/cb_detector_config
-  led_detector_config: /forearm_camera_l/led_detector
-  settler_config:      /forearm_camera_l/monocam_settler_config
+  cb_detector_config:  /l_forearm_cam/cb_detector_config
+  led_detector_config: /l_forearm_cam/led_detector
+  settler_config:      /l_forearm_cam/monocam_settler_config
 
   configs:
     cb_6x8:
@@ -202,9 +202,9 @@ forearm_left_rect:
 
 # ----- Forearm Camera Right (Rectified)-----
 forearm_right_rect:
-  cb_detector_config:  /forearm_camera_r/cb_detector_config
-  led_detector_config: /forearm_camera_r/led_detector
-  settler_config:      /forearm_camera_r/monocam_settler_config
+  cb_detector_config:  /r_forearm_cam/cb_detector_config
+  led_detector_config: /r_forearm_cam/led_detector
+  settler_config:      /r_forearm_cam/monocam_settler_config
 
   configs:
     cb_6x8:
