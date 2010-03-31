@@ -40,7 +40,7 @@ from pr2_calibration_estimation.single_transform import SingleTransform
 
 class TiltingLaser:
 
-    # Dictionary with two elems (Total of 12 elems)
+    # Dictionary with two elems (Total of 13 elems)
     #  before_joint: [px py pz rx ry rx]
     #  after_joint:  [px py pz rx ry rx]
     def __init__(self, config = {"before_joint": [  0, 0, 0, 0, 0, 0],
@@ -60,23 +60,26 @@ class TiltingLaser:
 
     def dict_to_params(self, config):
         param_vec = reshape(matrix([ config["before_joint"], config["after_joint"] ], float), (-1,1))
-        assert(param_vec.size == 12)
+        param_vec = numpy.concatenate([param_vec, matrix([config["gearing"]])])
+        assert(param_vec.size == self.get_length())
         return param_vec
 
     def params_to_config(self, param_vec):
-        assert(param_vec.shape == (12,1))
+        assert(param_vec.shape == (13,1))
         return {"before_joint" : self._before_joint.params_to_config(param_vec[0:6, 0]),
                 "after_joint"  : self._before_joint.params_to_config(param_vec[6:12,0]),
+                "gearing"      : float(param_vec[12,0]),
                 "cov"          : self._cov_dict}
 
     def calc_free(self, free_config):
         #import code; code.interact(local=locals())
         assert( 'before_joint' in free_config )
         assert( 'after_joint'  in free_config )
+        assert( 'gearing' in free_config )
 
         # Flatten the config
-        flat_config = free_config['before_joint'] + free_config['after_joint']
-        assert( len(flat_config) == 12)
+        flat_config = free_config['before_joint'] + free_config['after_joint'] + [free_config['gearing']]
+        assert( len(flat_config) == self.get_length())
 
         # Convert int list into bool list
         flat_free = [x == 1 for x in flat_config]
@@ -87,21 +90,22 @@ class TiltingLaser:
     def inflate(self, param_vec):
         self._before_joint.inflate(param_vec[0:6,:])
         self._after_joint.inflate(param_vec[6:12,:])
+        self._gearing = param_vec[12,0]
 
     # Return column vector of config
     def deflate(self):
-        param_vec = matrix(numpy.zeros((12,1), float))
-        #import code; code.interact(local=locals())
+        param_vec = matrix(numpy.zeros((13,1), float))
         param_vec[0:6,0] = self._before_joint.deflate()
         param_vec[6:12,0] = self._after_joint.deflate()
+        param_vec[12,0] = self._gearing
         return param_vec
 
     # Returns # of params needed for inflation & deflation
     def get_length(self):
-        return 12
+        return 13
 
     def compute_pose(self, joint_pos):
-        joint_T = SingleTransform([0, 0, 0, 0, joint_pos[0], 0])
+        joint_T = SingleTransform([0, 0, 0, 0, joint_pos[0]*self._gearing, 0])
         return self._before_joint.transform * joint_T.transform * self._after_joint.transform
 
     # Given a single set of joint positions, project into 3D

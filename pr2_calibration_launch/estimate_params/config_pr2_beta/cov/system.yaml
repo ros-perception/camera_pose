@@ -36,6 +36,7 @@
     tilt_laser:
       before_joint: [ .09893, 0,  .227, 0, 0, 0]
       after_joint:  [  0, 0,  .03,  0, 0, 0]
+      gearing: 1.0
       cov:
         bearing: 0.004
         range: 0.02
