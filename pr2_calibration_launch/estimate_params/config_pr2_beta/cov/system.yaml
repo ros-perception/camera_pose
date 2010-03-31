@@ -32,7 +32,7 @@
      - [ 0, -pi/2, .068, 0 ]          # head_pan_joint
      - [ 0,    0,    0,  0 ]          # head_tilt_joint
      cov:
-      joint_angles: [0.001, 0.001]
+      joint_angles: [0.0002, 0.0002]
      gearing: [1.0, 1.0]
 
   tilting_lasers:
@@ -41,9 +41,9 @@
       after_joint:  [  0, 0,  .03,  0, 0, 0]
       gearing: 1.0
       cov:
-        bearing: 0.004
-        range: 0.02
-        tilt: 0.008
+        bearing: 0.0005
+        range: 0.005
+        tilt: 0.0005
 
   transforms:
     l_shoulder_pan_joint:    [ 0.0,  .188,     0, 0, 0, 0] # torso_lift_link -> l_shoulder_pan_joint
@@ -80,37 +80,37 @@
       f_shift: 0.0
       cx_shift: 0.0
       cy_shift: 0.0
-      cov: {u: 0.5, v: 0.5}
+      cov: {u: 0.125, v: 0.125}
     wide_right_rect:
       baseline_shift: 0.0
       f_shift: 0.0
       cx_shift: 0.0
       cy_shift: 0.0
-      cov: {u: 0.5, v: 0.5}
+      cov: {u: 0.125, v: 0.125}
     narrow_left_rect:
       baseline_shift: 0.0
       f_shift: 0.0
       cx_shift: 0.0
       cy_shift: 0.0
-      cov: {u: 0.5, v: 0.5}
+      cov: {u: 0.125, v: 0.125}
     narrow_right_rect:
       baseline_shift: 0.0
       f_shift: 0.0
       cx_shift: 0.0
       cy_shift: 0.0
-      cov: {u: 0.5, v: 0.5}
+      cov: {u: 0.125, v: 0.125}
     forearm_left_rect:
       baseline_shift: 0.0
       f_shift: 0.0
       cx_shift: 0.0
       cy_shift: 0.0
-      cov: {u: 0.5, v: 0.5}
+      cov: {u: 0.125, v: 0.125}
     forearm_right_rect:
       baseline_shift: 0.0
       f_shift: 0.0
       cx_shift: 0.0
       cy_shift: 0.0
-      cov: {u: 0.5, v: 0.5}
+      cov: {u: 0.125, v: 0.125}
 
   checkerboards:
     small_cb_4x5:
