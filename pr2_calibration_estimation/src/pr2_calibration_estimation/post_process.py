@@ -43,7 +43,7 @@ import rosrecord
 import yaml
 import os.path
 import numpy
-from numpy import kron, ones, eye, array, matrix
+from numpy import kron, ones, eye, array, matrix, diag
 import multi_step_cov_estimator as est_helpers
 import opt_runner
 from sensors.multi_sensor import MultiSensor
@@ -103,11 +103,11 @@ if __name__ == '__main__':
     # Build the sensor definition subset for this step
     #sensor_defs = est_helpers.load_requested_sensors(all_sensors_dict, cur_step['sensors'])
 
-    loop_list = [('right_arm_chain', 'narrow_right_rect', {'color':'b', 'marker':'o'}),
-                 ('right_arm_chain', 'narrow_left_rect',  {'color':'b', 'marker':'s'}),
-                 ('right_arm_chain', 'wide_left_rect',    {'color':'r', 'marker':'o'}),
-                 ('right_arm_chain', 'wide_right_rect',   {'color':'r', 'marker':'s'})]
-
+#    loop_list = [('tilt_laser', 'narrow_right_rect', {'color':'b', 'marker':'o'}),
+#                 ('tilt_laser', 'narrow_left_rect',  {'color':'b', 'marker':'s'}),
+#                 ('tilt_laser', 'wide_left_rect',    {'color':'r', 'marker':'o'}),
+#                 ('tilt_laser', 'wide_right_rect',   {'color':'r', 'marker':'s'})]
+    loop_list = [('tilt_laser', 'narrow_right_rect', {'color':'b', 'marker':'o'})]
 
     for sensor_id_3d, sensor_id_2d, plot_opts in loop_list:
         sensor_defs = est_helpers.load_requested_sensors(all_sensors_dict, [sensor_id_2d, sensor_id_3d])
@@ -160,11 +160,11 @@ if __name__ == '__main__':
         #fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
         #import code; code.interact(local=locals())
 
-        #cam_Js   = [s.compute_expected_J(fk) for s,fk in zip(cam_sensors, fk_points)]
-        #cam_covs = [matrix(array(s.compute_cov(fk)) * kron(eye(s.get_residual_length()/2),ones([2,2]))) for s,fk in zip(cam_sensors, fk_points)]
-        #fk_covs  = [matrix(array(s.compute_cov(None)) * kron(eye(s.get_residual_length()/3),ones([3,3]))) for s in chain_sensors]
+        cam_Js   = [s.compute_expected_J(fk) for s,fk in zip(cam_sensors, fk_points)]
+        cam_covs = [matrix(array(s.compute_cov(fk)) * kron(eye(s.get_residual_length()/2),ones([2,2]))) for s,fk in zip(cam_sensors, fk_points)]
+        fk_covs  = [matrix(array(s.compute_cov(None)) * kron(eye(s.get_residual_length()/3),ones([3,3]))) for s in chain_sensors]
 
-        #full_covs = [cam_J*fk_cov*cam_J.T + cam_cov for cam_J, cam_cov, fk_cov in zip(cam_Js, cam_covs, fk_covs)]
+        full_covs = [cam_J*fk_cov*cam_J.T + cam_cov for cam_J, cam_cov, fk_cov in zip(cam_Js, cam_covs, fk_covs)]
 
         #import code; code.interact(local=locals())
 
@@ -175,6 +175,17 @@ if __name__ == '__main__':
 
         import matplotlib.pyplot as plt
         plt.scatter(r[:,0], r[:,1], **plot_opts)
+
+        for cur_cov in full_covs[0:1]:
+            circ_angles = numpy.linspace(0,2*numpy.pi, 360, endpoint=True)
+            circ_pos = numpy.concatenate( [ [numpy.sin(circ_angles)],
+                                            [numpy.cos(circ_angles)] ] )
+            l,v = numpy.linalg.eig(cur_cov[0:2,0:2])
+            ellip = .25 * matrix(v) * matrix(diag(numpy.sqrt(l))) * matrix(circ_pos)
+            ellip_shifted = array(ellip + r[0,:].T)
+            #import code; code.interact(local=locals())
+            plt.plot(ellip_shifted[0,:], ellip_shifted[1,:])
+
     plt.axis('equal')
     plt.grid(True)
     plt.show()
