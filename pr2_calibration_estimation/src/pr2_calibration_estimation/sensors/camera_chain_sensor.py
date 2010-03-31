@@ -144,6 +144,10 @@ class CameraChainSensor:
         return pixel_pts.T
 
     def compute_expected_J(self, target_pts):
+        '''
+        Calculate the jacobian between points in the world, and camera cooridinates.
+        For n points, J is a 2nx3n matrix
+        '''
         epsilon = 1e-8
         N = len(self._M_cam.image_points)
         Jt = zeros([N*3, N*2])
@@ -155,7 +159,7 @@ class CameraChainSensor:
             for i in [0,1,2]:
                 x[i,0] += epsilon
                 fTest = self.compute_expected(x)
-                sub_Jt[i,:] = array((fTest - f0) / epsilon)[:,0]
+                sub_Jt[i,:] = array((fTest - f0) / epsilon)
                 x[i,0] -= epsilon
             Jt[k*3:(k+1)*3, k*2:(k+1)*2] = sub_Jt
         return Jt.T
