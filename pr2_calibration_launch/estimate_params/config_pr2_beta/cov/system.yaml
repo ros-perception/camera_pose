@@ -12,6 +12,7 @@
      - [   0,    0,    0, 0      ]    # r_wrist_roll_joint
      cov:
        joint_angles: [0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002]
+     gearing: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 
     left_arm_chain:
      dh:
@@ -24,6 +25,7 @@
      - [   0,    0,    0, 0      ]    # l_wrist_roll_joint
      cov:
        joint_angles: [0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002]
+     gearing: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 
     head_chain:
      dh:
@@ -31,6 +33,7 @@
      - [ 0,    0,    0,  0 ]          # head_tilt_joint
      cov:
       joint_angles: [0.001, 0.001]
+     gearing: [1.0, 1.0]
 
   tilting_lasers:
     tilt_laser:

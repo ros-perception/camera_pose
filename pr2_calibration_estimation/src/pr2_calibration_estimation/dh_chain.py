@@ -31,7 +31,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy
-from numpy import matrix, vsplit, sin, cos, reshape, pi
+from numpy import matrix, vsplit, sin, cos, reshape, pi, array
 import rospy
 
 class DhChain:
@@ -48,15 +48,20 @@ class DhChain:
         self._config = param_mat            # Mx4 matrix. Each row is a link, containing [theta, alpha, a, d]
 
         self._cov_dict = config['cov']
+        self._gearing = config['gearing']
         assert( len(self._cov_dict['joint_angles']) == self._M)
 
     def calc_free(self, free_config):
-        assert( len(free_config) == self._M )
+        #import code; code.interact(local=locals())
+        assert( len(free_config['dh']) == self._M)
+        assert( len(free_config['gearing']) == self._M )
 
         # Flatten the config
-        flat_config = sum(free_config, [])
+        flat_config = sum(free_config['dh'], [])
 
         assert( len(flat_config) == self._M * 4)
+
+        flat_config = flat_config + free_config['gearing']
 
         # Convert int list into bool list
         flat_free = [x == 1 for x in flat_config]
@@ -64,26 +69,32 @@ class DhChain:
         return flat_free
 
     def params_to_config(self, param_vec):
-        assert(param_vec.shape == (self._M * 4, 1))
-        param_mat = reshape( param_vec.T, (-1,4))
+        assert(param_vec.shape == (self._M * 5, 1)) # 4 dh params + 1 gearing per joint
+        dh_param_vec = param_vec[0:(self._M * 4),0]
+        gearing_param_vec = param_vec[(self._M * 4):,0]
+
+        param_mat = reshape( dh_param_vec.T, (-1,4))
         config_dict = {}
         config_dict['dh'] = param_mat.tolist()
+        config_dict['gearing'] = (array(gearing_param_vec)[:,0]).tolist()
         config_dict['cov'] = self._cov_dict
         return config_dict
 
     # Convert column vector of params into config
     def inflate(self, param_vec):
-        param_mat = param_vec[:,:]
+        param_mat = param_vec[:self._M*4,:]
         self._config = reshape(param_mat, (-1,4))
+        self._gearing = array(param_vec[self._M*4:,:])[:,0].tolist()
 
     # Return column vector of config
     def deflate(self):
         param_vec = reshape(self._config, (-1,1))
+        param_vec = numpy.concatenate([param_vec, matrix(self._gearing).T])
         return param_vec
 
     # Returns # of params needed for inflation & deflation
     def get_length(self):
-        return self._length
+        return self._M*5
 
     # Returns 4x4 numpy matrix of the pose of the tip of
     # the specified link num. Assumes the last link's tip
@@ -94,8 +105,11 @@ class DhChain:
 
         dh_trimmed  = self._config[0:(link_num+1), :]
         pos_trimmed = chain_state.position[0:(link_num+1)]
+        gearing_trimmed = self._gearing[0:(link_num+1)]
 
-        eef_pose = chain_T(dh_trimmed, pos_trimmed)
+        pos_scaled = [cur_pos * cur_gearing for cur_pos, cur_gearing in zip(pos_trimmed, gearing_trimmed)]
+
+        eef_pose = chain_T(dh_trimmed, pos_scaled)
         return eef_pose
 
 # Computes the transform for a chain

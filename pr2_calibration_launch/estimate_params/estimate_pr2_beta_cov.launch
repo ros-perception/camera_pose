@@ -17,7 +17,7 @@
         </rosparam>
         <param name="output_filename" type="string" value="system1" />
       </group>
-      
+
       <group ns="02 - Adding Arm Joint Offsets and Stereocam Locations">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free2.yaml" />
         <rosparam>
@@ -60,10 +60,10 @@
           - left_arm_chain
           - right_arm_chain
         </rosparam>
-        <param name="output_filename" type="string" value="system3" />
-      </group>     
+        <param name="output_filename" type="string" value="system4" />
+      </group>
 
-      <group ns="05 - Adding Forearm Cams and Polishing">
+      <group ns="06 - Adding Forearm Cams and Polishing">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free6.yaml" />
         <rosparam>
           sensors:
@@ -78,8 +78,7 @@
           - right_arm_chain
         </rosparam>
         <param name="output_filename" type="string" value="system_calibrated" />
-      </group>     
-
+      </group>
     </group>
 
     <param name="initial_system" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/system.yaml" />

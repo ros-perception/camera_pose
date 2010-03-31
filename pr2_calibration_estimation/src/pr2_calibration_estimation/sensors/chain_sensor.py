@@ -178,7 +178,9 @@ class ChainSensor:
         chain_id = self._config_dict['chain_id']
         num_links = self._full_chain.calc_block._chain._M
         assert(num_links == len(self._M_chain.chain_state.position))
-        sparsity['dh_chains'][chain_id] = [ [1,1,1,1] ] * num_links
+        sparsity['dh_chains'][chain_id] = {}
+        sparsity['dh_chains'][chain_id]['dh'] = [ [1,1,1,1] ] * num_links
+        sparsity['dh_chains'][chain_id]['gearing'] = [1] * num_links
 
         sparsity['checkerboards'] = {}
         sparsity['checkerboards'][self._target_id] = { 'spacing_x': 1,
