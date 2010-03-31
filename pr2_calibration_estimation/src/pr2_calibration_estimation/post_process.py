@@ -121,8 +121,8 @@ if __name__ == '__main__':
                 for cur_laser in msg.M_laser:
                     if cur_laser.laser_id == "tilt_laser_6x8":
                         cur_laser.laser_id = "tilt_laser"
-                    else:
-                        cur_laser.laser_id = "tilt_laser_blah"
+                    #else:
+                    #    cur_laser.laser_id = "tilt_laser_blah"
                 ms = MultiSensor(sensor_defs)
                 ms.sensors_from_message(msg)
                 multisensors.append(ms)
@@ -164,7 +164,7 @@ if __name__ == '__main__':
         cam_covs = [matrix(array(s.compute_cov(fk)) * kron(eye(s.get_residual_length()/2),ones([2,2]))) for s,fk in zip(cam_sensors, fk_points)]
         fk_covs  = [matrix(array(s.compute_cov(None)) * kron(eye(s.get_residual_length()/3),ones([3,3]))) for s in chain_sensors]
 
-        full_covs = [cam_J*fk_cov*cam_J.T + cam_cov for cam_J, cam_cov, fk_cov in zip(cam_Js, cam_covs, fk_covs)]
+        full_covs = [matrix(cam_J)*fk_cov*matrix(cam_J).T + cam_cov for cam_J, cam_cov, fk_cov in zip(cam_Js, cam_covs, fk_covs)]
 
         #import code; code.interact(local=locals())
 
@@ -180,11 +180,12 @@ if __name__ == '__main__':
             circ_angles = numpy.linspace(0,2*numpy.pi, 360, endpoint=True)
             circ_pos = numpy.concatenate( [ [numpy.sin(circ_angles)],
                                             [numpy.cos(circ_angles)] ] )
-            l,v = numpy.linalg.eig(cur_cov[0:2,0:2])
-            ellip = .25 * matrix(v) * matrix(diag(numpy.sqrt(l))) * matrix(circ_pos)
-            ellip_shifted = array(ellip + r[0,:].T)
-            #import code; code.interact(local=locals())
-            plt.plot(ellip_shifted[0,:], ellip_shifted[1,:])
+            for k in range(cur_cov.shape[0]/2)[0:1]:
+                l,v = numpy.linalg.eig(cur_cov[(2*k):(2*k+2),(2*k):(2*k+2)])
+                ellip = numpy.sqrt(4.6052) * matrix(v) * matrix(diag(numpy.sqrt(l))) * matrix(circ_pos)
+                ellip_shifted = array(ellip + r[k,:].T)
+                #import code; code.interact(local=locals())
+                plt.plot(ellip_shifted[0,:], ellip_shifted[1,:], 'b')
 
     plt.axis('equal')
     plt.grid(True)
