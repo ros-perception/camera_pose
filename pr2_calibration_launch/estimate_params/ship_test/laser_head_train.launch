@@ -15,7 +15,7 @@
           - right_arm_chain
           - tilt_laser
         </rosparam>
-        <param name="output_filename" type="string" value="head_laser_0" />
+        <param name="output_filename" type="string" value="training_0" />
       </group>
     
       <group ns="01 - Joints and Stereocam Locations">
@@ -28,7 +28,7 @@
           - wide_right_rect
           - tilt_laser
         </rosparam>
-        <param name="output_filename" type="string" value="head_laser_1" />
+        <param name="output_filename" type="string" value="training_1" />
       </group>
 
       <group ns="02 - Adding Stereo Baselines">
@@ -41,7 +41,7 @@
           - wide_right_rect
           - tilt_laser
         </rosparam>
-        <param name="output_filename" type="string" value="head_laser_calibrated" />
+        <param name="output_filename" type="string" value="training_calibrated" />
       </group>
 
     </group>
@@ -50,7 +50,7 @@
 
   </group>
 
-  <node pkg="pr2_calibration_estimation" type="multi_step_cov_estimator.py" name="cal_cov_estimator" output="screen"
-        args="$(find pr2_calibration_launch)/estimate_params/ship_test/pre_ship_train.bag $(find pr2_calibration_launch)/estimate_params/ship_test/head_laser_results" respawn="False"/>
+  <node pkg="pr2_calibration_estimation" type="multi_step_cov_estimator.py" name="laser_head_train" output="screen"
+        args="$(find pr2_calibration_launch)/estimate_params/ship_test/bags/pre_ship_train.bag $(find pr2_calibration_launch)/estimate_params/ship_test/head_laser_results" respawn="False"/>
 
 </launch>

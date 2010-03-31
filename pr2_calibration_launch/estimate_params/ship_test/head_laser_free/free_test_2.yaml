@@ -1,26 +1,32 @@
 
   dh_chains:
     right_arm_chain:
-     - [ 0, 0, 0, 0 ]    # Shoulder Pan
-     - [ 0, 0, 0, 0 ]    # Shoulder Lift
-     - [ 0, 0, 0, 0 ]    # Upper Arm
-     - [ 0, 0, 0, 0 ]    # Elbow Flex
-     - [ 0, 0, 0, 0 ]    # Forearm Roll
-     - [ 0, 0, 0, 0 ]    # Wrist flex
-     - [ 0, 0, 0, 0 ]    # Wrist roll
+      dh:
+        - [ 0, 0, 0, 0 ]    # Shoulder Pan
+        - [ 0, 0, 0, 0 ]    # Shoulder Lift
+        - [ 0, 0, 0, 0 ]    # Upper Arm
+        - [ 0, 0, 0, 0 ]    # Elbow Flex
+        - [ 0, 0, 0, 0 ]    # Forearm Roll
+        - [ 0, 0, 0, 0 ]    # Wrist flex
+        - [ 0, 0, 0, 0 ]    # Wrist roll
+      gearing: [0, 0, 0, 0, 0, 0, 0]
 
     left_arm_chain:
-     - [ 0, 0, 0, 0 ]    # Shoulder Pan
-     - [ 0, 0, 0, 0 ]    # Shoulder Lift
-     - [ 0, 0, 0, 0 ]    # Upper Arm
-     - [ 0, 0, 0, 0 ]    # Elbow Flex
-     - [ 0, 0, 0, 0 ]    # Forearm Roll
-     - [ 0, 0, 0, 0 ]    # Wrist flex
-     - [ 0, 0, 0, 0 ]    # Wrist roll
+      dh:
+        - [ 0, 0, 0, 0 ]    # Shoulder Pan
+        - [ 0, 0, 0, 0 ]    # Shoulder Lift
+        - [ 0, 0, 0, 0 ]    # Upper Arm
+        - [ 0, 0, 0, 0 ]    # Elbow Flex
+        - [ 0, 0, 0, 0 ]    # Forearm Roll
+        - [ 0, 0, 0, 0 ]    # Wrist flex
+        - [ 0, 0, 0, 0 ]    # Wrist roll
+      gearing: [0, 0, 0, 0, 0, 0, 0]
 
     head_chain:
-     - [ 0, 0, 0, 0 ]          # Head Pan
-     - [ 0, 0, 0, 0 ]          # Head Tilt
+      dh:
+        - [ 0, 0, 0, 0 ]          # Head Pan
+        - [ 0, 0, 0, 0 ]          # Head Tilt
+      gearing: [0, 0]
 
   tilting_lasers:
     tilt_laser:
