@@ -206,7 +206,7 @@ class CameraChainSensor:
         sparsity['dh_chains'][chain_id]['gearing'] = [1] * num_links
 
         sparsity['rectified_cams'] = {}
-        sparsity['rectified_cams'][self.sensor_id] = {'baseline_shift': 1}
+        sparsity['rectified_cams'][self.sensor_id] = dict( [(x,1) for x in self._camera.get_param_names()] )
 
         return sparsity
 
