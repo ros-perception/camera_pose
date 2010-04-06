@@ -7,19 +7,47 @@
     </group>
 
     <group ns="cal_steps">
-      <group ns="01 - Checkerboard Locations">
-        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/free1.yaml" />
+
+      <group ns="A - 01 - Estimating Checkerboard Locations">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_0.yaml" />
         <rosparam>
           sensors:
-          - tilt_laser
           - left_arm_chain
           - right_arm_chain
+          - tilt_laser
         </rosparam>
-        <param name="output_filename" type="string" value="system1" />
+        <param name="output_filename" type="string" value="head_laser_0" />
       </group>
 
-      <group ns="02 - Adding Arm Joint Offsets and Stereocam Locations">
-        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free2.yaml" />
+
+      <group ns="A - 02 - Adding Stereocam Locations">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_1.yaml" />
+        <rosparam>
+          sensors:
+          - narrow_left_rect
+          - narrow_right_rect
+          - wide_left_rect
+          - wide_right_rect
+          - tilt_laser
+        </rosparam>
+        <param name="output_filename" type="string" value="head_laser_1" />
+      </group>
+
+      <group ns="A - 03 - Adding Stereo Baselines, Laser Pose, Laser Gearing">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_2.yaml" />
+        <rosparam>
+          sensors:
+          - narrow_left_rect
+          - narrow_right_rect
+          - wide_left_rect
+          - wide_right_rect
+          - tilt_laser
+        </rosparam>
+        <param name="output_filename" type="string" value="head_laser_calibrated" />
+      </group>
+
+      <group ns="B - 01 - Locking Head Sensors. Estimating Arm Joint Offsets">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_arms_only_1.yaml" />
         <rosparam>
           sensors:
           - narrow_left_rect
@@ -29,56 +57,12 @@
           - tilt_laser
           - left_arm_chain
           - right_arm_chain
-        </rosparam>
-        <param name="output_filename" type="string" value="system2" />
-      </group>
-
-      <group ns="03 - Adding Stere Baselines">
-        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free3.yaml" />
-        <rosparam>
-          sensors:
-          - narrow_left_rect
-          - narrow_right_rect
-          - wide_left_rect
-          - wide_right_rect
-          - tilt_laser
-          - left_arm_chain
-          - right_arm_chain
-        </rosparam>
-        <param name="output_filename" type="string" value="system3" />
-      </group>
-
-      <group ns="04 - Adding Tilt Laser Position">
-        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free4.yaml" />
-        <rosparam>
-          sensors:
-          - narrow_left_rect
-          - narrow_right_rect
-          - wide_left_rect
-          - wide_right_rect
-          - tilt_laser
-          - left_arm_chain
-          - right_arm_chain
-        </rosparam>
-        <param name="output_filename" type="string" value="system4" />
-      </group>
-
-      <group ns="06 - Adding Forearm Cams and Polishing">
-        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free6.yaml" />
-        <rosparam>
-          sensors:
-          - narrow_left_rect
-          - narrow_right_rect
-          - wide_left_rect
-          - wide_right_rect
           - forearm_left_rect
           - forearm_right_rect
-          - tilt_laser
-          - left_arm_chain
-          - right_arm_chain
         </rosparam>
         <param name="output_filename" type="string" value="system_calibrated" />
       </group>
+
     </group>
 
     <param name="initial_system" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/system.yaml" />
