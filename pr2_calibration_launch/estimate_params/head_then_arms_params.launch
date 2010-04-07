@@ -69,7 +69,4 @@
 
   </group>
 
-  <node pkg="pr2_calibration_estimation" type="multi_step_cov_estimator.py" name="cal_cov_estimator" output="screen"
-        args="/tmp/pr2_calibration/cal_measurements.bag /tmp/pr2_calibration/" respawn="False"/>
-
 </launch>
