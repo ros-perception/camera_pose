@@ -110,13 +110,19 @@ if __name__ == '__main__':
                  (sensor_3d_name, 'wide_left_rect',    {'color':'r', 'marker':'o'}),
                  (sensor_3d_name, 'wide_right_rect',   {'color':'r', 'marker':'s'})]
 
-    sensor_3d_name = 'right_arm_chain'
-    loop_list2 = [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'o'}),
-                 (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'s'}),
-                 (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'o'}),
-                 (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'s'})]
+    #sensor_3d_name = 'right_arm_chain'
+    #loop_list2 = [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'o'}),
+    #             (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'s'}),
+    #             (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'o'}),
+    #             (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'s'})]
+    loop_list2 = []
 
-    loop_list = loop_list1 + loop_list2
+    loop_list3 = [('right_arm_chain', 'forearm_right_rect', {'color':'g', 'marker':'o'}),
+                 ( 'right_arm_chain', 'forearm_left_rect',  {'color':'y', 'marker':'o'}),
+                 ( 'left_arm_chain',  'forearm_right_rect', {'color':'g', 'marker':'s'}),
+                 ( 'left_arm_chain',  'forearm_left_rect',  {'color':'y', 'marker':'s'})]
+
+    loop_list = loop_list1 + loop_list2 + loop_list3
 
 #    loop_list = [('tilt_laser', 'narrow_right_rect', {'color':'b', 'marker':'o'})]
 
@@ -167,8 +173,8 @@ if __name__ == '__main__':
         # Calculate loop errors
         chain_sensors = [[s for s in ms.sensors if s.sensor_id == sensor_id_3d][0] for ms in multisensors_pruned]
         cam_sensors   = [[s for s in ms.sensors if s.sensor_id == sensor_id_2d][0] for ms in multisensors_pruned]
-        fk_points = [s.get_measurement() for s in chain_sensors]
-        #fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
+        #fk_points = [s.get_measurement() for s in chain_sensors]
+        fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
         #import code; code.interact(local=locals())
 
         cam_Js   = [s.compute_expected_J(fk) for s,fk in zip(cam_sensors, fk_points)]
@@ -196,7 +202,7 @@ if __name__ == '__main__':
                 ellip = numpy.sqrt(4.6052) * matrix(v) * matrix(diag(numpy.sqrt(l))) * matrix(circ_pos)
                 ellip_shifted = array(ellip + r[k,:].T)
                 #import code; code.interact(local=locals())
-                plt.plot(ellip_shifted[0,:], ellip_shifted[1,:], 'b')
+                #plt.plot(ellip_shifted[0,:], ellip_shifted[1,:], 'b')
 
     plt.axis('equal')
     plt.grid(True)
