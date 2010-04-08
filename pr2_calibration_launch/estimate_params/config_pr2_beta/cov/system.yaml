@@ -11,7 +11,7 @@
      - [   0,   pi/2,  0, 0      ]    # r_wrist_flex_joint
      - [   0,    0,    0, 0      ]    # r_wrist_roll_joint
      cov:
-       joint_angles: [0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002]
+       joint_angles: [0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
      gearing: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 
     left_arm_chain:
@@ -24,7 +24,7 @@
      - [   0,   pi/2,  0, 0      ]    # l_wrist_flex_joint
      - [   0,    0,    0, 0      ]    # l_wrist_roll_joint
      cov:
-       joint_angles: [0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002]
+       joint_angles: [0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
      gearing: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 
     head_chain:
