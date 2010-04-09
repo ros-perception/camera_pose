@@ -107,22 +107,26 @@ if __name__ == '__main__':
     sensor_3d_name = 'tilt_laser'
     loop_list1 = [(sensor_3d_name, 'narrow_right_rect', {'color':'b', 'marker':'o'}),
                  (sensor_3d_name, 'narrow_left_rect',  {'color':'b', 'marker':'s'}),
-                 (sensor_3d_name, 'wide_left_rect',    {'color':'r', 'marker':'o'}),
+                 (sensor_3d_name, 'wide_left_rect',    {'color':'g', 'marker':'o'}),
                  (sensor_3d_name, 'wide_right_rect',   {'color':'r', 'marker':'s'})]
+    loop_list1 = []
 
-    #sensor_3d_name = 'right_arm_chain'
-    #loop_list2 = [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'o'}),
-    #             (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'s'}),
-    #             (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'o'}),
-    #             (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'s'})]
-    loop_list2 = []
+    sensor_3d_name = 'right_arm_chain'
+    loop_list2 = [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'o'}),
+                 (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'s'}),
+                 (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'o'}),
+                 (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'s'})]
+    #loop_list2 = []
 
     loop_list3 = [('right_arm_chain', 'forearm_right_rect', {'color':'g', 'marker':'o'}),
                  ( 'right_arm_chain', 'forearm_left_rect',  {'color':'y', 'marker':'o'}),
-                 ( 'left_arm_chain',  'forearm_right_rect', {'color':'g', 'marker':'s'}),
-                 ( 'left_arm_chain',  'forearm_left_rect',  {'color':'y', 'marker':'s'})]
+                 ( 'left_arm_chain',  'forearm_right_rect', {'color':'y', 'marker':'s'}),
+                 ( 'left_arm_chain',  'forearm_left_rect',  {'color':'g', 'marker':'s'})]
+
+    loop_list3 = []
 
     loop_list = loop_list1 + loop_list2 + loop_list3
+    #loop_list = loop_list[0:1]
 
 #    loop_list = [('tilt_laser', 'narrow_right_rect', {'color':'b', 'marker':'o'})]
 
@@ -147,6 +151,10 @@ if __name__ == '__main__':
 
         # Only grab the samples that have both a narrow left rect and a right_arm_chain
         multisensors_pruned, cb_poses_pruned = zip(*[(ms,cb) for ms,cb in zip(multisensors, cb_poses) if len(ms.sensors) == 2])
+        sample_ind = [k for k,ms in zip(range(len(multisensors)), multisensors) if len(ms.sensors) == 2]
+
+        print "Sample Indices:"
+        print ", ".join(["%u" % i for i in sample_ind])
 
         system_def = RobotParams()
         system_def.configure(system_def_dict)
@@ -173,8 +181,8 @@ if __name__ == '__main__':
         # Calculate loop errors
         chain_sensors = [[s for s in ms.sensors if s.sensor_id == sensor_id_3d][0] for ms in multisensors_pruned]
         cam_sensors   = [[s for s in ms.sensors if s.sensor_id == sensor_id_2d][0] for ms in multisensors_pruned]
-        #fk_points = [s.get_measurement() for s in chain_sensors]
-        fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
+        fk_points = [s.get_measurement() for s in chain_sensors]
+        #fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
         #import code; code.interact(local=locals())
 
         cam_Js   = [s.compute_expected_J(fk) for s,fk in zip(cam_sensors, fk_points)]
@@ -188,10 +196,30 @@ if __name__ == '__main__':
         proj_points = [s.compute_expected(pts) for (s,pts) in zip(cam_sensors,fk_points)]
         meas_points = [s.get_measurement() for s in cam_sensors]
 
+        sample_ind = sum([ [sample_ind[k]]*meas_points[k].shape[0] for k in range(len(proj_points))], [])
+
+
         r = numpy.concatenate(proj_points) - numpy.concatenate(meas_points)
+
+
+        bearing_list = []
+        #for ms in multisensors_pruned:
+        #    laser_sensor = [s for s in ms.sensors if s.sensor_id == "tilt_laser"][0]
+        #    cur_bearings = [js.position[1] for js in laser_sensor._M_laser.joint_points]
+        #    bearing_list.append(numpy.array(cur_bearings))
+        #y_coord_list = [ numpy.array(SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points())[1,:] for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
+        #y_coords = numpy.concatenate(y_coord_list)
+
+        #bearings = numpy.concatenate(bearing_list)
 
         import matplotlib.pyplot as plt
         plt.scatter(r[:,0], r[:,1], **plot_opts)
+        #plt.scatter(r[:,0], bearings, **plot_opts)
+
+        for k in range(len(sample_ind)):
+            #plt.text(r[k,0], r[k,1], "%u" % sample_ind[k])
+            #plt.text(r[k,0], bearings[k], "%u" % sample_ind[k])
+            pass
 
         for cur_cov in full_covs[0:1]:
             circ_angles = numpy.linspace(0,2*numpy.pi, 360, endpoint=True)
