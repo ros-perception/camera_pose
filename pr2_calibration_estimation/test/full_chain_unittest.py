@@ -49,7 +49,9 @@ import numpy
 def loadSystem1():
     calc_block = FullChainCalcBlock()
     before_chain_Ts = [SingleTransform([10, 0, 0, 0, 0, 0])]
-    chain = DhChain( [ [0, 0, 1, 0] ])
+    chain = DhChain( {'dh':[ [0, 0, 1, 0] ],
+                      'gearing':[1],
+                      'cov':{'joint_angles':[1]}} )
     dh_link_num = -1
     after_chain_Ts = [SingleTransform([ 0, 0, 20, 0, 0, 0])]
 

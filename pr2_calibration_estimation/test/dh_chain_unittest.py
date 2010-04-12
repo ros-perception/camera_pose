@@ -51,7 +51,7 @@ class LoadDhChain(unittest.TestCase):
                    [ 0, 0, 1, 0 ],
                    [ 0, 0, 1, 2 ] ]
 
-        self.dh_chain = DhChain(params)
+        self.dh_chain = DhChain({'dh':params, 'gearing':[1,1,1], 'cov':{'joint_angles':[1,1,1]}})
 
 class TestDhChain(LoadDhChain):
     def test_init(self):
@@ -59,14 +59,14 @@ class TestDhChain(LoadDhChain):
 
 
     def test_get_length(self):
-        self.assertEqual(self.dh_chain.get_length(), 12)
+        self.assertEqual(self.dh_chain.get_length(), 15)
 
     def test_free(self):
         free_config = [ [ 0, 0, 1, 0 ],
                         [ 0, 0, 1, 0 ],
                         [ 0, 0, 1, 1 ] ]
 
-        free_list = self.dh_chain.calc_free(free_config)
+        free_list = self.dh_chain.calc_free({'dh':free_config, 'gearing':[0,0,0]})
         self.assertEqual(free_list[0],  0)
         self.assertEqual(free_list[1],  0)
         self.assertEqual(free_list[2],  1)
@@ -88,8 +88,8 @@ class TestDhChain(LoadDhChain):
         param_vec = self.dh_chain.deflate()
         param_vec[0,0] = 10
         config = self.dh_chain.params_to_config(param_vec)
-        self.assertAlmostEqual(config[0][0], 10, 6)
-        self.assertAlmostEqual(config[2][3], 2, 6)
+        self.assertAlmostEqual(config['dh'][0][0], 10, 6)
+        self.assertAlmostEqual(config['dh'][2][3], 2, 6)
 
     def test_fk_easy1(self):
         chain_state = JointState()

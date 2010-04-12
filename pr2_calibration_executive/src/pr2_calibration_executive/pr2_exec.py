@@ -67,50 +67,78 @@ pub = rospy.Publisher("robot_measurement", RobotMeasurement)
 
 try:
     # Capture Left Arm Data
-    full_paths = [samples_dir + "/left/" + x for x in left_sample_names]
+    if not rospy.is_shutdown():
+        full_paths = [samples_dir + "/left/" + x for x in left_sample_names]
 
-    cur_config = yaml.load(open(full_paths[0]))
-    m_robot = executive.capture(cur_config, rospy.Duration(0.01))
-    
-    print "Please put the checkerboard in the left hand (open/close the gripper with the joystick's left/right D-Pad buttons). press <enter> to continue.  Type N to skip"
-    resp = raw_input("press <enter> ")
-    if string.upper(resp) == "N":
-        print "Skipping left arm samples"
-    else:
-        for cur_sample_path in full_paths:
-            print "On left arm sample [%s]" % cur_sample_path
-            cur_config = yaml.load(open(cur_sample_path))
-            m_robot = executive.capture(cur_config, rospy.Duration(40))
-            if m_robot is None:
-                print "************** Didn't get a sample *****************"
-            else:
-                print "__________ Got a sample! ____________________"
-                pub.publish(m_robot)
-            if rospy.is_shutdown():
-                break
+        cur_config = yaml.load(open(full_paths[0]))
+        m_robot = executive.capture(cur_config, rospy.Duration(0.01))
+
+        print "Please put the checkerboard in the left hand (open/close the gripper with the joystick's left/right D-Pad buttons). press <enter> to continue.  Type N to skip"
+        resp = raw_input("press <enter> ")
+        if string.upper(resp) == "N":
+            print "Skipping left arm samples"
+        else:
+            for cur_sample_path in full_paths:
+                print "On left arm sample [%s]" % cur_sample_path
+                cur_config = yaml.load(open(cur_sample_path))
+                m_robot = executive.capture(cur_config, rospy.Duration(40))
+                if m_robot is None:
+                    print "************** Didn't get a sample *****************"
+                else:
+                    print "__________ Got a sample! ____________________"
+                    pub.publish(m_robot)
+                if rospy.is_shutdown():
+                    break
 
     # Capture Right Arm Data
-    full_paths = [samples_dir + "/right/" + x for x in right_sample_names]
+    if not rospy.is_shutdown():
+        full_paths = [samples_dir + "/right/" + x for x in right_sample_names]
 
-    cur_config = yaml.load(open(full_paths[0]))
-    m_robot = executive.capture(cur_config, rospy.Duration(0.01))
-    
-    print "Please put the checkerboard in the right hand (open/close the gripper with the joystick's square/circle buttons). press <enter> to continue..."
-    resp = raw_input("press <enter> ")
-    if string.upper(resp) == "N":
-        print "Skipping right arm samples"
-    else:
-        for cur_sample_path in full_paths:
-            print "On right arm sample [%s]" % cur_sample_path
-            cur_config = yaml.load(open(cur_sample_path))
-            m_robot = executive.capture(cur_config, rospy.Duration(40))
-            if m_robot is None:
-                print "************** Didn't get a sample *****************"
-            else:
-                print "__________ Got a sample! ____________________"
-                pub.publish(m_robot)
-            if rospy.is_shutdown():
-                break
+        cur_config = yaml.load(open(full_paths[0]))
+        m_robot = executive.capture(cur_config, rospy.Duration(0.01))
+
+        print "Please put the checkerboard in the right hand (open/close the gripper with the joystick's square/circle buttons). press <enter> to continue..."
+        resp = raw_input("press <enter> ")
+        if string.upper(resp) == "N":
+            print "Skipping right arm samples"
+        else:
+            for cur_sample_path in full_paths:
+                print "On right arm sample [%s]" % cur_sample_path
+                cur_config = yaml.load(open(cur_sample_path))
+                m_robot = executive.capture(cur_config, rospy.Duration(40))
+                if m_robot is None:
+                    print "************** Didn't get a sample *****************"
+                else:
+                    print "__________ Got a sample! ____________________"
+                    pub.publish(m_robot)
+                if rospy.is_shutdown():
+                    break
+
+    # Capture Far Checkerboards
+    if not rospy.is_shutdown():
+        full_paths = [samples_dir + "/far/" + x for x in far_sample_names]
+
+        cur_config = yaml.load(open(full_paths[0]))
+        m_robot = executive.capture(cur_config, rospy.Duration(0.01))
+
+        print "Please remove the checkerboard from the gripper, and place the large 6x8"
+        print "checkerboard in a 'landscape' orientation approx 3m in front of the robot,"
+        print "in view of the head cameras and tilting laser."
+        resp = raw_input("press <enter> ")
+        if string.upper(resp) == "N":
+            print "Skipping far samples"
+        else:
+            for cur_sample_path in full_paths:
+                print "On right arm sample [%s]" % cur_sample_path
+                cur_config = yaml.load(open(cur_sample_path))
+                m_robot = executive.capture(cur_config, rospy.Duration(40))
+                if m_robot is None:
+                    print "************** Didn't get a sample *****************"
+                else:
+                    print "__________ Got a sample! ____________________"
+                    pub.publish(m_robot)
+                if rospy.is_shutdown():
+                    break
 
 except EOFError:
     print "Exiting"

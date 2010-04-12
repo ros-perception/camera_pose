@@ -47,17 +47,26 @@ def loadConfigDict():
     config_yaml = '''
 dh_chains:
   chain1:
-  - [0, 1, 2, 3]
-  - [4, 5, 6, 7]
+    dh:
+    - [0, 1, 2, 3]
+    - [4, 5, 6, 7]
+    gearing: [71,72]
+    cov:
+      joint_angles: [73,74]
   chain2:
-  - [10, 11, 12, 13]
-  - [14, 15, 16, 17]
-  - [18, 19, 20, 21]
+    dh:
+    - [10, 11, 12, 13]
+    - [14, 15, 16, 17]
+    - [18, 19, 20, 21]
+    gearing: [22,23,24]
+    cov:
+      joint_angles: [25,26,27]
 
 tilting_lasers:
   laserA:
     before_joint: [0, 0, 0, 0, 0, 0]
     after_joint:  [0, 0, 0, 0, 0, 0]
+    gearing: 1
 
 transforms:
   transformA: [0, 0, 0, 0, 0, 0]
@@ -65,6 +74,12 @@ transforms:
 rectified_cams:
   camA:
     baseline_shift: 0.0
+    f_shift: 0.0
+    cx_shift: 0.0
+    cy_shift: 0.0
+    cov:
+      u: 1
+      v: 2
 
 checkerboards:
   boardA:
@@ -84,19 +99,22 @@ def loadParamVec():
                    0, 0, 0, 0,
                    0,10, 0, 0,
                    0, 0, 0, 0,
+                   0, 0, 0,
                  # Chain 1
                  -10, 0, 0, 0,
                    0, 0, 0, 0,
+                   0, 0,
                # Tilting Lasers
                  # Laser A
                    0,20, 0, 0, 0, 0,
                    0, 0,30, 0, 0, 0,
+                   1,
                # Transforms
                  # transformA
                   40, 0, 0, 0, 0, 0,
                # Rectified Cams
                  # Cam A
-                   4,
+                   4, 0, 0, 0,
                # Checkerboards
                  # Board A
                    30, 40]
@@ -107,17 +125,22 @@ def loadFreeDict():
     free_yaml = '''
 dh_chains:
   chain1:
-  - [0, 0, 0, 1]
-  - [0, 0, 0, 0]
+    dh:
+    - [0, 0, 0, 1]
+    - [0, 0, 0, 0]
+    gearing: [0,0]
   chain2:
-  - [ 1,  0,  0,  0]
-  - [ 0,  0,  0,  0]
-  - [ 0,  0,  0,  0]
+    dh:
+    - [ 1,  0,  0,  0]
+    - [ 0,  0,  0,  0]
+    - [ 0,  0,  0,  0]
+    gearing: [0, 0, 0]
 
 tilting_lasers:
   laserA:
     before_joint: [0, 0, 1, 0, 0, 0]
     after_joint:  [0, 0, 0, 0, 0, 0]
+    gearing: 0
 
 transforms:
   transformA: [0, 0, 1, 0, 0, 0]
@@ -125,6 +148,9 @@ transforms:
 rectified_cams:
   camA:
     baseline_shift: 0
+    f_shift: 0
+    cx_shift: 0
+    cy_shift: 0
 
 checkerboards:
   boardA:
@@ -153,27 +179,27 @@ class TestRobotParams(unittest.TestCase):
         print "cam end:   %u" % robot_params.rectified_cams["camA"].end
 
         # ****** DH Chains ******
-        self.assertEqual(robot_params.dh_chains["chain1"].start, 12)
-        self.assertEqual(robot_params.dh_chains["chain1"].end,   20)
+        self.assertEqual(robot_params.dh_chains["chain1"].start, 15)
+        self.assertEqual(robot_params.dh_chains["chain1"].end,   25)
 
         self.assertEqual(robot_params.dh_chains["chain2"].start,  0)
-        self.assertEqual(robot_params.dh_chains["chain2"].end,   12)
+        self.assertEqual(robot_params.dh_chains["chain2"].end,   15)
 
         # ****** Tilting Lasers ******
-        self.assertEqual(robot_params.tilting_lasers["laserA"].start, 20)
-        self.assertEqual(robot_params.tilting_lasers["laserA"].end,   32)
+        self.assertEqual(robot_params.tilting_lasers["laserA"].start, 25)
+        self.assertEqual(robot_params.tilting_lasers["laserA"].end,   38)
 
         # ****** Transforms ******
-        self.assertEqual(robot_params.transforms["transformA"].start, 32)
-        self.assertEqual(robot_params.transforms["transformA"].end,   38)
+        self.assertEqual(robot_params.transforms["transformA"].start, 38)
+        self.assertEqual(robot_params.transforms["transformA"].end,   44)
 
         # ****** Rectified Cams ******
-        self.assertEqual(robot_params.rectified_cams["camA"].start, 38)
-        self.assertEqual(robot_params.rectified_cams["camA"].end,   39)
+        self.assertEqual(robot_params.rectified_cams["camA"].start, 44)
+        self.assertEqual(robot_params.rectified_cams["camA"].end,   48)
 
         # ****** Checkerboards ******
-        self.assertEqual(robot_params.checkerboards["boardA"].start, 39)
-        self.assertEqual(robot_params.checkerboards["boardA"].end,   41)
+        self.assertEqual(robot_params.checkerboards["boardA"].start, 48)
+        self.assertEqual(robot_params.checkerboards["boardA"].end,   50)
 
     def test_inflate(self):
         robot_params = RobotParams()
@@ -185,14 +211,14 @@ class TestRobotParams(unittest.TestCase):
         self.assertEqual(robot_params.tilting_lasers["laserA"]._before_joint.transform[1,3], 20)
         self.assertEqual(robot_params.tilting_lasers["laserA"]._after_joint.transform[2,3],  30)
         self.assertEqual(robot_params.transforms["transformA"].transform[0,3],  40)
-        self.assertEqual(robot_params.rectified_cams["camA"]._baseline_shift,  4)
+        self.assertEqual(robot_params.rectified_cams["camA"]._config['baseline_shift'],  4)
         self.assertEqual(robot_params.checkerboards["boardA"]._spacing_x,  30)
 
     def test_params_to_config(self):
         robot_params = RobotParams()
         robot_params.configure(loadConfigDict())
         config = robot_params.params_to_config(loadParamVec())
-        self.assertAlmostEqual(config["dh_chains"]["chain2"][1][1], 10, 6)
+        self.assertAlmostEqual(config["dh_chains"]["chain2"]['dh'][1][1], 10, 6)
         self.assertAlmostEqual(config["rectified_cams"]["camA"]["baseline_shift"], 4, 6)
         self.assertAlmostEqual(config["tilting_lasers"]["laserA"]["before_joint"][1], 20, 6)
         self.assertAlmostEqual(config["checkerboards"]["boardA"]["spacing_y"], 40)
@@ -205,9 +231,9 @@ class TestRobotParams(unittest.TestCase):
         print free_list
         self.assertEqual(free_list[0], True)
         self.assertEqual(free_list[1], False)
-        self.assertEqual(free_list[15], True)
-        self.assertEqual(free_list[16], False)
-        self.assertEqual(free_list[22], True)
+        self.assertEqual(free_list[18], True)
+        self.assertEqual(free_list[19], False)
+        self.assertEqual(free_list[27], True)
 
     def test_deflate(self):
         robot_params = RobotParams()

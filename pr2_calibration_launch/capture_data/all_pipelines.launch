@@ -22,6 +22,6 @@
         args="messages r_forearm_cam/image_rect 2" />
 
   <include file="$(find pr2_calibration_launch)/capture_data/intersection.launch" />
-  <include file="$(find pr2_calibration_launch)/capture_data/laser_pipeline.launch" />
+  <include file="$(find pr2_calibration_launch)/capture_data/laser_pipelines.launch" />
   
 </launch>

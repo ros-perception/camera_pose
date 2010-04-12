@@ -19,8 +19,6 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 rosbuild_add_executable(pr2_fk_ref test/pr2_fk_ref.cpp)
 
-rosbuild_add_pyunit(test/camera_chain_unittest.py)
-rosbuild_add_pyunit(test/camera_laser_unittest.py)
 rosbuild_add_pyunit(test/camera_unittest.py)
 rosbuild_add_pyunit(test/checkerboard_unittest.py)
 rosbuild_add_pyunit(test/dh_chain_unittest.py)
@@ -28,6 +26,10 @@ rosbuild_add_pyunit(test/full_chain_unittest.py)
 rosbuild_add_pyunit(test/robot_params_unittest.py)
 rosbuild_add_pyunit(test/single_transform_unittest.py)
 rosbuild_add_pyunit(test/tilting_laser_unittest.py)
+
+rosbuild_add_pyunit(test/chain_sensor_unittest.py)
+rosbuild_add_pyunit(test/camera_chain_sensor_unittest.py)
+rosbuild_add_pyunit(test/tilting_laser_sensor_unittest.py)
 
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_pr2_fk.launch)
 

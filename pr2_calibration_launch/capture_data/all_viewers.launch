@@ -8,6 +8,10 @@
   <include file="$(find pr2_calibration_launch)/capture_data/monocam_viewer.launch"
            ns="r_forearm_cam" />
 
- <include file="$(find pr2_calibration_launch)/capture_data/laser_view.launch" />
+  <include file="$(find pr2_calibration_launch)/capture_data/laser_view.launch"
+           ns="tilt_laser"/>
+
+  <include file="$(find pr2_calibration_launch)/capture_data/laser_view.launch"
+           ns="tilt_laser_6x8"/> 
 
 </launch>

@@ -1,31 +1,38 @@
 
   dh_chains:
     right_arm_chain:
-     - [ 0, 0, 0, 0 ]    # Shoulder Pan
-     - [ 0, 0, 0, 0 ]    # Shoulder Lift
-     - [ 0, 0, 0, 0 ]    # Upper Arm
-     - [ 0, 0, 0, 0 ]    # Elbow Flex
-     - [ 0, 0, 0, 0 ]    # Forearm Roll
-     - [ 0, 0, 0, 0 ]    # Wrist flex
-     - [ 0, 0, 0, 0 ]    # Wrist roll
+      dh:
+        - [ 0, 0, 0, 0 ]    # Shoulder Pan
+        - [ 0, 0, 0, 0 ]    # Shoulder Lift
+        - [ 0, 0, 0, 0 ]    # Upper Arm
+        - [ 0, 0, 0, 0 ]    # Elbow Flex
+        - [ 0, 0, 0, 0 ]    # Forearm Roll
+        - [ 0, 0, 0, 0 ]    # Wrist flex
+        - [ 0, 0, 0, 0 ]    # Wrist roll
+      gearing: [0, 0, 0, 0, 0, 0, 0]
 
     left_arm_chain:
-     - [ 0, 0, 0, 0 ]    # Shoulder Pan
-     - [ 0, 0, 0, 0 ]    # Shoulder Lift
-     - [ 0, 0, 0, 0 ]    # Upper Arm
-     - [ 0, 0, 0, 0 ]    # Elbow Flex
-     - [ 0, 0, 0, 0 ]    # Forearm Roll
-     - [ 0, 0, 0, 0 ]    # Wrist flex
-     - [ 1, 0, 0, 0 ]    # Wrist roll
+      dh:
+        - [ 0, 0, 0, 0 ]    # Shoulder Pan
+        - [ 0, 0, 0, 0 ]    # Shoulder Lift
+        - [ 0, 0, 0, 0 ]    # Upper Arm
+        - [ 0, 0, 0, 0 ]    # Elbow Flex
+        - [ 0, 0, 0, 0 ]    # Forearm Roll
+        - [ 0, 0, 0, 0 ]    # Wrist flex
+        - [ 0, 0, 0, 0 ]    # Wrist roll
+      gearing: [0, 0, 0, 0, 0, 0, 0]
 
     head_chain:
-     - [ 0, 0, 0, 0 ]          # Head Pan
-     - [ 0, 0, 0, 0 ]          # Head Tilt
+      dh:
+        - [ 0, 0, 0, 0 ]          # Head Pan
+        - [ 0, 0, 0, 0 ]          # Head Tilt
+      gearing: [0, 0]
 
   tilting_lasers:
     tilt_laser:
       before_joint: [ 0, 0, 0, 0, 0, 0 ]
       after_joint:  [ 0, 0, 0, 0, 0, 0 ]
+      gearing: 0
 
   transforms:
     l_shoulder_pan_joint:              [ 0, 0, 0, 0, 0, 0 ]
@@ -50,7 +57,7 @@
     r_forearm_cam_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
 
     right_arm_tip_adj:                 [ 0, 0, 0, 0, 0, 0 ]
-    right_arm_cb:                      [ 0, 0, 0, 0, 0, 0 ]
+    right_arm_cb:                      [ 1, 1, 1, 0, 1, 1 ]
 
     left_arm_tip_adj:                  [ 0, 0, 0, 0, 0, 0 ]
     left_arm_cb:                       [ 1, 1, 1, 0, 1, 1 ]
