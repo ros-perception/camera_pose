@@ -43,10 +43,17 @@ import numpy
 from pr2_calibration_estimation.camera import RectifiedCamera
 from numpy import *
 
+def DefaultParams():
+    return {'baseline_shift':0,
+            'f_shift':0,
+            'cx_shift':0,
+            'cy_shift':0,
+            'cov': {'u':0.5, 'v':0.5} }
+
 class TestRectifiedCamera(unittest.TestCase):
 
     def test_project_easy_1(self):
-        cam = RectifiedCamera({"baseline_shift":0})
+        cam = RectifiedCamera(DefaultParams())
         P_list = [ 1, 0, 0, 0, \
                    0, 1, 0, 0, \
                    0, 0, 1, 0 ]
@@ -67,7 +74,7 @@ class TestRectifiedCamera(unittest.TestCase):
         self.assertAlmostEqual(numpy.linalg.norm(result-expected), 0.0, 6)
 
     def test_project_easy_2(self):
-        cam = RectifiedCamera({"baseline_shift":0})
+        cam = RectifiedCamera(DefaultParams())
         P_list = [ 1, 0, 0,-1, \
                    0, 1, 0, 0, \
                    0, 0, 1, 0 ]
@@ -88,7 +95,7 @@ class TestRectifiedCamera(unittest.TestCase):
         self.assertAlmostEqual(numpy.linalg.norm(result-expected), 0.0, 6)
 
     def test_project_easy_3(self):
-        cam = RectifiedCamera({"baseline_shift":0})
+        cam = RectifiedCamera(DefaultParams())
         P_list = [ 1, 0, 0, 0, \
                    0, 1, 0, 0, \
                    0, 0, 1, 0 ]
@@ -112,27 +119,29 @@ class TestRectifiedCamera(unittest.TestCase):
 
 
     def test_free(self):
-        cam = RectifiedCamera({"baseline_shift":0})
-        free_list = cam.calc_free( {"baseline_shift":0} )
+        cam = RectifiedCamera(DefaultParams())
+        free_list = cam.calc_free( {"baseline_shift":0, "f_shift":0, "cx_shift":0, "cy_shift":0} )
         self.assertEqual(free_list[0], False)
 
-        free_list = cam.calc_free( {"baseline_shift":1} )
+        free_list = cam.calc_free( {"baseline_shift":1, "f_shift":0, "cx_shift":0, "cy_shift":0} )
         self.assertEqual(free_list[0], True)
 
-        self.assertEqual(len(free_list), 1)
+        self.assertEqual(len(free_list), 4)
 
     def test_params_to_config(self):
-        cam = RectifiedCamera()
-        p = matrix([1], float)
+        cam = RectifiedCamera(DefaultParams())
+        p = matrix([1, 0, 0, 0], float).T
         config = cam.params_to_config(p)
         self.assertAlmostEqual(config["baseline_shift"], 1, 6)
 
     def test_length(self):
-        cam = RectifiedCamera({"baseline_shift":0})
-        self.assertEqual(cam.get_length(), 1)
+        cam = RectifiedCamera(DefaultParams())
+        self.assertEqual(cam.get_length(), 4)
 
     def test_deflate(self):
-        cam = RectifiedCamera({"baseline_shift":10})
+        params = DefaultParams()
+        params['baseline_shift'] = 10
+        cam = RectifiedCamera(params)
         self.assertEqual(cam.deflate()[0,0], 10)
 
 if __name__ == '__main__':

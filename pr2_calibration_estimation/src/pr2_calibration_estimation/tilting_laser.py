@@ -44,7 +44,8 @@ class TiltingLaser:
     #  before_joint: [px py pz rx ry rx]
     #  after_joint:  [px py pz rx ry rx]
     def __init__(self, config = {"before_joint": [  0, 0, 0, 0, 0, 0],
-                                 "after_joint" : [  0, 0, 0, 0, 0, 0] } ):
+                                 "after_joint" : [  0, 0, 0, 0, 0, 0],
+                                 'gearing':1 } ):
         rospy.logdebug("Initializing tilting laser")
 
         self._before_joint = SingleTransform()

@@ -87,6 +87,7 @@ def loadSystem():
             laserA:
                 before_joint: [0, 0, 0, 0, 0, 0]
                 after_joint:  [0, 0, 0, 0, 0, 0]
+                gearing: 1
                 cov:
                   bearing: 1
                   range:   1
@@ -113,7 +114,7 @@ class TestTiltingLaser(unittest.TestCase):
 
         sensor.update_config(robot_params)
 
-        cov = sensor.calculate_cov(None)
+        cov = sensor.compute_cov(None)
 
         print "Cov:"
         print cov
@@ -147,8 +148,8 @@ class TestTiltingLaser(unittest.TestCase):
         z = block.get_measurement()
         r = block.compute_residual(target_pts)
 
-        self.assertAlmostEqual(numpy.linalg.norm(h-target_pts[0:3,:]), 0.0, 6)
-        self.assertAlmostEqual(numpy.linalg.norm(z-target_pts[0:3,:]), 0.0, 6)
+        self.assertAlmostEqual(numpy.linalg.norm(h-target_pts), 0.0, 6)
+        self.assertAlmostEqual(numpy.linalg.norm(z-target_pts), 0.0, 6)
         self.assertAlmostEqual(numpy.linalg.norm(r), 0.0, 6)
 
 

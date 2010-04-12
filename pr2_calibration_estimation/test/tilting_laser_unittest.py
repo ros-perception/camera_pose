@@ -47,19 +47,23 @@ class TestTiltingLaser(unittest.TestCase):
 
     def test_free(self):
         tl = TiltingLaser( {"before_joint":[ 0, 0, 10, 0,    0, pi/2],
-                            "after_joint": [20, 0,  0, 0, pi/2,    0] } )
+                            "after_joint": [20, 0,  0, 0, pi/2,    0],
+                            "gearing":1} )
         free_list = tl.calc_free( {"before_joint":[ 0, 0, 1, 0, 0, 0 ],
-                                   "after_joint": [ 1, 0, 0, 0, 0, 0 ] } )
+                                   "after_joint": [ 1, 0, 0, 0, 0, 0 ],
+                                   "gearing":0} )
 
         self.assertEqual(free_list[0], False)
         self.assertEqual(free_list[1], False)
         self.assertEqual(free_list[2], True)
         self.assertEqual(free_list[6], True)
         self.assertEqual(free_list[11],False)
+        self.assertEqual(free_list[12],False)
 
     def test_inflate(self):
         tl = TiltingLaser( {"before_joint":[ 0, 0, 10, 0,    0, pi/2],
-                            "after_joint": [20, 0,  0, 0, pi/2,    0] } )
+                            "after_joint": [20, 0,  0, 0, pi/2,    0],
+                            "gearing":1 } )
         expected_before = numpy.matrix( [[ 0,-1, 0,  0],
                                          [ 1, 0, 0,  0],
                                          [ 0, 0, 1, 10],
@@ -81,8 +85,9 @@ class TestTiltingLaser(unittest.TestCase):
 
     def test_deflate(self):
         tl = TiltingLaser()
-        p = reshape ( matrix( [ [ 1,  2,  3,  4,  5,  6],
-                                [ 7,  8,  9, 10, 11, 12] ] ), (-1,1))
+        p = reshape ( matrix( [ 1,  2,  3,  4,  5,  6,
+                                7,  8,  9, 10, 11, 12,
+                                13 ] ), (-1,1))
         tl.inflate(p)
         result = tl.deflate()
         #import code; code.interact(local=locals())
@@ -90,15 +95,16 @@ class TestTiltingLaser(unittest.TestCase):
 
     def test_params_to_config(self):
         tl = TiltingLaser()
-        p = reshape ( matrix( [ [ 1,  2,  3,  4,  5,  6],
-                                [ 7,  8,  9, 10, 11, 12] ] ), (-1,1))
+        p = reshape ( matrix( [  1,  2,  3,  4,  5,  6,
+                                 7,  8,  9, 10, 11, 12, 13 ] ), (-1,1))
         config = tl.params_to_config(p)
         self.assertAlmostEqual(config["before_joint"][0], 1, 6)
         self.assertAlmostEqual(config["after_joint"][2], 9, 6)
 
     def test_project_point_easy_1(self):
         tl = TiltingLaser( {"before_joint": [  0, 0, 10, 0, 0, 0],
-                            "after_joint" : [ 20, 0,  0, 0, 0, 0] } )
+                            "after_joint" : [ 20, 0,  0, 0, 0, 0],
+                            "gearing":1 } )
         result = tl.project_point_to_3D([0, 0, 0])
         expected = numpy.matrix( [20, 0, 10, 1] ).T
         print ""
@@ -107,7 +113,8 @@ class TestTiltingLaser(unittest.TestCase):
 
     def test_project_point_easy_2(self):
         tl = TiltingLaser( {"before_joint": [  0, 0, 10, 0, 0, 0],
-                            "after_joint" : [ 20, 0,  0, 0, 0, 0] } )
+                            "after_joint" : [ 20, 0,  0, 0, 0, 0],
+                            "gearing":1 } )
         result = tl.project_point_to_3D([0, pi/2, 1])
         expected = numpy.matrix( [20, 1, 10, 1] ).T
         print ""
@@ -116,7 +123,8 @@ class TestTiltingLaser(unittest.TestCase):
 
     def test_project_point_easy_3(self):
         tl = TiltingLaser( {"before_joint": [  0,  0, 10, 0, 0, 0],
-                            "after_joint" : [ 20,  0,  0, 0, 0, 0] } )
+                            "after_joint" : [ 20,  0,  0, 0, 0, 0],
+                            "gearing":1 } )
         result = tl.project_point_to_3D([pi/2, 0, 0])
         expected = numpy.matrix( [0 , 0,-10, 1] ).T
         print ""
@@ -126,7 +134,8 @@ class TestTiltingLaser(unittest.TestCase):
 
     def test_project_point_easy_4(self):
         tl = TiltingLaser( {"before_joint": [  0,  0, 10, 0, 0, 0],
-                            "after_joint" : [ 20,  0,  0, 0, 0, 0] } )
+                            "after_joint" : [ 20,  0,  0, 0, 0, 0],
+                            "gearing":1 } )
         result = tl.project_point_to_3D([pi/2, -pi/2, 15])
         expected = numpy.matrix( [0 ,-15, -10, 1] ).T
         print ""
@@ -136,7 +145,8 @@ class TestTiltingLaser(unittest.TestCase):
 
     def test_project(self):
         tl = TiltingLaser( {"before_joint": [  0,  0, 10, 0, 0, 0],
-                            "after_joint" : [ 20,  0,  0, 0, 0, 0] } )
+                            "after_joint" : [ 20,  0,  0, 0, 0, 0],
+                            "gearing":1 } )
 
         result = tl.project_to_3D( [ [0,    0, 0],
                                      [0,    0, 1],
@@ -155,7 +165,7 @@ class TestTiltingLaser(unittest.TestCase):
 
     def test_get_length(self):
         tl = TiltingLaser()
-        self.assertEqual(tl.get_length(), 12)
+        self.assertEqual(tl.get_length(), 13)
 
 if __name__ == '__main__':
     import rostest

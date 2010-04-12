@@ -127,17 +127,22 @@ class TestCameraChainSensor(unittest.TestCase):
               chainA:
                 dh:
                   - [ 0, 0, 1, 0 ]
+                gearing: [1]
                 cov:
                   joint_angles: [1.0]
               chainB:
                 dh:
                   - [ 0, 0, 2, 0 ]
+                gearing: [1]
                 cov:
                   joint_angles: [1.0]
             tilting_lasers: {}
             rectified_cams:
               camA:
                 baseline_shift: 0.0
+                f_shift: 0.0
+                cx_shift: 0.0
+                cy_shift: 0.0
                 cov: {u: 1.0, v: 1.0}
             transforms:
                 transformA: [0, 0, 0, 0, 0, 0]
@@ -217,8 +222,8 @@ class TestCameraChainSensor(unittest.TestCase):
         sparsity = block.build_sparsity_dict()
         self.assertEqual(sparsity['transforms']['transformA'], [1,1,1,1,1,1])
         self.assertEqual(sparsity['transforms']['transformB'], [1,1,1,1,1,1])
-        self.assertEqual(sparsity['dh_chains']['chainA'], [[1,1,1,1]])
-        self.assertEqual(sparsity['rectified_cameras']['camA']['baseline_shift'], 1)
+        self.assertEqual(sparsity['dh_chains']['chainA']['dh'], [[1,1,1,1]])
+        self.assertEqual(sparsity['rectified_cams']['camA']['baseline_shift'], 1)
 
 if __name__ == '__main__':
     import rostest

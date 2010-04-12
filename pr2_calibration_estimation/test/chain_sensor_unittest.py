@@ -122,6 +122,7 @@ class TestChainSensor(unittest.TestCase):
               chainA:
                 dh:
                 - [ 0, 0, 1, 0 ]
+                gearing: [1]
                 cov:
                   joint_angles: [1]
             tilting_lasers: {}
@@ -145,7 +146,7 @@ class TestChainSensor(unittest.TestCase):
                                              chain_state=JointState(position=[0]) ),
                             "boardA")
         block.update_config(robot_params)
-        cov = block.calculate_cov(None)
+        cov = block.compute_cov(None)
 
         self.assertAlmostEqual(cov[0,0], 0.0, 6)
         self.assertAlmostEqual(cov[1,0], 0.0, 6)
@@ -212,7 +213,7 @@ class TestChainSensor(unittest.TestCase):
         sparsity = block.build_sparsity_dict()
         self.assertEqual(sparsity['transforms']['transformA'], [1,1,1,1,1,1])
         self.assertEqual(sparsity['transforms']['transformB'], [1,1,1,1,1,1])
-        self.assertEqual(sparsity['dh_chains']['chainA'], [[1,1,1,1]])
+        self.assertEqual(sparsity['dh_chains']['chainA'], {'dh':[[1,1,1,1]], 'gearing':[1]})
 
 if __name__ == '__main__':
     import rostest
