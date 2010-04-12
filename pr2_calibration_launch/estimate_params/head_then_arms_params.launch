@@ -3,7 +3,7 @@
   <group ns="calibration_config" clear_params="true">
 
     <group ns="sensors">
-      <param name="all"    textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/sensors.yaml" />
+      <param name="all"    textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/sensors.yaml" />
     </group>
 
     <group ns="cal_steps">
@@ -65,7 +65,7 @@
 
     </group>
 
-    <param name="initial_system" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/cov/system.yaml" />
+    <param name="initial_system" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/system.yaml" />
 
   </group>
 
