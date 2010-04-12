@@ -1,0 +1,26 @@
+camera_measurements:
+- {cam_id: narrow_left_rect, config: small_cb_4x5}
+- {cam_id: wide_left_rect, config: small_cb_4x5}
+- {cam_id: wide_right_rect, config: small_cb_4x5}
+- {cam_id: narrow_right_rect, config: small_cb_4x5}
+joint_commands:
+- controller: head_traj_controller
+  segments:
+  - duration: 2.0
+    positions: [0.81000730585056824, 0.58695422744569303]
+- controller: r_arm_controller
+  segments:
+  - duration: 2.0
+    positions: [0.29039810342724742, 0.13780512973715667, -1.0143650792864947, -0.98528266851454782,
+      -0.39798795821985727, -1.1213506484083346, 5.7472641838501719]
+- controller: l_arm_controller
+  segments:
+  - duration: 2.0
+    positions: [1.4905189440181639, -0.040351778320824983, 0.0089403179473079887,
+      -1.5798559801666965, -0.16613683372200977, -0.26394378788568323, -0.030164590874690964]
+joint_measurements:
+- {chain_id: head_chain, config: tight_tol}
+- {chain_id: right_arm_chain, config: tight_tol}
+laser_measurements: []
+sample_id: r_arm_0029
+target: {chain_id: right_arm_chain, target_id: small_cb_4x5}

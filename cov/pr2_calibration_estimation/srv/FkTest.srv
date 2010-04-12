@@ -1,0 +1,6 @@
+string root
+string tip
+float64[] joint_positions
+---
+float64[] pos
+float64[] rot         # 3x3 matrix storing transform (filled 1 row at a time)

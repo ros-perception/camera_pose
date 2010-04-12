@@ -1,0 +1,27 @@
+<launch>
+
+  <include file="$(find pr2_calibration_launch)/capture_data/controllers.launch" />
+  <include file="$(find pr2_calibration_launch)/capture_data/stereo_image_proc.launch" />
+  <include file="$(find pr2_calibration_launch)/capture_data/joint_settlers.launch" />
+
+  <!-- Cameras -->
+  <include file="$(find pr2_calibration_launch)/capture_data/double_stereo_pipeline.launch" />
+
+  <include file="$(find pr2_calibration_launch)/capture_data/monocam_pipeline.launch"
+           ns="l_forearm_cam" />
+  <node type="throttle"
+        pkg="topic_tools"
+        name="forearm_l_throttle"
+        args="messages l_forearm_cam/image_rect 2" />
+
+  <include file="$(find pr2_calibration_launch)/capture_data/monocam_pipeline.launch"
+           ns="r_forearm_cam" />
+  <node type="throttle"
+        pkg="topic_tools"
+        name="forearm_r_throttle"
+        args="messages r_forearm_cam/image_rect 2" />
+
+  <include file="$(find pr2_calibration_launch)/capture_data/intersection.launch" />
+  <include file="$(find pr2_calibration_launch)/capture_data/laser_pipelines.launch" />
+  
+</launch>

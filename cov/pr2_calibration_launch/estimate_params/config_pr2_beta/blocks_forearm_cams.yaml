@@ -1,0 +1,61 @@
+  # Camera attached to a DH Chain. laser sensor connected to root
+
+  camera_laser: []
+
+  camera_chain:
+    - block_id:  LeftForearm-RightArm
+      camera_id: forearm_left_rect
+      camera_chain:
+        before_chain: [l_shoulder_pan_joint]
+        chain_id:     left_arm_chain
+        after_chain:  [l_forearm_roll_adj, l_forearm_cam_frame_joint, l_forearm_cam_optical_frame_joint]
+        dh_link_num:  4
+      target_chain:
+        before_chain: [r_shoulder_pan_joint]
+        chain_id:     right_arm_chain
+        after_chain:  [right_arm_tip_adj, right_arm_cb]
+        dh_link_num:  6
+      error_scalar: 1.0
+
+    - block_id:  LeftForearm-LeftArm
+      camera_id: forearm_left_rect
+      camera_chain:
+        before_chain: [l_shoulder_pan_joint]
+        chain_id:     left_arm_chain
+        after_chain:  [l_forearm_roll_adj, l_forearm_cam_frame_joint, l_forearm_cam_optical_frame_joint]
+        dh_link_num:  4
+      target_chain:
+        before_chain: [l_shoulder_pan_joint]
+        chain_id:     left_arm_chain
+        after_chain:  [left_arm_tip_adj, left_arm_cb]
+        dh_link_num:  6
+      error_scalar: 1.0
+
+    - block_id:  RightForearm-LeftArm
+      camera_id: forearm_right_rect
+      camera_chain:
+        before_chain: [r_shoulder_pan_joint]
+        chain_id:     right_arm_chain
+        after_chain:  [r_forearm_roll_adj, r_forearm_cam_frame_joint, r_forearm_cam_optical_frame_joint]
+        dh_link_num:  4
+      target_chain:
+        before_chain: [l_shoulder_pan_joint]
+        chain_id:     left_arm_chain
+        after_chain:  [left_arm_tip_adj, left_arm_cb]
+        dh_link_num:  6
+      error_scalar: 1.0
+
+    - block_id:  RightForearm-RightArm
+      camera_id: forearm_right_rect
+      camera_chain:
+        before_chain: [r_shoulder_pan_joint]
+        chain_id:     right_arm_chain
+        after_chain:  [r_forearm_roll_adj, r_forearm_cam_frame_joint, r_forearm_cam_optical_frame_joint]
+        dh_link_num:  4
+      target_chain:
+        before_chain: [r_shoulder_pan_joint]
+        chain_id:     right_arm_chain
+        after_chain:  [right_arm_tip_adj, right_arm_cb]
+        dh_link_num:  6
+      error_scalar: 1.0
+

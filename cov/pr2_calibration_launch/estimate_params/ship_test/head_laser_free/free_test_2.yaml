@@ -1,0 +1,82 @@
+
+  dh_chains:
+    right_arm_chain:
+      dh:
+        - [ 0, 0, 0, 0 ]    # Shoulder Pan
+        - [ 0, 0, 0, 0 ]    # Shoulder Lift
+        - [ 0, 0, 0, 0 ]    # Upper Arm
+        - [ 0, 0, 0, 0 ]    # Elbow Flex
+        - [ 0, 0, 0, 0 ]    # Forearm Roll
+        - [ 0, 0, 0, 0 ]    # Wrist flex
+        - [ 0, 0, 0, 0 ]    # Wrist roll
+      gearing: [0, 0, 0, 0, 0, 0, 0]
+
+    left_arm_chain:
+      dh:
+        - [ 0, 0, 0, 0 ]    # Shoulder Pan
+        - [ 0, 0, 0, 0 ]    # Shoulder Lift
+        - [ 0, 0, 0, 0 ]    # Upper Arm
+        - [ 0, 0, 0, 0 ]    # Elbow Flex
+        - [ 0, 0, 0, 0 ]    # Forearm Roll
+        - [ 0, 0, 0, 0 ]    # Wrist flex
+        - [ 0, 0, 0, 0 ]    # Wrist roll
+      gearing: [0, 0, 0, 0, 0, 0, 0]
+
+    head_chain:
+      dh:
+        - [ 0, 0, 0, 0 ]          # Head Pan
+        - [ 0, 0, 0, 0 ]          # Head Tilt
+      gearing: [0, 0]
+
+  tilting_lasers:
+    tilt_laser:
+      before_joint: [ 0, 0, 0, 0, 0, 0 ]
+      after_joint:  [ 0, 0, 0, 0, 0, 0 ]
+      gearing: 0
+
+  transforms:
+    l_shoulder_pan_joint:              [ 0, 0, 0, 0, 0, 0 ]
+    r_shoulder_pan_joint:              [ 0, 0, 0, 0, 0, 0 ]
+    head_pan_joint:                    [ 0, 0, 0, 0, 0, 0 ]
+
+    head_chain_tip_adj:                [ 0, 0, 0, 0, 0, 0 ]
+
+    head_plate_frame_joint:            [ 0, 0, 0, 0, 0, 0 ]
+    double_stereo_frame_joint:         [ 0, 0, 0, 0, 0, 0 ]
+    wide_stereo_frame_joint:           [ 0, 0, 0, 0, 0, 0 ]
+    narrow_stereo_frame_joint:         [ 0, 0, 0, 0, 0, 0 ]
+    wide_stereo_optical_frame_joint:   [ 0, 0, 0, 0, 0, 0 ]
+    narrow_stereo_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
+
+    l_forearm_roll_adj:                [ 0, 0, 0, 0, 0, 0 ]
+    l_forearm_cam_frame_joint:         [ 0, 0, 0, 0, 0, 0 ]
+    l_forearm_cam_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
+
+    r_forearm_roll_adj:                [ 0, 0, 0, 0, 0, 0 ]
+    r_forearm_cam_frame_joint:         [ 0, 0, 0, 0, 0, 0 ]
+    r_forearm_cam_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
+
+    right_arm_tip_adj:                 [ 0, 0, 0, 0, 0, 0 ]
+    right_arm_cb:                      [ 0, 0, 0, 0, 0, 0 ]
+
+    left_arm_tip_adj:                  [ 0, 0, 0, 0, 0, 0 ]
+    left_arm_cb:                       [ 0, 0, 0, 0, 0, 0 ]
+
+  rectified_cams:
+    wide_left_rect:
+      baseline_shift: 0
+    wide_right_rect:
+      baseline_shift: 0
+    narrow_left_rect:
+      baseline_shift: 0
+    narrow_right_rect:
+      baseline_shift: 0
+    forearm_left_rect:
+      baseline_shift: 0
+    forearm_right_rect:
+      baseline_shift: 0
+
+  checkerboards:
+    small_cb_4x5:
+      spacing_x: 0
+      spacing_y: 0

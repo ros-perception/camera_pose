@@ -1,0 +1,87 @@
+<launch>
+
+  <group ns="right_arm_chain">
+
+    <node pkg="joint_states_settler" type="joint_states_settler_action"
+          name="settler" output="screen">
+
+      <remap from="joint_states" to="/joint_states" />
+      <remap from="pruned_joint_states" to="chain_state" />
+      <!-- remap from="settled_interval" to="/request_interval" / -->
+
+      <param name="joint_name_00" type="string" value="r_shoulder_pan_joint" />
+      <param name="joint_tol_00"  type="double" value="0.0" />
+
+      <param name="joint_name_01" type="string" value="r_shoulder_lift_joint" />
+      <param name="joint_tol_01"  type="double" value="0.0" />
+
+      <param name="joint_name_02" type="string" value="r_upper_arm_roll_joint" />
+      <param name="joint_tol_02"  type="double" value="0.0" />
+
+      <param name="joint_name_03" type="string" value="r_elbow_flex_joint" />
+      <param name="joint_tol_03"  type="double" value="0.0" />
+
+      <param name="joint_name_04" type="string" value="r_forearm_roll_joint" />
+      <param name="joint_tol_04"  type="double" value="0.0" />
+
+      <param name="joint_name_05" type="string" value="r_wrist_flex_joint" />
+      <param name="joint_tol_05"  type="double" value="0.0" />
+
+      <param name="joint_name_06" type="string" value="r_wrist_roll_joint" />
+      <param name="joint_tol_06"  type="double" value="0.0" />
+
+    </node>
+
+  </group>
+
+  <group ns="left_arm_chain">
+
+    <node pkg="joint_states_settler" type="joint_states_settler_action"
+          name="settler" output="screen">
+
+      <remap from="joint_states" to="/joint_states" />
+      <remap from="pruned_joint_states" to="chain_state" />
+      <!-- remap from="settled_interval" to="/request_interval" / -->
+
+      <param name="joint_name_00" type="string" value="l_shoulder_pan_joint" />
+      <param name="joint_tol_00"  type="double" value="0.0" />
+
+      <param name="joint_name_01" type="string" value="l_shoulder_lift_joint" />
+      <param name="joint_tol_01"  type="double" value="0.0" />
+
+      <param name="joint_name_02" type="string" value="l_upper_arm_roll_joint" />
+      <param name="joint_tol_02"  type="double" value="0.0" />
+
+      <param name="joint_name_03" type="string" value="l_elbow_flex_joint" />
+      <param name="joint_tol_03"  type="double" value="0.0" />
+
+      <param name="joint_name_04" type="string" value="l_forearm_roll_joint" />
+      <param name="joint_tol_04"  type="double" value="0.0" />
+
+      <param name="joint_name_05" type="string" value="l_wrist_flex_joint" />
+      <param name="joint_tol_05"  type="double" value="0.0" />
+
+      <param name="joint_name_06" type="string" value="l_wrist_roll_joint" />
+      <param name="joint_tol_06"  type="double" value="0.0" />
+
+    </node>
+
+  </group>
+
+
+  <group ns="head_chain">
+    <node pkg="joint_states_settler" type="joint_states_settler_action"
+          name="settler" output="screen">
+      <remap from="joint_states" to="/joint_states" />
+      <remap from="pruned_joint_states" to="chain_state" />
+      <!-- remap from="settled_interval" to="/request_interval" / -->
+
+      <param name="joint_name_00" type="string" value="head_pan_joint" />
+      <param name="joint_tol_00"  type="double" value="0.0" />
+
+      <param name="joint_name_01" type="string" value="head_tilt_joint" />
+      <param name="joint_tol_01"  type="double" value="0.0" />
+    </node>
+  </group>
+
+</launch>
