@@ -50,6 +50,7 @@ from pr2_calibration_estimation.camera import RectifiedCamera
 from pr2_calibration_estimation.tilting_laser import TiltingLaser
 from pr2_calibration_estimation.full_chain import FullChainCalcBlock
 
+import numpy
 from numpy import *
 
 def loadConfigList():
@@ -106,7 +107,7 @@ class TestTiltingLaser(unittest.TestCase):
         print ""
         config, robot_params = loadSystem()
 
-        joint_points = [ JointState(position=[0,pi/2,1]),
+        joint_points = [ JointState(position=[0,0,1]),
                          JointState(position=[pi/2,0,2]) ]
 
         sensor = TiltingLaserSensor(config, LaserMeasurement(laser_id="laserA",
@@ -119,12 +120,37 @@ class TestTiltingLaser(unittest.TestCase):
         print "Cov:"
         print cov
 
+        #numpy.savetxt('cov.txt', cov, "% 6.4f")
+
         self.assertAlmostEqual(cov[0,0], 1.0, 6)
         self.assertAlmostEqual(cov[1,1], 1.0, 6)
-        self.assertAlmostEqual(cov[2,2], 0.0, 6)
+        self.assertAlmostEqual(cov[2,2], 1.0, 6)
         self.assertAlmostEqual(cov[3,3], 4.0, 6)
         self.assertAlmostEqual(cov[4,4], 4.0, 6)
         self.assertAlmostEqual(cov[5,5], 1.0, 6)
+
+    def test_gamma(self):
+        print ""
+        config, robot_params = loadSystem()
+
+        joint_points = [ JointState(position=[0,0,1]),
+                         JointState(position=[pi/2,0,2]) ]
+
+        sensor = TiltingLaserSensor(config, LaserMeasurement(laser_id="laserA",
+                                                             joint_points=joint_points))
+
+        sensor.update_config(robot_params)
+        gamma = sensor.compute_marginal_gamma_sqrt(None)
+
+        print "Gamma:"
+        print gamma
+        #numpy.savetxt('gamma.txt', gamma, "% 6.4f")
+        self.assertAlmostEqual(gamma[0,0], 1.0, 6)
+        self.assertAlmostEqual(gamma[1,1], 1.0, 6)
+        self.assertAlmostEqual(gamma[2,2], 1.0, 6)
+        self.assertAlmostEqual(gamma[3,3], 0.5, 6)
+        self.assertAlmostEqual(gamma[4,4], 0.5, 6)
+        self.assertAlmostEqual(gamma[5,5], 1.0, 6)
 
     def test_tilting_laser_1(self):
         print ""

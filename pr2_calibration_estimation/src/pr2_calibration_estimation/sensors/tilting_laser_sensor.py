@@ -46,6 +46,7 @@ from numpy import reshape, array, zeros, matrix, diag, real
 
 import roslib; roslib.load_manifest('pr2_calibration_estimation')
 import rospy
+import numpy
 
 # Takes a measurment, plus a set of possible camera/laser pairs, and creates the necessary error blocks
 class TiltingLaserBundler:
@@ -108,6 +109,7 @@ class TiltingLaserSensor:
             sub_gamma_sqrt = real(sub_gamma_sqrt_full)
             assert(scipy.linalg.norm(sub_gamma_sqrt_full - sub_gamma_sqrt) < 1e-6)
             gamma[first:last, first:last] = sub_gamma_sqrt
+            #import code; code.interact(local=locals())
         return gamma
 
     def get_residual_length(self):
@@ -125,6 +127,10 @@ class TiltingLaserSensor:
     def compute_cov(self, target_pts):
         epsilon = 1e-8
 
+        # Ok, this is coded kind of weird. Jt should be [3*N, len(r)]. Currently, it is
+        # [3, len(r)], which means we are assuming that laser noise is correlated across
+        # multiple points. This is wrong.  However, we accidentally fix this when computing
+        # Gamma, so it doesn't show up in the final solution.
         Jt = zeros([3, self.get_residual_length()])
 
         import copy
@@ -147,6 +153,10 @@ class TiltingLaserSensor:
         #import code; code.interact(local=locals())
         cov = matrix(Jt).T * matrix(diag(cov_sensor)) * matrix(Jt)
         return cov
+
+#    def compute_cov(self, target_pts):
+#        N = target_pts.shape[1]
+#        return numpy.eye(N*3)
 
 
     # Returns the pixel coordinates of the laser points after being projected into the camera
