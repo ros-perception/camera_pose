@@ -8,7 +8,7 @@
 
     <group ns="cal_steps">
 
-      <group ns="A - 01 - Estimating Checkerboard Locations">
+      <group ns="A - 00 - Estimating Checkerboard Locations">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_0.yaml" />
         <rosparam>
           sensors:
@@ -20,7 +20,7 @@
       </group>
 
 
-      <group ns="A - 02 - Adding Stereocam Locations">
+      <group ns="A - 01 - Adding Stereocam Locations">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_1.yaml" />
         <rosparam>
           sensors:
@@ -33,8 +33,21 @@
         <param name="output_filename" type="string" value="head_laser_1" />
       </group>
 
-      <group ns="A - 03 - Adding Stereo Baselines, Laser Pose, Laser Gearing">
+      <group ns="A - 02 - Adding Stereo Baselines">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_2.yaml" />
+        <rosparam>
+          sensors:
+          - narrow_left_rect
+          - narrow_right_rect
+          - wide_left_rect
+          - wide_right_rect
+          - tilt_laser
+        </rosparam>
+        <param name="output_filename" type="string" value="head_laser_2" />
+      </group>
+
+      <group ns="A - 03 - Adding Laser Pose">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_3.yaml" />
         <rosparam>
           sensors:
           - narrow_left_rect

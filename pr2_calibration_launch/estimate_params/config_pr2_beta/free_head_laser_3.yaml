@@ -30,8 +30,8 @@
 
   tilting_lasers:
     tilt_laser:
-      before_joint: [ 0, 0, 0, 0, 0, 0 ]
-      after_joint:  [ 0, 0, 0, 0, 0, 0 ]
+      before_joint: [ 0, 0, 0, 0, 1, 0 ]
+      after_joint:  [ 0, 0, 1, 0, 0, 1 ]
       gearing: 0
 
   transforms:
@@ -69,7 +69,7 @@
       cx_shift: 0
       cy_shift: 0
     wide_right_rect:
-      baseline_shift: 0
+      baseline_shift: 1
       f_shift: 0
       cx_shift: 0
       cy_shift: 0
@@ -79,7 +79,7 @@
       cx_shift: 0
       cy_shift: 0
     narrow_right_rect:
-      baseline_shift: 0
+      baseline_shift: 1
       f_shift: 0
       cx_shift: 0
       cy_shift: 0
