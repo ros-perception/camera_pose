@@ -2,7 +2,8 @@
     <!-- ImageAnnotator -->
    <node type="image_annotator"
          pkg="laser_cb_detector"
-         name="cb_annotator">
+         name="cb_annotator"
+         machine="c2" >
      <remap from="features" to="laser_checkerboard"/>
      <remap from="image" to="cb_image" />
      <remap from="annotated" to="cb_annotated_image" />
@@ -11,7 +12,8 @@
    <!-- Laser Joint Processor -->
    <node type="laser_joint_processor_node"
           pkg="laser_joint_processor"
-          name="laser_joint_processor"  output="screen">
+          name="laser_joint_processor"  output="screen"
+          machine="c2" >
       <remap from="snapshot" to="dense_laser_snapshot" />
       <remap from="features" to="laser_checkerboard" />
       <remap from="joint_features" to="joint_state_features" />
@@ -22,7 +24,8 @@
   <!-- prototype projector -->
   <node type="laser_joint_projector_node"
         pkg="laser_joint_projector"
-        name="joint_projector">
+        name="joint_projector"
+        machine="c2" >
     <remap from="robot_description" to="/robot_description"/>
   </node>
 
@@ -30,7 +33,8 @@
   <node type="laser_interval_calc_node"
         pkg="laser_cb_detector"
         name="laser_interval_calc"
-        output="screen">
+        output="screen"
+        machine="c2" >
     <remap from="snapshot" to="dense_laser_snapshot"/>
     <remap from="features" to="laser_checkerboard"/>
     <remap from="laser_interval" to="laser_checkerboard_interval"/>
