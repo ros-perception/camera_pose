@@ -118,21 +118,12 @@ if __name__ == '__main__':
                  (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'s'})]
     #loop_list2 = []
 
-<<<<<<< Updated upstream:pr2_calibration_estimation/src/pr2_calibration_estimation/post_process.py
     loop_list3 = [('right_arm_chain', 'forearm_right_rect', {'color':'g', 'marker':'o'}),
                  ( 'right_arm_chain', 'forearm_left_rect',  {'color':'y', 'marker':'o'}),
                  ( 'left_arm_chain',  'forearm_right_rect', {'color':'y', 'marker':'s'}),
                  ( 'left_arm_chain',  'forearm_left_rect',  {'color':'g', 'marker':'s'})]
 
     loop_list3 = []
-=======
-    loop_list3 = [('right_arm_chain', 'forearm_right_rect', {'color':'c', 'marker':'o'}),
-                 ( 'right_arm_chain', 'forearm_left_rect',  {'color':'m', 'marker':'o'}),
-                 ( 'left_arm_chain',  'forearm_right_rect', {'color':'m', 'marker':'s'}),
-                 ( 'left_arm_chain',  'forearm_left_rect',  {'color':'c', 'marker':'s'})]
-
-    #loop_list3 = []
->>>>>>> Stashed changes:pr2_calibration_estimation/src/pr2_calibration_estimation/post_process.py
 
     loop_list = loop_list1 + loop_list2 + loop_list3
     #loop_list = loop_list[0:1]
