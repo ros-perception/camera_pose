@@ -10,6 +10,7 @@
 
       <group ns="A - 00 - Estimating Checkerboard Locations">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_0.yaml" />
+        <param name="use_cov" type="bool" value="False" />
         <rosparam>
           sensors:
           - left_arm_chain
@@ -22,6 +23,7 @@
 
       <group ns="A - 01 - Adding Stereocam Locations">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_1.yaml" />
+        <param name="use_cov" type="bool" value="True" />
         <rosparam>
           sensors:
           - narrow_left_rect
@@ -35,6 +37,7 @@
 
       <group ns="A - 02 - Adding Stereo Baselines">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_2.yaml" />
+        <param name="use_cov" type="bool" value="True" />
         <rosparam>
           sensors:
           - narrow_left_rect
@@ -61,6 +64,7 @@
 
       <group ns="B - 01 - Locking Head Sensors. Estimating Arm Joint Offsets">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_arms_only_1.yaml" />
+        <param name="use_cov" type="bool" value="True" />
         <rosparam>
           sensors:
           - narrow_left_rect

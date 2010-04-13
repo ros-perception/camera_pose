@@ -119,7 +119,7 @@ def load_requested_sensors(all_sensors_dict, requested_sensors):
     return cur_sensors
 
 if __name__ == '__main__':
-    rospy.init_node("multi_step_cov_estimator")
+    rospy.init_node("multi_step_cov_estimator", anonymous=True)
 
     print "Starting The Multi Step [Covariance] Estimator Node\n"
 
@@ -222,7 +222,12 @@ if __name__ == '__main__':
             output_poses = previous_pose_guesses
         else:
             free_dict = yaml.load(cur_step["free_params"])
-            output_dict, output_poses, J = opt_runner(previous_system, previous_pose_guesses, free_dict, multisensors)
+            use_cov = cur_step['use_cov']
+            if use_cov:
+                print "Executing step with covariance calculations"
+            else:
+                print "Executing step without covariance calculations"
+            output_dict, output_poses, J = opt_runner(previous_system, previous_pose_guesses, free_dict, multisensors, use_cov)
 
         # Dump results to file
         out_f = open(output_dir + "/" + cur_step["output_filename"] + ".yaml", 'w')

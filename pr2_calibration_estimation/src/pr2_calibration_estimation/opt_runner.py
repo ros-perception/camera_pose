@@ -45,11 +45,12 @@ class ErrorCalc:
     """
     Helpers for computing errors and jacobians
     """
-    def __init__(self, robot_params, free_dict, multisensors):
+    def __init__(self, robot_params, free_dict, multisensors, use_cov):
         self._robot_params = robot_params
         self._expanded_params = robot_params.deflate()
         self._free_list = robot_params.calc_free(free_dict)
         self._multisensors = multisensors
+        self._use_cov = use_cov
 
 
     def calculate_full_param_vec(self, opt_param_vec):
@@ -80,8 +81,10 @@ class ErrorCalc:
         for multisensor, cb_pose_vec in zip(self._multisensors, list(full_pose_arr)):
             # Process cb pose
             cb_points = SingleTransform(cb_pose_vec).transform * self._robot_params.checkerboards[multisensor.checkerboard].generate_points()
-            r_list.append(multisensor.compute_residual_scaled(cb_points))
-
+            if (self._use_cov):
+                r_list.append(multisensor.compute_residual_scaled(cb_points))
+            else:
+                r_list.append(multisensor.compute_residual(cb_points))
         #import code; code.interact(local=locals())
         r_vec = concatenate(r_list)
 
@@ -186,7 +189,10 @@ class ErrorCalc:
             Jt[i] = (sensor.compute_residual(target_points) - f0)/epsilon
             dx[i] = 0.0
         J = Jt.transpose()
-        J_scaled = gamma_sqrt * J
+        if (self._use_cov):
+            J_scaled = gamma_sqrt * J
+        else:
+            J_scaled = J
         return J_scaled
 
     def multisensor_pose_jacobian(self, opt_param_vec, pose_param_vec, multisensor):
@@ -214,7 +220,10 @@ class ErrorCalc:
             #import code; code.interact(local=locals())
             dx[i] = 0.0
         J = Jt.transpose()
-        J_scaled = gamma_sqrt * J
+        if (self._use_cov):
+            J_scaled = gamma_sqrt * J
+        else:
+            J_scaled = J
         return J_scaled
 
 def build_opt_vector(robot_params, free_dict, pose_guess_arr):
@@ -244,7 +253,7 @@ def compute_errors_breakdown(error_calc, multisensors, opt_pose_arr):
             errors_dict[sensor.sensor_id].append(r_sensor)
     return errors_dict
 
-def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors):
+def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors, use_cov):
     """
     Runs a single optimization step for the calibration optimization.
       robot_params_dict - Dictionary storing all of the system primitives' parameters (lasers, cameras, chains, transforms, etc)
@@ -257,7 +266,7 @@ def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors):
     robot_params = RobotParams()
     robot_params.configure(robot_params_dict)
 
-    error_calc = ErrorCalc(robot_params, free_dict, multisensors)
+    error_calc = ErrorCalc(robot_params, free_dict, multisensors, use_cov)
 
     # Construct the initial guess
     opt_all = build_opt_vector(robot_params, free_dict, pose_guess_arr)

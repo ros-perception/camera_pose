@@ -109,14 +109,14 @@ if __name__ == '__main__':
                  (sensor_3d_name, 'narrow_left_rect',  {'color':'b', 'marker':'s'}),
                  (sensor_3d_name, 'wide_left_rect',    {'color':'g', 'marker':'o'}),
                  (sensor_3d_name, 'wide_right_rect',   {'color':'r', 'marker':'s'})]
-    loop_list1 = []
+    #loop_list1 = []
 
     sensor_3d_name = 'right_arm_chain'
     loop_list2 = [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'o'}),
                  (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'s'}),
                  (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'o'}),
                  (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'s'})]
-    #loop_list2 = []
+    loop_list2 = []
 
     loop_list3 = [('right_arm_chain', 'forearm_right_rect', {'color':'g', 'marker':'o'}),
                  ( 'right_arm_chain', 'forearm_left_rect',  {'color':'y', 'marker':'o'}),
@@ -140,6 +140,7 @@ if __name__ == '__main__':
             if topic == "robot_measurement":
                 # Hack to rename laser id
                 for cur_laser in msg.M_laser:
+                    #pass
                     if cur_laser.laser_id == "tilt_laser_6x8":
                         cur_laser.laser_id = "tilt_laser"
                     #else:
@@ -162,7 +163,7 @@ if __name__ == '__main__':
             ms.update_config(system_def)
 
 
-        error_calc = opt_runner.ErrorCalc(system_def, free_dict, multisensors_pruned)
+        error_calc = opt_runner.ErrorCalc(system_def, free_dict, multisensors_pruned, False)
         opt_all_vec = opt_runner.build_opt_vector(system_def, free_dict, numpy.array(cb_poses_pruned))
         e = error_calc.calculate_error(opt_all_vec)
         #J = error_calc.calculate_jacobian(opt_all_vec)
@@ -181,8 +182,8 @@ if __name__ == '__main__':
         # Calculate loop errors
         chain_sensors = [[s for s in ms.sensors if s.sensor_id == sensor_id_3d][0] for ms in multisensors_pruned]
         cam_sensors   = [[s for s in ms.sensors if s.sensor_id == sensor_id_2d][0] for ms in multisensors_pruned]
-        fk_points = [s.get_measurement() for s in chain_sensors]
-        #fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
+        #fk_points = [s.get_measurement() for s in chain_sensors]
+        fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
         #import code; code.interact(local=locals())
 
         cam_Js   = [s.compute_expected_J(fk) for s,fk in zip(cam_sensors, fk_points)]
