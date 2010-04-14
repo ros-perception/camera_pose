@@ -182,8 +182,8 @@ if __name__ == '__main__':
         # Calculate loop errors
         chain_sensors = [[s for s in ms.sensors if s.sensor_id == sensor_id_3d][0] for ms in multisensors_pruned]
         cam_sensors   = [[s for s in ms.sensors if s.sensor_id == sensor_id_2d][0] for ms in multisensors_pruned]
-        #fk_points = [s.get_measurement() for s in chain_sensors]
-        fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
+        fk_points = [s.get_measurement() for s in chain_sensors]
+        #fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
         #import code; code.interact(local=locals())
 
         cam_Js   = [s.compute_expected_J(fk) for s,fk in zip(cam_sensors, fk_points)]
