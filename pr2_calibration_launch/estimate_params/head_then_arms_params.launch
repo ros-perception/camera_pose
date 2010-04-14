@@ -51,6 +51,7 @@
 
       <group ns="A - 03 - Adding Laser Pose">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_3.yaml" />
+        <param name="use_cov" type="bool" value="True" />
         <rosparam>
           sensors:
           - narrow_left_rect
