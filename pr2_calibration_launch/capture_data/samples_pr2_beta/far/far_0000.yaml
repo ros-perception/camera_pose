@@ -1,8 +1,8 @@
 camera_measurements:
-- {cam_id: narrow_left_rect, config: cb_6x8}
-- {cam_id: wide_left_rect, config: cb_6x8}
-- {cam_id: wide_right_rect, config: cb_6x8}
-- {cam_id: narrow_right_rect, config: cb_6x8}
+- {cam_id: narrow_left_rect, config: cb_8x6}
+- {cam_id: wide_left_rect, config: cb_8x6}
+- {cam_id: wide_right_rect, config: cb_8x6}
+- {cam_id: narrow_right_rect, config: cb_8x6}
 joint_commands:
 - controller: head_traj_controller
   segments:
@@ -21,6 +21,6 @@ joint_commands:
 joint_measurements:
 - {chain_id: head_chain, config: tight_tol}
 laser_measurements:
-- {config: cb_6x8, laser_id: tilt_laser_6x8}
+- {config: cb_8x6, laser_id: tilt_laser_8x6}
 sample_id: far_0000
-target: {chain_id: floating, target_id: large_cb_6x8}
+target: {chain_id: floating, target_id: large_cb_8x6}
