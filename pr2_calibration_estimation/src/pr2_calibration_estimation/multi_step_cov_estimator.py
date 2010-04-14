@@ -190,7 +190,7 @@ if __name__ == '__main__':
             if topic == "robot_measurement":
                 # Hack to rename laser id
                 for cur_laser in msg.M_laser:
-                    if cur_laser.laser_id == "tilt_laser_6x8":
+                    if cur_laser.laser_id in ["tilt_laser_6x8", "tilt_laser_8x6"]:
                         cur_laser.laser_id = "tilt_laser"
                 ms = MultiSensor(cur_sensors)
                 ms.sensors_from_message(msg)
