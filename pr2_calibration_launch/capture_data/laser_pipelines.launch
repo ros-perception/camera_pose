@@ -1,7 +1,5 @@
 <launch>
 
-    <include file="$(find pr2_machine)/pr2.machine" />
-
     <node type="robot_cal_tilt_profile.py"
           pkg="pr2_calibration_launch"
           args="laser_tilt_controller"
@@ -17,8 +15,7 @@
    <node type="dense_laser_snapshotter"
          pkg="pr2_dense_laser_snapshotter"
          name="dense_laser_snapshotter"
-         output="screen"
-         machine="c2" >
+         output="screen" >
        <remap from="scan" to="/tilt_scan"/>
        <remap from="laser_tilt_controller/laser_scanner_signal" to="/laser_tilt_controller/laser_scanner_signal"/>
    </node>
@@ -27,19 +24,16 @@
    <include file="$(find pr2_calibration_launch)/capture_data/laser_post_process.launch" ns="tilt_laser_8x6"/>
 
    <node type="relay" pkg="topic_tools" name="relay_dense_laser"
-         args="dense_laser_snapshot tilt_laser/dense_laser_snapshot"
-         machine="c2" />
+         args="dense_laser_snapshot tilt_laser/dense_laser_snapshot"/>
 
    <node type="relay" pkg="topic_tools" name="relay_dense_laser_8x6"
-         args="dense_laser_snapshot tilt_laser_8x6/dense_laser_snapshot"
-         machine="c2" />
+         args="dense_laser_snapshot tilt_laser_8x6/dense_laser_snapshot"/>
 
    <group ns="tilt_laser">
       <!-- Laser CB Detector -->
       <node type="laser_cb_detector_node"
             pkg="laser_cb_detector"
-            name="laser_cb_detector"
-            machine="c2" >
+            name="laser_cb_detector">
         <remap from="snapshot" to="dense_laser_snapshot" />
         <remap from="image" to="cb_image" />
 
@@ -61,8 +55,7 @@
       <!-- Laser CB Detector -->
       <node type="laser_cb_detector_node"
             pkg="laser_cb_detector"
-            name="laser_cb_detector"
-            machine="c2" >
+            name="laser_cb_detector">
         <remap from="snapshot" to="dense_laser_snapshot" />
         <remap from="image" to="cb_image" />
 

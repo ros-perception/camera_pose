@@ -1,4 +1,5 @@
 <launch>
+  <machine name="c2" address="c2" ros-root="$(env ROS_ROOT)" ros-package-path="$(env ROS_PACKAGE_PATH)" default="True"/>
 
   <include file="$(find pr2_calibration_launch)/capture_data/controllers.launch" />
   <include file="$(find pr2_calibration_launch)/capture_data/stereo_image_proc.launch" />
