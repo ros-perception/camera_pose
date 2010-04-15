@@ -4,7 +4,7 @@
         name="calibration_gui" output="screen">
     <remap from="left" to="narrow_stereo/left/image_raw" />
     <remap from="right" to="narrow_stereo/right/image_raw" />
-    <remap from="left_camera/set_camera_info" to="narrow_stereo/left/set_camera_info" />
-    <remap from="right_camera/set_camera_info" to="narrow_stereo/right/set_camera_info" />
+    <remap from="left_camera" to="narrow_stereo/left" />
+    <remap from="right_camera" to="narrow_stereo/right" />
   </node>
 </launch>

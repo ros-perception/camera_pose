@@ -3,6 +3,6 @@
         args="--size=5x4 --square=0.025"
         name="calibration_gui" output="screen">
     <remap from="image" to="l_forearm_cam/image_raw" />
-    <remap from="camera/set_camera_info" to="l_forearm_cam/set_camera_info" />
+    <remap from="camera" to="l_forearm_cam" />
   </node>
 </launch>
