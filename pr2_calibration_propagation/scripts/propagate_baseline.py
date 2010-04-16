@@ -114,8 +114,12 @@ def main():
     rospy.wait_for_service(set_cal_service_name)
     print "Writing camera info to camera memory..."
     set_cal_srv = rospy.ServiceProxy(set_cal_service_name, sensor_msgs.srv.SetCameraInfo)
-    set_cal_srv(cam_info)
-    print "Done writing to camera"
+    resp = set_cal_srv(cam_info)
+    if resp.success:
+        print "Done writing to camera"
+    else:
+        print "**************** ERROR WRITING TO CAMERA. PLEASE RETRY ***********************"
+        sys.exit(-1)
 
 if __name__ == "__main__":
     main()
