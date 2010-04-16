@@ -107,23 +107,30 @@ if __name__ == '__main__':
     sensor_3d_name = 'tilt_laser'
     loop_list1 = [(sensor_3d_name, 'narrow_right_rect', {'color':'b', 'marker':'o'}),
                  (sensor_3d_name, 'narrow_left_rect',  {'color':'b', 'marker':'s'}),
-                 (sensor_3d_name, 'wide_left_rect',    {'color':'g', 'marker':'o'}),
+                 (sensor_3d_name, 'wide_left_rect',    {'color':'r', 'marker':'o'}),
                  (sensor_3d_name, 'wide_right_rect',   {'color':'r', 'marker':'s'})]
     #loop_list1 = []
 
     sensor_3d_name = 'right_arm_chain'
-    loop_list2 = [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'o'}),
+    loop_list2r= [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'s'}),
                  (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'s'}),
-                 (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'o'}),
+                 (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'s'}),
                  (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'s'})]
-    loop_list2 = []
 
-    loop_list3 = [('right_arm_chain', 'forearm_right_rect', {'color':'g', 'marker':'o'}),
-                 ( 'right_arm_chain', 'forearm_left_rect',  {'color':'y', 'marker':'o'}),
-                 ( 'left_arm_chain',  'forearm_right_rect', {'color':'y', 'marker':'s'}),
-                 ( 'left_arm_chain',  'forearm_left_rect',  {'color':'g', 'marker':'s'})]
+    sensor_3d_name = 'left_arm_chain'
+    loop_list2l= [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'o'}),
+                 (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'o'}),
+                 (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'o'}),
+                 (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'o'})]
 
-    loop_list3 = []
+    loop_list2 = loop_list2r + loop_list2l
+    #loop_list2 = []
+
+    loop_list3 = [('right_arm_chain', 'forearm_right_rect', {'color':'c', 'marker':'o'}),
+                 ( 'right_arm_chain', 'forearm_left_rect',  {'color':'m', 'marker':'o'}),
+                 ( 'left_arm_chain',  'forearm_right_rect', {'color':'m', 'marker':'s'}),
+                 ( 'left_arm_chain',  'forearm_left_rect',  {'color':'c', 'marker':'s'})]
+    #loop_list3 = []
 
     loop_list = loop_list1 + loop_list2 + loop_list3
     #loop_list = loop_list[0:1]
@@ -214,7 +221,7 @@ if __name__ == '__main__':
         #bearings = numpy.concatenate(bearing_list)
 
         import matplotlib.pyplot as plt
-        plt.scatter(r[:,0], r[:,1], **plot_opts)
+        plt.scatter(array(r)[:,0], array(r)[:,1], **plot_opts)
         #plt.scatter(r[:,0], bearings, **plot_opts)
 
         for k in range(len(sample_ind)):
