@@ -41,6 +41,9 @@ from calibration_msgs.msg import RobotMeasurement
 import os
 import string
 
+print "Starting executive..."
+time.sleep(3.0)
+
 rospy.init_node("pr2_capture_executive_node")
 
 samples_dir = rospy.myargv()[1]
