@@ -185,9 +185,10 @@ class CaptureExecutive:
         self.lock.release()
 
     def add_cam_measurement(self, cam_id, msg):
-        self.lock.acquire()
-        self.cache.add_cam_measurement(cam_id, msg)
-        self.lock.release()
+        if len(msg.image_points) > 0:
+            self.lock.acquire()
+            self.cache.add_cam_measurement(cam_id, msg)
+            self.lock.release()
 
     def add_chain_measurement(self, chain_id, msg):
         self.lock.acquire()
