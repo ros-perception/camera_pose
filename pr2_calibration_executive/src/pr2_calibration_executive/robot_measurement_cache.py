@@ -183,12 +183,12 @@ class RobotMeasurementCache:
         # See if we got everything that we needed
         for cam_id, m in cam_measurements.items():
             if m is None:
-                print "Didn't get a valid [%s]" % cam_id
+                #print "Didn't get a valid [%s]" % cam_id
                 return None
 
         for chain_id, m in chain_measurements.items():
             if m is None:
-                print "Didn't get a [%s]" % chain_id
+                #print "Didn't get a [%s]" % chain_id
                 return None
 
         for laser_id, m in laser_measurements.items():
