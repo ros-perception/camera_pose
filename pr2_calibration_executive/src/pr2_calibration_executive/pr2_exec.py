@@ -42,7 +42,7 @@ import os
 import string
 
 print "Starting executive..."
-time.sleep(3.0)
+time.sleep(7.0)
 
 rospy.init_node("pr2_capture_executive_node")
 
