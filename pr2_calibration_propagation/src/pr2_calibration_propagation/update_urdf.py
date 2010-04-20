@@ -104,10 +104,15 @@ def update_urdf(initial_system, calibrated_system, xml_in):
             not_found.remove(joint_name)
             changelist.extend(cur_cl)
 
+    # Hack to change laser gearing. Assumes that the laser reference position is 0
+    reduction_scale = 1.0 / calibrated_system['tilting_lasers']['tilt_laser']['gearing']
+    cur_cl = update_joint.update_transmission(xml_in, 'laser_tilt_mount_trans', reduction_scale)
+    changelist.extend(cur_cl)
+
     print "jointnames never found: ", not_found
 
     for span, result in changelist:
-        print "\"%s\" -> \"%s\"" % (xml_in[span[0]:span[1]+1], result)
+        print "\"%s\" -> \"%s\"" % (xml_in[span[0]:span[1]], result)
 
     xml_out = process_changelist.process_changelist(changelist, xml_in)
 
