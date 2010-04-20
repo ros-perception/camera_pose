@@ -99,11 +99,17 @@ class TestAtomicElem(unittest.TestCase):
         span = update_joint.find_atomic_elem_span(str_in, 'target2')
         self.assertEqual(span, None)
 
+class TestSplitInternals(unittest.TestCase):
+    def test_easy1(self):
+        str_in = '''<tag1>123</tag1>'''
+        span = update_joint.find_split_internals(str_in)
+        self.assertEqual(span, (6,9))
+
 if __name__ == '__main__':
     import rostest
     rostest.unitrun('pr2_calibration_propagation', 'test_split_elem',   TestSplitElem,   coverage_packages=['pr2_calibration_propagation.update_joint'])
     rostest.unitrun('pr2_calibration_propagation', 'test_atomic_elem',  TestAtomicElem,  coverage_packages=['pr2_calibration_propagation.update_joint'])
     rostest.unitrun('pr2_calibration_propagation', 'test_attr',         TestAttr,        coverage_packages=['pr2_calibration_propagation.update_joint'])
     rostest.unitrun('pr2_calibration_propagation', 'test_update_joint', TestUpdateJoint, coverage_packages=['pr2_calibration_propagation.update_joint'])
-
+    rostest.unitrun('pr2_calibration_propagation', 'test_split_internals', TestSplitInternals, coverage_packages=['pr2_calibration_propagation.update_joint'])
 

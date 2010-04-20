@@ -70,6 +70,37 @@ def update_joint(str_in, name, xyz=None, rpy=None, ref_shift=None):
 
     return changelist
 
+def update_transmission(str_in, name, reduction_scale):
+    '''
+    Updates a transmission
+    new_reduction = original_recuction * reduction_scale
+    '''
+    change
+
+
+def find_split_internals(str_in, start=0, end=None):
+    '''
+    Find everything enclosed by a split element tag
+    '''
+    if end is None:
+        end = len(str_in)
+
+    # Find the first '>'
+    internals_start = str_in.find(">", start, end)+1
+
+    # Keep walking along text until we get to the last '<'
+    left_arrow = str_in.find('<', start, end)
+    if left_arrow < 0:
+        print "Error: Couldn't any '<' in text"
+        print str_in[start:end]
+        sys.exit(-1)
+
+    while left_arrow >= 0:
+        internals_end = left_arrow
+        left_arrow = str_in.find('<', left_arrow+1, end)
+
+    return (internals_start, internals_end)
+
 def find_attr_span(str_in, name, start=0, end=None):
     '''
     Find the span of an attribute in an element.  The resulting start to (end+1) will
