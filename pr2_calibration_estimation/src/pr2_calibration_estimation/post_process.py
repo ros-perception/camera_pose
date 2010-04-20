@@ -247,7 +247,7 @@ if __name__ == '__main__':
 
     plt.axis('equal')
     plt.grid(True)
-    plt.legend(scatter_list, [x['name'] for x in loop_list], prop={'size':'x-small'})
+    #plt.legend(scatter_list, [x['name'] for x in loop_list], prop={'size':'x-small'})
     plt.show()
 
     sys.exit(0)
