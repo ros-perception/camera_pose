@@ -1,0 +1,27 @@
+- name: "Right Arm - Right Forearm"
+  3d: right_arm_chain
+  cam: forearm_right_rect
+  plot_ops:
+    color: c
+    marker: o
+
+- name: "Right Arm - Left Forearm"
+  3d: right_arm_chain
+  cam: forearm_left_rect
+  plot_ops:
+    color: m
+    marker: o
+
+- name: "Left Arm - Right Forearm"
+  3d: left_arm_chain
+  cam: forearm_right_rect
+  plot_ops:
+    color: m
+    marker: s
+
+- name: "Left Arm - Left Forearm"
+  3d: left_arm_chain
+  cam: forearm_left_rect
+  plot_ops:
+    color: c
+    marker: s

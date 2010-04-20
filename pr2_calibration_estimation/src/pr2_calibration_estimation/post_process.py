@@ -53,27 +53,27 @@ from single_transform import SingleTransform
 def usage():
     rospy.logerr("Not enough arguments")
     print "Usage:"
-    print " ./proto1.py [bagfile] [output_dir]"
+    print " ./proto1.py [bagfile] [output_dir] [loop_list.yaml]"
     sys.exit(0)
 
 if __name__ == '__main__':
-    rospy.init_node("multi_step_estimator")
+    rospy.init_node("scatterplot_viewer")
 
     print "Starting The Post Processing App\n"
 
-    if (len(rospy.myargv()) < 2):
+    if (len(rospy.myargv()) < 3):
         usage()
-    elif (len(rospy.myargv()) < 3):
-        bag_filename = rospy.myargv()[1]
-        output_dir = "."
     else:
         bag_filename = rospy.myargv()[1]
         output_dir = rospy.myargv()[2]
+        loop_list_filename = rospy.myargv()[3]
 
     print "Using Bagfile: %s\n" % bag_filename
     if not os.path.isfile(bag_filename):
         rospy.logerr("Bagfile does not exist. Exiting...")
         sys.exit(1)
+
+    loop_list = yaml.load(open(loop_list_filename))
 
     config_param_name = "calibration_config"
     if not rospy.has_param(config_param_name):
@@ -104,41 +104,43 @@ if __name__ == '__main__':
     #sensor_defs = est_helpers.load_requested_sensors(all_sensors_dict, cur_step['sensors'])
 
 
-    sensor_3d_name = 'tilt_laser'
-    loop_list1 = [(sensor_3d_name, 'narrow_right_rect', {'color':'b', 'marker':'o'}),
-                 (sensor_3d_name, 'narrow_left_rect',  {'color':'b', 'marker':'s'}),
-                 (sensor_3d_name, 'wide_left_rect',    {'color':'r', 'marker':'o'}),
-                 (sensor_3d_name, 'wide_right_rect',   {'color':'r', 'marker':'s'})]
-    #loop_list1 = []
-
-    sensor_3d_name = 'right_arm_chain'
-    loop_list2r= [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'s'}),
-                 (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'s'}),
-                 (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'s'}),
-                 (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'s'})]
-
-    sensor_3d_name = 'left_arm_chain'
-    loop_list2l= [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'o'}),
-                 (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'o'}),
-                 (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'o'}),
-                 (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'o'})]
-
-    loop_list2 = loop_list2r + loop_list2l
-    #loop_list2 = []
-
-    loop_list3 = [('right_arm_chain', 'forearm_right_rect', {'color':'c', 'marker':'o'}),
-                 ( 'right_arm_chain', 'forearm_left_rect',  {'color':'m', 'marker':'o'}),
-                 ( 'left_arm_chain',  'forearm_right_rect', {'color':'m', 'marker':'s'}),
-                 ( 'left_arm_chain',  'forearm_left_rect',  {'color':'c', 'marker':'s'})]
-    #loop_list3 = []
-
-    loop_list = loop_list1 + loop_list2 + loop_list3
+#    sensor_3d_name = 'tilt_laser'
+#    loop_list1 = [(sensor_3d_name, 'narrow_right_rect', {'color':'b', 'marker':'o'}),
+#                 (sensor_3d_name, 'narrow_left_rect',  {'color':'b', 'marker':'s'}),
+#                 (sensor_3d_name, 'wide_left_rect',    {'color':'r', 'marker':'o'}),
+#                 (sensor_3d_name, 'wide_right_rect',   {'color':'r', 'marker':'s'})]
+#    #loop_list1 = []
+#
+#    sensor_3d_name = 'right_arm_chain'
+#    loop_list2r= [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'s'}),
+#                 (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'s'}),
+#                 (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'s'}),
+#                 (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'s'})]
+#
+#    sensor_3d_name = 'left_arm_chain'
+#    loop_list2l= [(sensor_3d_name, 'narrow_right_rect', {'color':'g', 'marker':'o'}),
+#                 (sensor_3d_name, 'narrow_left_rect',  {'color':'g', 'marker':'o'}),
+#                 (sensor_3d_name, 'wide_left_rect',    {'color':'y', 'marker':'o'}),
+#                 (sensor_3d_name, 'wide_right_rect',   {'color':'y', 'marker':'o'})]
+#
+#    loop_list2 = loop_list2r + loop_list2l
+#    #loop_list2 = []
+#
+#    loop_list3 = [('right_arm_chain', 'forearm_right_rect', {'color':'c', 'marker':'o'}),
+#                 ( 'right_arm_chain', 'forearm_left_rect',  {'color':'m', 'marker':'o'}),
+#                 ( 'left_arm_chain',  'forearm_right_rect', {'color':'m', 'marker':'s'}),
+#                 ( 'left_arm_chain',  'forearm_left_rect',  {'color':'c', 'marker':'s'})]
+#    #loop_list3 = []
+#
+#    loop_list = loop_list1 + loop_list2 + loop_list3
     #loop_list = loop_list[0:1]
 
 #    loop_list = [('tilt_laser', 'narrow_right_rect', {'color':'b', 'marker':'o'})]
 
-    for sensor_id_3d, sensor_id_2d, plot_opts in loop_list:
-        sensor_defs = est_helpers.load_requested_sensors(all_sensors_dict, [sensor_id_2d, sensor_id_3d])
+    scatter_list = []
+
+    for cur_loop in loop_list:
+        sensor_defs = est_helpers.load_requested_sensors(all_sensors_dict, [cur_loop['cam'], cur_loop['3d']])
 
         # Generate the multisensor samples from the bag
         f = open(bag_filename)
@@ -187,8 +189,8 @@ if __name__ == '__main__':
 
 
         # Calculate loop errors
-        chain_sensors = [[s for s in ms.sensors if s.sensor_id == sensor_id_3d][0] for ms in multisensors_pruned]
-        cam_sensors   = [[s for s in ms.sensors if s.sensor_id == sensor_id_2d][0] for ms in multisensors_pruned]
+        chain_sensors = [[s for s in ms.sensors if s.sensor_id == cur_loop['3d']][0]  for ms in multisensors_pruned]
+        cam_sensors   = [[s for s in ms.sensors if s.sensor_id == cur_loop['cam']][0] for ms in multisensors_pruned]
         fk_points = [s.get_measurement() for s in chain_sensors]
         #fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
         #import code; code.interact(local=locals())
@@ -221,7 +223,10 @@ if __name__ == '__main__':
         #bearings = numpy.concatenate(bearing_list)
 
         import matplotlib.pyplot as plt
-        plt.scatter(array(r)[:,0], array(r)[:,1], **plot_opts)
+        #print "Plot ops:"
+        #print cur_loop['plot_ops']
+        cur_scatter = plt.scatter(array(r)[:,0], array(r)[:,1], **cur_loop['plot_ops'])
+        scatter_list.append(cur_scatter)
         #plt.scatter(r[:,0], bearings, **plot_opts)
 
         for k in range(len(sample_ind)):
@@ -242,6 +247,7 @@ if __name__ == '__main__':
 
     plt.axis('equal')
     plt.grid(True)
+    plt.legend(scatter_list, [x['name'] for x in loop_list], prop={'size':'x-small'})
     plt.show()
 
     sys.exit(0)

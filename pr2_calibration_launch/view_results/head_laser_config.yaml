@@ -1,0 +1,28 @@
+
+- name: "Tilt Laser: Narrow Stereo Left"
+  3d: tilt_laser
+  cam: narrow_left_rect
+  plot_ops:
+    color: b
+    marker: s
+
+- name: "Tilt Laser: Narrow Stereo Right"
+  3d: tilt_laser
+  cam: narrow_right_rect
+  plot_ops:
+    color: b
+    marker: o
+
+- name: "Tilt Laser: Wide Stereo Left"
+  3d: tilt_laser
+  cam: wide_left_rect
+  plot_ops:
+    color: r
+    marker: s
+
+- name: "Tilt Laser: Wide Stereo Right"
+  3d: tilt_laser
+  cam: wide_right_rect
+  plot_ops:
+    color: r
+    marker: o
