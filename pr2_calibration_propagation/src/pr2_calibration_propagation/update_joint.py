@@ -75,8 +75,24 @@ def update_transmission(str_in, name, reduction_scale):
     Updates a transmission
     new_reduction = original_recuction * reduction_scale
     '''
-    change
+    changelist = []
+    trans_span = find_split_elem_span(str_in, 'transmission', name)
+    if trans_span is None:
+        return None
 
+    mech_red_span = find_split_elem_span(str_in, 'mechanicalReduction', None, *trans_span)
+    if mech_red_span is None:
+        return None
+
+    internal_span = find_split_internals(str_in, *mech_red_span)
+    if internal_span is None:
+        return None
+
+    reduction_orig = float(str_in[internal_span[0]:internal_span[1]])
+    reduction_new  = reduction_orig * reduction_scale
+    changelist.append( (internal_span, "%.12f" % reduction_new) )
+
+    return changelist
 
 def find_split_internals(str_in, start=0, end=None):
     '''
@@ -152,14 +168,17 @@ def find_atomic_elem_span(str_in, node_name, start=0, end=None):
     return (elem_start, elem_end + len("/>"))
 
 
-def find_split_elem_span(str_in, elem_name, attr_name):
+def find_split_elem_span(str_in, elem_name, attr_name=None, start=0, end=None):
     '''
     Find the span of a xml node. This function assumes that it doesn't use an '/>'. Thus it should look like <elem> </elem>, and not <elem/>.
     '''
-    elem_start = str_in.find("<%s" % elem_name)
+    if end is None:
+        end = len(str_in)
+
+    elem_start = str_in.find("<%s" % elem_name, start, end)
     while elem_start >= 0:
-        elem_slash_end = str_in.find("/>", elem_start)
-        elem_end = str_in.find(">", elem_start)
+        elem_slash_end = str_in.find("/>", elem_start, end)
+        elem_end = str_in.find(">", elem_start, end)
         if elem_end == -1:
             print "ERROR: Found [<%s] without matching close [>]" % elem_name
             print str_in[elem_start:]
@@ -168,11 +187,15 @@ def find_split_elem_span(str_in, elem_name, attr_name):
         # Continue, so long as we got to a '>' before getting to a '/>'
         if elem_slash_end == -1 or elem_end < elem_slash_end:
             #print "Found: %s" % str_in[elem_start:elem_end+1]
-            block_delim = str_in.find("</%s>" % elem_name, elem_start)
+            block_delim = str_in.find("</%s>" % elem_name, elem_start, end)
             if block_delim < 0:
                 print "ERROR: Didn't find </%s>" % elem_name
                 print str_in[elem_start]
             block_delim += len("</%s>"%elem_name)
+
+            # If we don't care about the name attribute, then we're already done
+            if attr_name is None:
+                break
 
             # Make sure it's not a gazebo elem
             if "%s:"%elem_name not in str_in[elem_start:block_delim]:
@@ -187,7 +210,7 @@ def find_split_elem_span(str_in, elem_name, attr_name):
             #print "Skipping: %s" % str_in[elem_start:elem_slash_end+2]
             pass
 
-        elem_start = str_in.find("<%s"%elem_name, elem_start+1)
+        elem_start = str_in.find("<%s"%elem_name, elem_start+1, end)
 
     if elem_start < 0:
         return None

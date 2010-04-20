@@ -46,6 +46,21 @@ class TestUpdateJoint(unittest.TestCase):
         self.assertEqual(cl[0][0], (42, 45))
         self.assertAlmostEqual(float(cl[0][1]), 124, 5)
 
+class TestUpdateTransmission(unittest.TestCase):
+    def test_easy1(self):
+        str_in = '''<transmission name="trans1"><mechanicalReduction>2</mechanicalReduction></transmission>'''
+        cl = update_joint.update_transmission(str_in, 'trans1', 3)
+        self.assertEqual(len(cl), 1)
+        self.assertEqual(cl[0][0], (49, 50))
+        self.assertAlmostEqual(float(cl[0][1]), 6, 5)
+
+    def test_easy2(self):
+        str_in = '''<transmission name="trans2"></transmission><transmission name="trans1"><mechanicalReduction>2</mechanicalReduction></transmission>'''
+        cl = update_joint.update_transmission(str_in, 'trans1', 3)
+        self.assertEqual(len(cl), 1)
+        self.assertEqual(cl[0][0], (92, 93))
+        self.assertAlmostEqual(float(cl[0][1]), 6, 5)
+
 class TestAttr(unittest.TestCase):
     def test_easy1(self):
         str_in = '''a="123" b="456"'''
@@ -112,4 +127,4 @@ if __name__ == '__main__':
     rostest.unitrun('pr2_calibration_propagation', 'test_attr',         TestAttr,        coverage_packages=['pr2_calibration_propagation.update_joint'])
     rostest.unitrun('pr2_calibration_propagation', 'test_update_joint', TestUpdateJoint, coverage_packages=['pr2_calibration_propagation.update_joint'])
     rostest.unitrun('pr2_calibration_propagation', 'test_split_internals', TestSplitInternals, coverage_packages=['pr2_calibration_propagation.update_joint'])
-
+    rostest.unitrun('pr2_calibration_propagation', 'test_update_transmission', TestUpdateTransmission, coverage_packages=['pr2_calibration_propagation.update_joint'])
