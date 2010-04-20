@@ -51,8 +51,10 @@
 
   </node>
 
+  <node type="urdf_pub.py" pkg="pr2_calibration_launch" name="urdf_pub"/>
+
   <node type="rosrecord" pkg="rosrecord" name="robot_measurement_recorder" output="screen"
-        args="-F /tmp/pr2_calibration/cal_measurements robot_measurement"
+        args="-F /tmp/pr2_calibration/cal_measurements robot_measurement robot_description"
         machine="c1" >
     <!-- Hack to create the directory -->
     <param name="mkdir_tmp" command="mkdir -m 777 -p /tmp/pr2_calibration" />
