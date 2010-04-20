@@ -94,7 +94,7 @@ def find_attr_span(str_in, name, start=0, end=None):
                 print "Error: Unmatch quotations:"
                 print str_in[start:end]
                 return None
-            return (attr_start, attr_end-1)
+            return (attr_start, attr_end)
 
     return None
 

@@ -56,7 +56,7 @@ def process_changelist(changelist, str_in):
         cur_start = cur_span[0]
         cur_end   = cur_span[1]
         str_out = str_out + str_in[cur_pos:cur_start] + new_text
-        cur_pos = cur_end + 1
+        cur_pos = cur_end
 
     str_out = str_out + str_in[cur_pos:]
 
