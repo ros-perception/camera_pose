@@ -49,6 +49,8 @@ import opt_runner
 from sensors.multi_sensor import MultiSensor
 from robot_params import RobotParams
 from single_transform import SingleTransform
+from visualization_msgs.msg import Marker, MarkerArray
+import geometry_msgs.msg
 
 def usage():
     rospy.logerr("Not enough arguments")
@@ -58,6 +60,9 @@ def usage():
 
 if __name__ == '__main__':
     rospy.init_node("scatterplot_viewer")
+
+    marker_guess_pub = rospy.Publisher("cb_guess", Marker)
+    marker_fk_pub = rospy.Publisher("cb_fk", Marker)
 
     print "Starting The Post Processing App\n"
 
@@ -139,7 +144,9 @@ if __name__ == '__main__':
 
     scatter_list = []
 
+    marker_count = 0
     for cur_loop in loop_list:
+        marker_count += 1
         sensor_defs = est_helpers.load_requested_sensors(all_sensors_dict, [cur_loop['cam'], cur_loop['3d']])
 
         # Generate the multisensor samples from the bag
@@ -188,11 +195,42 @@ if __name__ == '__main__':
             print "  %s: %.6f" % (sensor_id, rms_error)
 
 
+
         # Calculate loop errors
         chain_sensors = [[s for s in ms.sensors if s.sensor_id == cur_loop['3d']][0]  for ms in multisensors_pruned]
         cam_sensors   = [[s for s in ms.sensors if s.sensor_id == cur_loop['cam']][0] for ms in multisensors_pruned]
         fk_points = [s.get_measurement() for s in chain_sensors]
-        #fk_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
+        cb_points = [SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points() for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
+
+        points_list_fk    = [ geometry_msgs.msg.Point(cur_pt[0, 0], cur_pt[0, 1], cur_pt[0, 2]) for cur_pt in list(numpy.concatenate(fk_points,1).T)]
+        points_list_guess = [ geometry_msgs.msg.Point(cur_pt[0, 0], cur_pt[0, 1], cur_pt[0, 2]) for cur_pt in list(numpy.concatenate(cb_points,1).T)]
+
+        m = Marker()
+        m.header.frame_id = "/world"
+        m.ns = "fk"
+        m.id = marker_count
+        m.type = Marker.SPHERE_LIST
+        m.action = Marker.MODIFY
+        m.points = points_list_fk
+        m.color.r = 0.0
+        m.color.g = 1.0
+        m.color.b = 0.0
+        m.color.a = 1.0
+        m.scale.x = 0.01
+        m.scale.y = 0.01
+        m.scale.z = 0.01
+
+        marker_fk_pub.publish(m)
+
+        m.points = points_list_guess
+        m.ns = "est"
+        m.color.r = 1.0
+        m.color.g = 0.0
+        m.color.b = 0.0
+        marker_fk_pub.publish(m)
+
+        #fk_points = cb_points
+
         #import code; code.interact(local=locals())
 
         cam_Js   = [s.compute_expected_J(fk) for s,fk in zip(cam_sensors, fk_points)]
