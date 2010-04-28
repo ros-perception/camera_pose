@@ -1,0 +1,13 @@
+<launch> 
+  <node pkg="dynamic_reconfigure" type="dynparam" name="$(anon dynparam)"
+        args="set_from_parameters prosilica_driver" >
+    <param name="trigger_mode" type="string" value="streaming" />
+  </node>
+  
+  <node type="cameracalibrator.py" pkg="camera_calibration"
+        args="--size=8x6 --square=0.108"
+        name="calibration_gui" output="screen">
+    <remap from="image" to="prosilica/image_raw" />
+    <remap from="camera" to="prosilica" />
+  </node>  
+</launch>
