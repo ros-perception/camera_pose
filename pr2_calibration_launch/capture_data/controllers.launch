@@ -11,6 +11,6 @@
   <node type="pr2_controller_manager" pkg="pr2_controller_manager" name="cal_controller_starter"
         args="start r_arm_controller l_arm_controller" output="screen"/>
 
-  <include file="$(find pr2_calibration_launch)/capture_data/teleop_grippers.launch" />
+  <!-- include file="$(find pr2_calibration_launch)/capture_data/teleop_grippers.launch" / -->
 
 </launch>
