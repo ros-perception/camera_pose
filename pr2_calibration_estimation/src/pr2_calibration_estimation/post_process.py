@@ -62,7 +62,7 @@ if __name__ == '__main__':
     rospy.init_node("scatterplot_viewer")
 
     marker_guess_pub = rospy.Publisher("cb_guess", Marker)
-    marker_fk_pub = rospy.Publisher("cb_fk", Marker)
+    marker_fk_pub = rospy.Publisher("cal_markers", Marker)
 
     print "Starting The Post Processing App\n"
 
@@ -206,15 +206,15 @@ if __name__ == '__main__':
         points_list_guess = [ geometry_msgs.msg.Point(cur_pt[0, 0], cur_pt[0, 1], cur_pt[0, 2]) for cur_pt in list(numpy.concatenate(cb_points,1).T)]
 
         m = Marker()
-        m.header.frame_id = "/world"
-        m.ns = "fk"
+        m.header.frame_id = "/torso_lift_link"
+        m.ns = "uncal_sensor"
         m.id = marker_count
         m.type = Marker.SPHERE_LIST
         m.action = Marker.MODIFY
         m.points = points_list_fk
         m.color.r = 0.0
-        m.color.g = 1.0
-        m.color.b = 0.0
+        m.color.g = 0.0
+        m.color.b = 1.0
         m.color.a = 1.0
         m.scale.x = 0.01
         m.scale.y = 0.01
@@ -223,7 +223,7 @@ if __name__ == '__main__':
         marker_fk_pub.publish(m)
 
         m.points = points_list_guess
-        m.ns = "est"
+        m.ns = "estimated"
         m.color.r = 1.0
         m.color.g = 0.0
         m.color.b = 0.0
