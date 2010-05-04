@@ -4,10 +4,10 @@ camera_measurements:
 - {cam_id: wide_right_rect, config: cb_8x6}
 - {cam_id: narrow_right_rect, config: cb_8x6}
 joint_commands:
-- controller: head_traj_controller
-  segments:
-  - duration: 2.0
-    positions: [0.0, 0.23]
+#- controller: head_traj_controller
+#  segments:
+#  - duration: 2.0
+#    positions: [0.0, 0.23]
 - controller: l_arm_controller
   segments:
   - duration: 2.0
