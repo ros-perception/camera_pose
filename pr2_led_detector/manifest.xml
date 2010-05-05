@@ -1,0 +1,16 @@
+<package>
+  <description brief="pr2_led_detector">
+
+     pr2_led_detector
+
+  </description>
+  <author>Vijay Pradeep</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pr2_led_detector</url>
+  <depend package="rospy"/>
+  <depend package="opencv2"/>
+
+</package>
+
+
