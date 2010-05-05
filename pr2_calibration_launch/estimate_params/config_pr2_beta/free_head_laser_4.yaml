@@ -32,7 +32,7 @@
     tilt_laser:
       before_joint: [ 0, 0, 0, 0, 0, 0 ]
       after_joint:  [ 0, 0, 1, 0, 0, 1 ]
-      gearing: 0
+      gearing: 1
 
   transforms:
     l_shoulder_pan_joint:              [ 0, 0, 0, 0, 0, 0 ]
