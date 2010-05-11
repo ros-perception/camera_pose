@@ -17,6 +17,8 @@
   <depend package="visualization_msgs"/>
 
   <rosdep name="python-scipy" />
+  <rosdep name="ipython" />
+  <rosdep name="python-tk" />
 
   <!-- For Running Tests -->
   <depend package="kdl" />
