@@ -30,7 +30,7 @@
 
   tilting_lasers:
     tilt_laser:
-      before_joint: [ 0, 0, 0, 0, 0, 0 ]
+      before_joint: [ 0, 0, 0, 0, 1, 0 ]
       after_joint:  [ 0, 0, 1, 0, 0, 1 ]
       gearing: 0
 
