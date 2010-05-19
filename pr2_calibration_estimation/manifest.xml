@@ -23,5 +23,8 @@
   <!-- For Running Tests -->
   <depend package="kdl" />
   <depend package="kdl_parser" />
+  <platform os="ubuntu" version="9.04"/>
+  <platform os="ubuntu" version="9.10"/>
+  <platform os="ubuntu" version="10.04"/>
 </package>
 
