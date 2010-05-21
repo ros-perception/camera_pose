@@ -104,32 +104,47 @@ class CaptureExecutive:
 
 
         print "Setting up sensor managers"
+        enable_list = []
+        disable_list = []
         # Set up the sensor managers
         for cam_id, cam_manager in self.cam_managers:
             if cam_id in [x["cam_id"] for x in next_configuration["camera_measurements"]]:
-                print "  Enabling  camera [%s]" % cam_id
+                #print "  Enabling  camera [%s]" % cam_id
+                enable_list.append(cam_id)
                 cam_manager.enable(True)
             else:
-                print "  Disabling camera [%s]" % cam_id
+                #print "  Disabling camera [%s]" % cam_id
+                disable_list.append(cam_id)
                 cam_manager.disable()
 
         for chain_id, chain_manager in self.chain_managers:
             if chain_id in [x["chain_id"] for x in next_configuration["joint_measurements"]]:
-                print "  Enabling  chain [%s]" % chain_id
+                #print "  Enabling  chain [%s]" % chain_id
+                enable_list.append(chain_id)
                 chain_manager.enable()
             else:
-                print "  Disabling chain [%s]" % chain_id
+                #print "  Disabling chain [%s]" % chain_id
+                disable_list.append(chain_id)
                 chain_manager.disable()
 
         for laser_id, laser_manager in self.laser_managers:
             enabled_lasers = [x["laser_id"] for x in next_configuration["laser_measurements"]]
             #print "Enabled Lasers: %s" % enabled_lasers
             if laser_id in enabled_lasers:
-                print "  Enabling  laser [%s]" % laser_id
+                #print "  Enabling  laser [%s]" % laser_id
+                enable_list.append(laser_id)
                 laser_manager.enable(True)
             else:
-                print "  Disabling laser [%s]" % laser_id
+                #print "  Disabling laser [%s]" % laser_id
+                disable_list.append(laser_id)
                 laser_manager.disable()
+
+        print "Enabling"
+        for cur_enabled in enable_list:
+            print " + %s" % cur_enabled
+        print "Disabling"
+        for cur_disabled in disable_list:
+            print " - %s" % cur_disabled
 
         self.lock.acquire()
         #print "In Capture(). Setting pipeline state to 'active'"
