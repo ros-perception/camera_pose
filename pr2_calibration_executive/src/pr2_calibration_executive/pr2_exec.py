@@ -68,16 +68,23 @@ print "Far Samples: \n - %s" % "\n - ".join(far_sample_names)
 
 pub = rospy.Publisher("robot_measurement", RobotMeasurement)
 
+far_success_count = 0
+left_success_count = 0
+left_fail_count = 0
+right_success_count = 0
+right_fail_count = 0
+
+
 try:
     # Capture Far Checkerboards
     keep_collecting = True
+    full_paths = [samples_dir + "/far/" + x for x in far_sample_names]
+    cur_config = yaml.load(open(full_paths[0]))
+    m_robot = executive.capture(cur_config, rospy.Duration(0.01))
+
     while not rospy.is_shutdown() and keep_collecting:
-        full_paths = [samples_dir + "/far/" + x for x in far_sample_names]
 
-        cur_config = yaml.load(open(full_paths[0]))
-        m_robot = executive.capture(cur_config, rospy.Duration(0.01))
-
-        print "Please place the large 6x8 checkerboard approx 3m in front of the robot"
+        print "Please place the large 7x6 checkerboard approx 3m in front of the robot"
         print "in view of the head cameras and tilting laser."
         print "Press <enter> when ready to collect data, or type \"N\" if done collecting large checkerboards"
         resp = raw_input("> ")
@@ -90,10 +97,12 @@ try:
                 cur_config = yaml.load(open(cur_sample_path))
                 m_robot = executive.capture(cur_config, rospy.Duration(40))
                 if m_robot is None:
-                    print "************** Didn't get a sample *****************"
+                    print "--------------- Failed To Capture a Far Sample -----------------"
                 else:
-                    print "__________ Got a sample! ____________________"
+                    print "++++++++++++++ Successfully Captured a Far Sample ++++++++++++++"
+                    far_success_count += 1
                     pub.publish(m_robot)
+                print "Succeeded on %u far samples" % far_success_count
                 if rospy.is_shutdown():
                     break
 
@@ -114,10 +123,13 @@ try:
                 cur_config = yaml.load(open(cur_sample_path))
                 m_robot = executive.capture(cur_config, rospy.Duration(40))
                 if m_robot is None:
-                    print "************** Didn't get a sample *****************"
+                    print "--------------- Failed To Capture a Left Hand Sample -----------------"
+                    left_fail_count += 1
                 else:
-                    print "__________ Got a sample! ____________________"
+                    print "++++++++++++++ Successfully Captured a Left Hand Sample ++++++++++++++"
+                    left_success_count += 1
                     pub.publish(m_robot)
+                print "Succeded on %u/%u left arm samples" % (left_success_count, left_fail_count + left_success_count)
                 if rospy.is_shutdown():
                     break
 
@@ -138,10 +150,13 @@ try:
                 cur_config = yaml.load(open(cur_sample_path))
                 m_robot = executive.capture(cur_config, rospy.Duration(40))
                 if m_robot is None:
-                    print "************** Didn't get a sample *****************"
+                    print "--------------- Failed To Capture a Right Hand Sample -----------------"
+                    right_fail_count += 1
                 else:
-                    print "__________ Got a sample! ____________________"
+                    print "++++++++++++++ Successfully Captured a Right Hand Sample ++++++++++++++"
+                    right_success_count += 1
                     pub.publish(m_robot)
+                print "Succeded on %u/%u right arm samples" % (right_success_count, right_fail_count + right_success_count)
                 if rospy.is_shutdown():
                     break
 
@@ -150,4 +165,9 @@ except EOFError:
 
 time.sleep(1)
 
-print "Calibration data collection has completed! You can now kill this node, along with any other calibration nodes that are running."
+print "Calibration data collection has completed!"
+print "Far Samples: %u" % far_success_count
+print "Left Arm Samples: %u/%u" % (left_success_count, left_fail_count + left_success_count)
+print "Right Arm Samples: %u/%u" % (right_success_count, right_fail_count + right_success_count)
+print ""
+print "You can now kill this node, along with any other calibration nodes that are running."

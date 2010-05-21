@@ -103,7 +103,7 @@ class RobotMeasurementCache:
 
     def add_laser_measurement(self, laser_id, m, interval_start, interval_end):
         print self._laser_caches.keys()
-        print "Trying to add [%s] elem to laser_caches" % laser_id
+        #print "Trying to add [%s] elem to laser_caches" % laser_id
         cur_cache = self._laser_caches[laser_id]
         cur_cache.append( [m, interval_start, interval_end] )
         cur_cache.sort(laser_cmp)
