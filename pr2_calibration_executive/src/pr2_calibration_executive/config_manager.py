@@ -97,7 +97,8 @@ class ConfigManager:
             self._controller_managers[cur_controller["controller"]].send_command(cur_controller)
 
     def stop(self):
-        print "Stopping the capture pipeline... not implemented yet"
+        pass
+        #print "Stopping the capture pipeline... not implemented yet"
 
 # Handles changing the configuration of a joint_states_settler
 class ChainConfigManager:

@@ -123,7 +123,7 @@ class CaptureExecutive:
 
         for laser_id, laser_manager in self.laser_managers:
             enabled_lasers = [x["laser_id"] for x in next_configuration["laser_measurements"]]
-            print "Enabled Lasers: %s" % enabled_lasers
+            #print "Enabled Lasers: %s" % enabled_lasers
             if laser_id in enabled_lasers:
                 print "  Enabling  laser [%s]" % laser_id
                 laser_manager.enable(True)

@@ -77,12 +77,12 @@ try:
         cur_config = yaml.load(open(full_paths[0]))
         m_robot = executive.capture(cur_config, rospy.Duration(0.01))
 
-        print "Please remove the checkerboard from the gripper, and place the large 6x8"
-        print "checkerboard in a 'landscape' orientation approx 3m in front of the robot,"
+        print "Please place the large 6x8 checkerboard approx 3m in front of the robot"
         print "in view of the head cameras and tilting laser."
-        resp = raw_input("press <enter> ")
+        print "Press <enter> when ready to collect data, or type \"N\" if done collecting large checkerboards"
+        resp = raw_input("> ")
         if string.upper(resp) == "N":
-            print "Skipping far samples"
+            print "Done collecting far samples"
             keep_collecting = False
         else:
             for cur_sample_path in full_paths:
