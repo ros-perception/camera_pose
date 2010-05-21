@@ -6,7 +6,7 @@ narrow_left_rect:
   settler_config:      /narrow_stereo/left/monocam_settler_config
 
   configs:
-    cb_8x6:
+    cb_7x6:
       settler:
         tolerance: 2.00
         ignore_failures: True
@@ -14,7 +14,7 @@ narrow_left_rect:
         cache_size: 100
       cb_detector:
         active: True
-        num_x: 8
+        num_x: 7
         num_y: 6
         width_scaling: 1
         height_scaling: 1
@@ -46,7 +46,7 @@ narrow_right_rect:
   settler_config:      /narrow_stereo/right/monocam_settler_config
 
   configs:
-    cb_8x6:
+    cb_7x6:
       settler:
         tolerance: 2.00
         ignore_failures: True
@@ -54,7 +54,7 @@ narrow_right_rect:
         cache_size: 100
       cb_detector:
         active: True
-        num_x: 8
+        num_x: 7
         num_y: 6
         width_scaling: 1
         height_scaling: 1
@@ -87,7 +87,7 @@ wide_left_rect:
   settler_config:      /wide_stereo/left/monocam_settler_config
 
   configs:
-    cb_8x6:
+    cb_7x6:
       settler:
         tolerance: 2.00
         ignore_failures: True
@@ -95,7 +95,7 @@ wide_left_rect:
         cache_size: 100
       cb_detector:
         active: True
-        num_x: 8
+        num_x: 7
         num_y: 6
         width_scaling: 2
         height_scaling: 2
@@ -127,7 +127,7 @@ wide_right_rect:
   settler_config:      /wide_stereo/right/monocam_settler_config
 
   configs:
-    cb_8x6:
+    cb_7x6:
       settler:
         tolerance: 2.00
         ignore_failures: True
@@ -135,7 +135,7 @@ wide_right_rect:
         cache_size: 100
       cb_detector:
         active: True
-        num_x: 8
+        num_x: 7
         num_y: 6
         width_scaling: 2
         height_scaling: 2
@@ -167,7 +167,7 @@ forearm_left_rect:
   settler_config:      /l_forearm_cam/monocam_settler_config
 
   configs:
-    cb_8x6:
+    cb_7x6:
       settler:
         tolerance: 2.00
         ignore_failures: True
@@ -175,7 +175,7 @@ forearm_left_rect:
         cache_size: 100
       cb_detector:
         active: True
-        num_x: 8
+        num_x: 7
         num_y: 6
         width_scaling: 2
         height_scaling: 2
@@ -207,7 +207,7 @@ forearm_right_rect:
   settler_config:      /r_forearm_cam/monocam_settler_config
 
   configs:
-    cb_8x6:
+    cb_7x6:
       settler:
         tolerance: 2.00
         ignore_failures: True
@@ -215,7 +215,7 @@ forearm_right_rect:
         cache_size: 100
       cb_detector:
         active: True
-        num_x: 8
+        num_x: 7
         num_y: 6
         width_scaling: 2
         height_scaling: 2

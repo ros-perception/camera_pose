@@ -21,13 +21,13 @@
    </node>
 
    <include file="$(find pr2_calibration_launch)/capture_data/laser_post_process.launch" ns="tilt_laser"/>
-   <include file="$(find pr2_calibration_launch)/capture_data/laser_post_process.launch" ns="tilt_laser_8x6"/>
+   <include file="$(find pr2_calibration_launch)/capture_data/laser_post_process.launch" ns="tilt_laser_7x6"/>
 
    <node type="relay" pkg="topic_tools" name="relay_dense_laser"
          args="dense_laser_snapshot tilt_laser/dense_laser_snapshot"/>
 
-   <node type="relay" pkg="topic_tools" name="relay_dense_laser_8x6"
-         args="dense_laser_snapshot tilt_laser_8x6/dense_laser_snapshot"/>
+   <node type="relay" pkg="topic_tools" name="relay_dense_laser_7x6"
+         args="dense_laser_snapshot tilt_laser_7x6/dense_laser_snapshot"/>
 
    <group ns="tilt_laser">
       <!-- Laser CB Detector -->
@@ -51,7 +51,7 @@
       </node>
   </group>
 
-  <group ns="tilt_laser_8x6">
+  <group ns="tilt_laser_7x6">
       <!-- Laser CB Detector -->
       <node type="laser_cb_detector_node"
             pkg="laser_cb_detector"
@@ -59,7 +59,7 @@
         <remap from="snapshot" to="dense_laser_snapshot" />
         <remap from="image" to="cb_image" />
 
-        <param name="num_x" type="int" value="8" />
+        <param name="num_x" type="int" value="7" />
         <param name="num_y" type="int" value="6" />
         <param name="spacing_x" type="double" value=".108" />
         <param name="spacing_y" type="double" value=".108" />

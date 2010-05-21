@@ -18,3 +18,7 @@ tilt_laser:
 tilt_laser_8x6:
   laser_cb_detector_config:  /none
   configs: []
+
+tilt_laser_7x6:
+  laser_cb_detector_config:  /none
+  configs: []

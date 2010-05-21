@@ -10,7 +10,7 @@
   <param name="l_forearm_cam/annotated_viewer/filename_format"       type="string" value="/tmp/pr2_calibration/cb_fail/cb_l_forearm_%04i.jpg" />
   <param name="r_forearm_cam/annotated_viewer/filename_format"       type="string" value="/tmp/pr2_calibration/cb_fail/cb_r_forearm_%04i.jpg" />
   <param name="tilt_laser/laser_cb_viewer/filename_format"           type="string" value="/tmp/pr2_calibration/cb_fail/cb_laser_5x4_%04i.jpg" />
-  <param name="tilt_laser_8x6/laser_cb_viewer/filename_format"       type="string" value="/tmp/pr2_calibration/cb_fail/cb_laser_8x6_%04i.jpg" />
+  <param name="tilt_laser_7x6/laser_cb_viewer/filename_format"       type="string" value="/tmp/pr2_calibration/cb_fail/cb_laser_7x6_%04i.jpg" />
 
   <include file="$(find pr2_calibration_launch)/capture_data/double_stereo_viewer.launch" />
 
@@ -24,6 +24,6 @@
            ns="tilt_laser"/>
 
   <include file="$(find pr2_calibration_launch)/capture_data/laser_view.launch"
-           ns="tilt_laser_8x6"/>
+           ns="tilt_laser_7x6"/>
 
 </launch>
