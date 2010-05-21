@@ -118,8 +118,8 @@
       corners_y: 5
       spacing_x: .025
       spacing_y: .025
-    large_cb_8x6:
-      corners_x: 8
+    large_cb_7x6:
+      corners_x: 7
       corners_y: 6
       spacing_x: .108
       spacing_y: .108
