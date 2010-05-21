@@ -157,7 +157,7 @@ if __name__ == '__main__':
                 # Hack to rename laser id
                 for cur_laser in msg.M_laser:
                     #pass
-                    if cur_laser.laser_id in ["tilt_laser_6x8", "tilt_laser_8x6"]:
+                    if cur_laser.laser_id in ["tilt_laser_6x8", "tilt_laser_8x6", "tilt_laser_7x6", "tilt_laser_6x7"]:
                         cur_laser.laser_id = "tilt_laser"
                     #else:
                     #    cur_laser.laser_id = "tilt_laser_blah"
