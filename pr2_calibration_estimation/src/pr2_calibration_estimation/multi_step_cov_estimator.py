@@ -44,6 +44,9 @@ import yaml
 import os.path
 import numpy
 
+import stat
+import os
+
 from numpy import matrix
 
 from pr2_calibration_estimation.robot_params import RobotParams
@@ -101,6 +104,26 @@ def load_calibration_steps(steps_dict):
     for cur_step in step_list:
         print " - %s" % cur_step['name']
     return step_list
+
+# Verifies that the given filename has the correct permissions.
+# Either it shouldn't exist, or it should be writable
+def check_file_permissions(filename):
+    # If the file doesn't exist, then we're fine
+    if not os.path.isfile(filename):
+        return True
+
+    statinfo = os.stat(filename);
+
+    # See if the current user owns the file. If so, look at user's write priveleges
+    if (os.geteuid() == statinfo.st_uid):
+        return (os.stat(filename).st_mode & stat.S_IWUSR) > 0
+
+    # See if the current user's group owns the file. If so, look at groups's write priveleges
+    if (os.getgid() == statinfo.st_gid):
+        return (os.stat(filename).st_mode & stat.S_IWGRP) > 0
+
+    # Not the owner, nor part of the group, so check the 'other' permissions
+    return (os.stat(filename).st_mode & stat.S_IWOTH) > 0
 
 
 def load_requested_sensors(all_sensors_dict, requested_sensors):
@@ -168,6 +191,20 @@ if __name__ == '__main__':
         previous_pose_guesses = numpy.array(yaml.load(config['initial_poses']))
     else:
         previous_pose_guesses = numpy.zeros([msg_count,6])
+
+    # Check if we can write to all of our output files
+    output_filenames = []
+    for suffix in [".yaml", "_poses.yaml", "_cov.txt"]:
+        output_filenames += [output_dir + "/" + cur_step["output_filename"] + suffix for cur_step in step_list]
+
+    valid_list = [check_file_permissions(curfile) for curfile in output_filenames];
+
+    permissions_valid = all(valid_list)
+
+    if not permissions_valid:
+        print "Invalid file permissions. You need to be able to write to the following files:"
+        print "\n".join([" - " + cur_file for cur_file,cur_valid in zip(output_filenames, valid_list) if not cur_valid])
+        sys.exit(-1)
 
     # Specify which system the first calibration step should use.
     # Normally this would be set at the end of the calibration loop, but for the first step,
