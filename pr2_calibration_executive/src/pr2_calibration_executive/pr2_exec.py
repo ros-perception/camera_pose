@@ -93,7 +93,7 @@ try:
             keep_collecting = False
         else:
             for cur_sample_path in full_paths:
-                print "On right arm sample [%s]" % cur_sample_path
+                print "On far sample [%s]" % cur_sample_path
                 cur_config = yaml.load(open(cur_sample_path))
                 m_robot = executive.capture(cur_config, rospy.Duration(40))
                 if m_robot is None:
