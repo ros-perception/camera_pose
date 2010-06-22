@@ -1,19 +1,14 @@
 
 # ----- Tilting Laser -----
+# Right now, laser reconfig is unimplemented. We work
+# around this by creating multiple laser sensors that
+# all use the same laser data, but process the data
+# with different params defined in the processing
+# nodes themselves.
+
 tilt_laser:
   laser_cb_detector_config:  /none
-
-  configs:
-  - config_name: small_cb_4x5
-    laser_cb_detector:
-      active: True
-      num_x: 6
-      num_y: 8
-      width_scaling: 1
-      height_scaling: 1
-      subpixel_window: 4
-      subpixel_zero_zone: 1
-      flip_horizontal: 1
+  configs: []
 
 tilt_laser_8x6:
   laser_cb_detector_config:  /none
