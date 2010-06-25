@@ -5,7 +5,7 @@
   </node>
   
   <node type="cameracalibrator.py" pkg="camera_calibration"
-        args="--size=8x6 --square=0.108"
+        args="--size=7x6 --square=0.108"
         name="calibration_gui" output="screen">
     <remap from="image" to="prosilica/image_raw" />
     <remap from="camera" to="prosilica" />
