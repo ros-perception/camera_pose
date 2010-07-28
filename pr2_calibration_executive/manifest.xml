@@ -20,13 +20,17 @@
 
   <depend package="monocam_settler" />
   <depend package="image_cb_detector" />
+  
+  <depend package="checkerboard_pose" />
+  <depend package="move_base_msgs" />
+  <depend package="actionlib" />
 
   <!-- msgs -->
   <depend package="calibration_msgs" />
   <depend package="sensor_msgs" />
   <depend package="geometry_msgs" />
   <depend package="trajectory_msgs" />
-
+  
   <export>
     <cpp cflags="-I${prefix}/msg/cpp" />
   </export>
@@ -35,5 +39,3 @@
   <platform os="ubuntu" version="9.10"/>
   <platform os="ubuntu" version="10.04"/>
 </package>
-
-

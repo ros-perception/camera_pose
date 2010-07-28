@@ -37,9 +37,18 @@ import yaml
 import sys
 import pr2_calibration_executive.capture_exec
 import time
-from calibration_msgs.msg import RobotMeasurement
+from calibration_msgs.msg import RobotMeasurement, CalibrationPattern
 import os
 import string
+from pose_finder import PoseFinder
+from checkerboard_pose.srv import GetCheckerboardPose
+
+in_laser = -1
+def laser_check_cb(msg):
+    global in_laser
+    #pass up the first incomplete message
+    else:
+        in_laser = int(msg.success)
 
 print "Starting executive..."
 time.sleep(7.0)
@@ -76,32 +85,76 @@ right_fail_count = 0
 
 
 try:
+    laser_check = rospy.Subscriber('/tilt_laser_7x6/laser_checkerboard', CalibrationPattern, laser_check_cb)
+
     # Capture Far Checkerboards
     keep_collecting = True
     full_paths = [samples_dir + "/far/" + x for x in far_sample_names]
     cur_config = yaml.load(open(full_paths[0]))
     m_robot = executive.capture(cur_config, rospy.Duration(0.01))
 
-    while not rospy.is_shutdown() and keep_collecting:
+    print "Please place the large 7x6 checkerboard approx 3m in front of the robot"
+    print "in view of the head cameras and tilting laser."
+    print "Press <enter> when ready to collect data"
+    resp = raw_input("> ")
 
-        print "Please place the large 7x6 checkerboard approx 3m in front of the robot"
-        print "in view of the head cameras and tilting laser."
-        print "Press <enter> when ready to collect data, or type \"N\" if done collecting large checkerboards"
-        resp = raw_input("> ")
-        if string.upper(resp) == "N":
-            print "Done collecting far samples"
-            keep_collecting = False
-        else:
-            for cur_sample_path in full_paths:
+    wide_check = rospy.ServiceProxy("wide_get_checkerboard_pose", GetCheckerboardPose)
+    narrow_check = rospy.ServiceProxy("narrow_get_checkerboard_pose", GetCheckerboardPose)
+    in_wide = wide_check(6, 7, .108, .108)
+    in_narrow = narrow_check(6, 7, .108, .108)
+
+    #check that the checkerboards are present
+    while True:
+	if in_wide and in_narrow and not in_laser:
+	    print "the checkerboard has been found in both the narrow and wide stereo cameras, however it is not visible to the laser." 
+            print "This is usually due to specular reflection."
+	    print "Please move the checkerboard, and press <enter> when ready to try again."
+	    raw_input("> ")
+	elif not in_wide or not in_narrow:
+	    print "The checkerboard is not visible!"
+	    print "Please place the large 7x6 checkerboard approx 3m in front of the robot"
+    	    print "in view of the head cameras and tilting laser."
+    	    print "Press <enter> when ready to try again."
+	elif in_wide and in_narrow and in_laser:
+	    break
+
+    print "Beginning auto calibration"
+
+    pose = PoseFinder()
+    pose.strafe_to_pose(0, 'wide_get_checkerboard_pose')
+
+    while not rospy.is_shutdown() and keep_collecting:
+        for cur_sample_path in full_paths:
+            success = False
+	    x=0
+	    while x<3 and not success:
                 print "On far sample [%s]" % cur_sample_path
                 cur_config = yaml.load(open(cur_sample_path))
+		rotation = int(cur_config['rotation'])
+
+		#if the sample does not succeed rotate back towward the previous working pose
+		if x>0:
+		  if rotation > 0:
+		    rotation -= .1
+		  if rotation < 0:
+		    rotation += .1 
+	        print "Current saple rotation:", rotation	
+		try:
+		    pose.rot_to_pose(int(cur_config['rotation']), 'wide_get_checkerboard_pose')
+		except:
+		    rospy.logerr("Error moving robot, aborting auto-calibration")
+		    exit()
+		
                 m_robot = executive.capture(cur_config, rospy.Duration(40))
                 if m_robot is None:
                     print "--------------- Failed To Capture a Far Sample -----------------"
+		    print "Retrying ......................................................."
+		    x += 1
                 else:
                     print "++++++++++++++ Successfully Captured a Far Sample ++++++++++++++"
                     far_success_count += 1
                     pub.publish(m_robot)
+		    success = True
                 print "Succeeded on %u far samples" % far_success_count
                 if rospy.is_shutdown():
                     break

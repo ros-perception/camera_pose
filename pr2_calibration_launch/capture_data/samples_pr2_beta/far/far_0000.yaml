@@ -1,3 +1,4 @@
+rotation: -0.5000
 camera_measurements:
 - {cam_id: narrow_left_rect, config: cb_7x6}
 - {cam_id: wide_left_rect, config: cb_7x6}
