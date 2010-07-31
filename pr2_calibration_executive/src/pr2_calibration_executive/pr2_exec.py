@@ -40,9 +40,9 @@ import time
 from calibration_msgs.msg import RobotMeasurement, CalibrationPattern
 import os
 import string
-from pose_finder import PoseFinder
+from base_control import BaseController
 from checkerboard_pose.srv import GetCheckerboardPose
-import cb_switch
+from arm_control import ArmController
 
 in_laser = -1
 def laser_check_cb(msg):
@@ -125,7 +125,7 @@ try:
 
     print "Beginning auto calibration"
 
-    pose = PoseFinder()
+    pose = BseController()
     pose.strafe_to_pose(0, 'wide_get_checkerboard_pose')
     pose.set_axis()     
 
@@ -196,8 +196,9 @@ try:
                 if rospy.is_shutdown():
                     break
 
-    #switch the checkerboard to the right hand
-    cb_switch.run()
+	#Pass the checkerboard off to the right gripper
+    arm_control = ArmControl('pass_off.yaml')
+	arm_control.run()
 
     # Capture Right Arm Data
     if not rospy.is_shutdown():

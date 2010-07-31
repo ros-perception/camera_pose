@@ -75,7 +75,7 @@ def pose_to_msg(pose):
   msg.orientation.w = q[3]
   return msg
 
-class PoseFinder:
+class BaseController():
   def __init__(self):
     self.listener = tf.TransformListener()
 
@@ -208,7 +208,7 @@ class PoseFinder:
 if __name__ == "__main__":
   rospy.init_node("strafe_pose_test")
 
-  pose = PoseFinder()
+  pose = BaseController()
   while True:
     pose.rot_to_pose(1, 'wide_get_checkerboard_pose')
     rospy.sleep(10)
