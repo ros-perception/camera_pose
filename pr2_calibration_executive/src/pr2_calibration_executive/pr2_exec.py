@@ -42,13 +42,12 @@ import os
 import string
 from pose_finder import PoseFinder
 from checkerboard_pose.srv import GetCheckerboardPose
+import cb_switch
 
 in_laser = -1
 def laser_check_cb(msg):
     global in_laser
-    #pass up the first incomplete message
-    else:
-        in_laser = int(msg.success)
+    in_laser = int(msg.success)
 
 print "Starting executive..."
 time.sleep(7.0)
@@ -85,8 +84,6 @@ right_fail_count = 0
 
 
 try:
-    laser_check = rospy.Subscriber('/tilt_laser_7x6/laser_checkerboard', CalibrationPattern, laser_check_cb)
-
     # Capture Far Checkerboards
     keep_collecting = True
     full_paths = [samples_dir + "/far/" + x for x in far_sample_names]
@@ -95,6 +92,14 @@ try:
 
     print "Please place the large 7x6 checkerboard approx 3m in front of the robot"
     print "in view of the head cameras and tilting laser."
+    print "Then press <enter>"
+    raw_input("> ")
+
+    laser_check = rospy.Subscriber('/tilt_laser_7x6/laser_checkerboard', CalibrationPattern, laser_check_cb)
+    print "Please wait for initial laser scan to complete"
+    while not in_laser >= 0:
+        pass
+ 
     print "Press <enter> when ready to collect data"
     resp = raw_input("> ")
 
@@ -122,52 +127,57 @@ try:
 
     pose = PoseFinder()
     pose.strafe_to_pose(0, 'wide_get_checkerboard_pose')
+    pose.set_axis()     
 
-    while not rospy.is_shutdown() and keep_collecting:
+    if not rospy.is_shutdown() and keep_collecting:
         for cur_sample_path in full_paths:
             success = False
 	    x=0
 	    while x<3 and not success:
                 print "On far sample [%s]" % cur_sample_path
                 cur_config = yaml.load(open(cur_sample_path))
-		rotation = int(cur_config['rotation'])
+		rotation = float(cur_config['rotation'])
 
-		#if the sample does not succeed rotate back towward the previous working pose
+		#if the sample does not succeed rotate back toward the previous working pose
 		if x>0:
 		  if rotation > 0:
-		    rotation -= .1
+		    rotation -= .075
 		  if rotation < 0:
-		    rotation += .1 
-	        print "Current saple rotation:", rotation	
+		    rotation += .075 
+	        print "Current sample rotation:", rotation	
 		try:
-		    pose.rot_to_pose(int(cur_config['rotation']), 'wide_get_checkerboard_pose')
+		    pose.rot_to_pose(rotation, 'wide_get_checkerboard_pose')
 		except:
 		    rospy.logerr("Error moving robot, aborting auto-calibration")
 		    exit()
-		
+                
                 m_robot = executive.capture(cur_config, rospy.Duration(40))
                 if m_robot is None:
                     print "--------------- Failed To Capture a Far Sample -----------------"
-		    print "Retrying ......................................................."
-		    x += 1
+		    print "Retrying ......................................................."	
+		    x+=1
                 else:
                     print "++++++++++++++ Successfully Captured a Far Sample ++++++++++++++"
                     far_success_count += 1
                     pub.publish(m_robot)
 		    success = True
                 print "Succeeded on %u far samples" % far_success_count
+
                 if rospy.is_shutdown():
                     break
+            if not x < 3:
+                print "--------------- Failed To Capture a Far Sample -----------------"
+                print "Skipping Sample ................................................"
+
 
     # Capture Left Arm Data
     if not rospy.is_shutdown():
+        pose.rot_to_pose_wh(3)
         full_paths = [samples_dir + "/left/" + x for x in left_sample_names]
 
         cur_config = yaml.load(open(full_paths[0]))
         m_robot = executive.capture(cur_config, rospy.Duration(0.01))
 
-        print "Please put the checkerboard in the left hand (open/close the gripper with the joystick's left/right D-Pad buttons). press <enter> to continue.  Type N to skip"
-        resp = raw_input("press <enter> ")
         if string.upper(resp) == "N":
             print "Skipping left arm samples"
         else:
@@ -186,6 +196,9 @@ try:
                 if rospy.is_shutdown():
                     break
 
+    #switch the checkerboard to the right hand
+    cb_switch.run()
+
     # Capture Right Arm Data
     if not rospy.is_shutdown():
         full_paths = [samples_dir + "/right/" + x for x in right_sample_names]
@@ -193,8 +206,6 @@ try:
         cur_config = yaml.load(open(full_paths[0]))
         m_robot = executive.capture(cur_config, rospy.Duration(0.01))
 
-        print "Please put the checkerboard in the right hand (open/close the gripper with the joystick's square/circle buttons). press <enter> to continue..."
-        resp = raw_input("press <enter> ")
         if string.upper(resp) == "N":
             print "Skipping right arm samples"
         else:

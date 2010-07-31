@@ -1,0 +1,39 @@
+<launch>
+
+  <node name="narrow_cb_pose" pkg="checkerboard_pose" type="cb_detector.py" >
+    <remap from="image_stream" to="/narrow_stereo/right/image_rect" />
+    <remap from="camera_info" to="/narrow_stereo/right/camera_info" />
+    <remap from="get_checkerboard_pose" to="narrow_get_checkerboard_pose" />
+    <param name="publish_period" value="0.0" />
+    <param name="corners_x" value="7" />
+    <param name="corners_y" value="6" />
+    <param name="spacing_x" value="0.108" />
+    <param name="spacing_y" value="0.108" />
+    <param name="width_scaling" value="1" />
+    <param name="height_scaling" value="1" />
+  </node>
+
+  <node name="wide_cb_pose" pkg="checkerboard_pose" type="cb_detector.py">
+    <remap from="image_stream" to="/wide_stereo/right/image_rect" />
+    <remap from="camera_info" to="/wide_stereo/right/camera_info" />
+    <remap from="get_checkerboard_pose" to="wide_get_checkerboard_pose" />
+    <param name="publish_period" value="0.0" />
+    <param name="corners_x" value="7" />
+    <param name="corners_y" value="6" />
+    <param name="spacing_x" value="0.108" />
+    <param name="spacing_y" value="0.108" />
+    <param name="width_scaling" value="1" />
+    <param name="height_scaling" value="1" /> 
+  </node>
+
+  <node type="pose_base_controller" pkg="pose_base_controller" name="pose_base_controller" output="screen">
+    <param name="fixed_frame" value="odom_combined" />
+    <param name="holonomic" value="true" />
+    <param name="k_trans" value="5.0" />
+    <param name="k_rot" value="5.0" />
+    <param name="max_vel_lin" value="0.2" />
+    <param name="max_vel_th" value="0.2" />
+    <param name="tolerance_trans" value="0.05" />
+    <param name="tolerance_rot" value="0.04" />
+  </node>
+</launch>

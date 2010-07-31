@@ -30,6 +30,7 @@
   <depend package="sensor_msgs" />
   <depend package="geometry_msgs" />
   <depend package="trajectory_msgs" />
+  <depend package="pr2_controllers_msgs"/>
   
   <export>
     <cpp cflags="-I${prefix}/msg/cpp" />
