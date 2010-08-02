@@ -25,6 +25,8 @@
   <depend package="move_base_msgs" />
   <depend package="actionlib" />
 
+  <depend package="arm_control" />
+
   <!-- msgs -->
   <depend package="calibration_msgs" />
   <depend package="sensor_msgs" />

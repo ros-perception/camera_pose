@@ -43,47 +43,66 @@ from pr2_controllers_msgs.msg import *
 
 class Arm(yaml.YAMLObject):
 	yaml_tag = u'!Arm'
-	def __init__(self, arm, waypoints, speeds):
-		self.arm  = arm[0]
+	def __setstate__(self, state):
+		self.__dict__ = state
+		self.arm  = self.arm[0]
 		#Create a goal message for this arm movement
 		goal = JointTrajectoryGoal()
-		for p, x in enumerate(waypoints):
+		goal.trajectory.joint_names = ['%s_shoulder_pan_joint' % self.arm, '%s_shoulder_lift_joint' % self.arm, '%s_upper_arm_roll_joint'%self.arm, '%s_elbow_flex_joint' % self.arm, '%s_forearm_roll_joint' % self.arm, '%s_wrist_flex_joint' % self.arm, '%s_wrist_roll_joint' % self.arm]
+		for p, x in enumerate(self.waypoints):
 			goal.trajectory.points.append(JointTrajectoryPoint())
 			goal.trajectory.points[p].positions = x
 			if p == 0:
-				goal.trajectory.points[p].time_from_start = speeds[p]
+				goal.trajectory.points[p].time_from_start = rospy.Duration(self.speeds[p])
 			else:
-				goal.trajectory.points[p].time_from_start = goal.trajectory.points[p-1] + speeds[p]
-		self.goal = goal		
+				goal.trajectory.points[p].time_from_start = goal.trajectory.points[p-1].time_from_start + rospy.Duration(self.speeds[p])
+		self.goal = goal
+		self.client = None		
 	
 	def set_client(self, clients):
 		self.client = clients[self.arm]
 
+	def send(self):
+		if self.client is None:
+			raise
+		self.client.send_goal(self.goal)
+		self.client.wait_for_result()
+
 class Grip(yaml.YAMLObject):
 	yaml_tag = u'!Grip'
-	def __init__(self, gripper, pose, effort):
-		self.gripper = gripper[0]
+	def __setstate__(self, state):
+		self.__dict__ = state
+		self.gripper = self.gripper[0]
 		goal = Pr2GripperCommandGoal()
-		goal.command.position = pose
-		goal.command.max_effort = effort
-		
+		goal.command.position = self.pose
+		goal.command.max_effort = self.effort
+		self.goal = goal
+		self.client = None
+
+	def set_client(self, clients):
+		self.client = clients[self.gripper]	
+
+	def send(self):
+		if self.client is None:
+			raise
+		self.client.send_goal(self.goal)
+		self.client.wait_for_result()
 
 class Config(yaml.YAMLObject):
 	yaml_tag = u'!Config'
-	def __init__(self, r_arm_topic, l_arm_topic, r_grip_topic, l_grip_topic):
-		r_arm_client = actionlib.SimpleActionClient(r_arm_topic, JointTrajectoryAction)
-		l_arm_client = actionlib.SimpleActionClient(l_arm_topic, JointTrajectoryAction)
-		r_arm_client.wait_for_server()
-		l_arm_client.wait_for_server()
-		
-		self.arms = {'r': r_arm_client, 'l': l_arm_client}
-		
-		r_grip_client = actionlib.SimpleActionClient(r_grip_topic, Pr2GripperCommandAction)
-		l_grip_client = actionlib.SimpleActionClient(l_grip_topic, Pr2GripperCommandAction)
-		r_grip_client.wait_for_server()
-		l_grip_client.wait_for_server()
-		
-		self.grips = {'r': r_grip_client, 'l': l_grip_client}
+	def __setstate__(self, state):
+		self.__dict__ = state
+		self.r_arm_client = actionlib.SimpleActionClient(self.r_arm_topic, JointTrajectoryAction)
+		self.l_arm_client = actionlib.SimpleActionClient(self.l_arm_topic, JointTrajectoryAction)
+		self.r_arm_client.wait_for_server()
+		self.l_arm_client.wait_for_server()
+		self.arms = {'r': self.r_arm_client, 'l': self.l_arm_client}
+
+		self.r_grip_client = actionlib.SimpleActionClient(self.r_grip_topic, Pr2GripperCommandAction)
+		self.l_grip_client = actionlib.SimpleActionClient(self.l_grip_topic, Pr2GripperCommandAction)
+		self.r_grip_client.wait_for_server()
+		self.l_grip_client.wait_for_server()	
+		self.grips = {'r': self.r_grip_client, 'l': self.l_grip_client}
 		
 	def set_clients(self, objs):
 		for x in objs:
@@ -93,34 +112,18 @@ class Config(yaml.YAMLObject):
 				x.set_client(self.grips)
 
 class ArmController():
-	"""Singleton controller class"""
-	class __impl():
-		def __init__(self, file):
-			data = yaml.load(open(file))
-			self.config = data[0]
-			self.actions = data[1:]
-			
-			self.config.set_clients(self.actions)
-		
-		def run():
-			for action in self.actions:
-				action.send()
-	
-	__instance = None
 	def __init__(self, file):
-		if ArmController.__instance == None:
-			ArmController.__instance = ArmController.__impl(file)
-		self.__dict__['_ArmController__instance'] = ArmController.__instance
-	
-	def __getattr__(self, attr):
-		""" Delegate access to implementation """
-		return getattr(self.__instance, attr)
-	
-	def __setattr__(self, attr, value):
-		""" Delegate access to implementation """
-		return setattr(self.__instance, attr, value)
+		data = yaml.load(open(file))
+		self.config = data[0]
+		self.actions = data[1:]
+		self.config.set_clients(self.actions)
+		
+	def run(self):
+		for action in self.actions:
+			action.send()
 	
 
 if __name__ == "__main__":
-	controller = ArmController()
+	rospy.init_node("arm_control")
+	controller = ArmController("pass_off.yaml")
 	controller.run()
