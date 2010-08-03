@@ -121,9 +121,10 @@ class ArmController():
 	def run(self):
 		for action in self.actions:
 			action.send()
+			rospy.sleep(2)
 	
 
 if __name__ == "__main__":
 	rospy.init_node("arm_control")
-	controller = ArmController("pass_off.yaml")
+	controller = ArmController("/u/klapow/pr2_calibration/arm_control/src/arm_control/pass_off.yaml")
 	controller.run()

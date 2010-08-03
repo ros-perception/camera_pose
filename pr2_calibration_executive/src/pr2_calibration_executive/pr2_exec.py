@@ -125,7 +125,7 @@ try:
 
     print "Beginning auto calibration"
 
-    pose = BseController()
+    pose = BaseController()
     pose.strafe_to_pose(0, 'wide_get_checkerboard_pose')
     pose.set_axis()     
 
@@ -197,8 +197,8 @@ try:
                     break
 
 	#Pass the checkerboard off to the right gripper
-    arm_control = ArmControl('pass_off.yaml')
-	arm_control.run()
+    arm_controller = ArmController('/u/klapow/pr2_calibration/pr2_calibration_executive/src/pr2_calibration_executive/pass_off.yaml')
+    arm_controller.run()
 
     # Capture Right Arm Data
     if not rospy.is_shutdown():
