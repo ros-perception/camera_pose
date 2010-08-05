@@ -126,5 +126,5 @@ class ArmController():
 
 if __name__ == "__main__":
 	rospy.init_node("arm_control")
-	controller = ArmController("/u/klapow/pr2_calibration/arm_control/src/arm_control/pass_off.yaml")
+	controller = ArmController(rospy.get_param("arm_control_config", "/u/klapow/pr2_calibration/arm_control/src/arm_control/pass_off.yaml"))
 	controller.run()

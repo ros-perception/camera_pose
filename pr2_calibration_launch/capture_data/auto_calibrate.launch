@@ -36,4 +36,6 @@
     <param name="tolerance_trans" value="0.05" />
     <param name="tolerance_rot" value="0.04" />
   </node>
+
+  <param name="/cb_pass_off_config" type="str" value="$(find pr2_calibration_launch)/capture_data/samples_pr2_beta/pass_off.yaml" />
 </launch>

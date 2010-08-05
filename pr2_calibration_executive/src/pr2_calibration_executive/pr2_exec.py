@@ -90,6 +90,26 @@ try:
     cur_config = yaml.load(open(full_paths[0]))
     m_robot = executive.capture(cur_config, rospy.Duration(0.01))
 
+    auto_mode = True
+    print "You are now beginning pr2 calibration."
+    print "Note that running calibration in full auto will require a special checkerboard"
+    print "More info can be found at http://ros.org/"
+    resp = raw_input("Would you like to run on full auto [Y/n]: ")
+    if string.upper(resp) == 'N':
+	auto_mode = False
+    else:
+	auto_mode = True
+	if not rospy.has_param("/cb_pass_off_config"):
+	    print "You are trying to run auto calibration without a cb pass off config file"
+	    print "Press <enter> to proceed without auto calibration or 'q' to quit"
+	    resp = raw_input("> ")
+	    if string.upper(resp) == 'Q':
+		sys.exit(1)
+	    else:
+		auto_mode = False
+	else:
+	    pass
+
     print "Please place the large 7x6 checkerboard approx 3m in front of the robot"
     print "in view of the head cameras and tilting laser."
     print "Then press <enter>"
@@ -196,9 +216,15 @@ try:
                 if rospy.is_shutdown():
                     break
 
-	#Pass the checkerboard off to the right gripper
-    arm_controller = ArmController('/u/klapow/pr2_calibration/pr2_calibration_executive/src/pr2_calibration_executive/pass_off.yaml')
-    arm_controller.run()
+    if auto_mode:
+        #Pass the checkerboard off to the right gripper
+        arm_controller = ArmController(rospy.get_param("/cb_pass_off_config"))
+        arm_controller.run()
+
+    elif not auto_mode:
+	print "Please move the checkerboard to the robots right gripper."
+	print "Press <enter> when you are ready to continue"
+	raw_input("> ")
 
     # Capture Right Arm Data
     if not rospy.is_shutdown():
