@@ -116,8 +116,8 @@
     small_cb_4x5:
       corners_x: 4
       corners_y: 5
-      spacing_x: .025
-      spacing_y: .025
+      spacing_x: .0245
+      spacing_y: .0245
     large_cb_7x6:
       corners_x: 7
       corners_y: 6
