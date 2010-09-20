@@ -12,6 +12,9 @@
   <param name="tilt_laser/laser_cb_viewer/filename_format"           type="string" value="/tmp/pr2_calibration/cb_fail/cb_laser_5x4_%04i.jpg" />
   <param name="tilt_laser_7x6/laser_cb_viewer/filename_format"       type="string" value="/tmp/pr2_calibration/cb_fail/cb_laser_7x6_%04i.jpg" />
 
+  <include file="$(find pr2_calibration_launch)/capture_data/monocam_viewer.launch"
+           ns="prosilica" />
+
   <include file="$(find pr2_calibration_launch)/capture_data/double_stereo_viewer.launch" />
 
   <include file="$(find pr2_calibration_launch)/capture_data/monocam_viewer.launch"

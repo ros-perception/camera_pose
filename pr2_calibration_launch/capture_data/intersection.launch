@@ -13,6 +13,7 @@
     <remap from="left_arm_chain" to="left_arm_chain/settled_interval" />
     <remap from="forearm_right_rect" to="r_forearm_cam/settled_interval" />
     <remap from="forearm_left_rect" to="l_forearm_cam/settled_interval" />
+    <remap from="prosilica_rect" to="prosilica/settled_interval" />
 
     <remap from="interval" to="request_interval" />
   </node>

@@ -7,6 +7,11 @@
         output="screen"
         machine="c1">
 
+    <remap from="prosilica_rect/camera_info" to="prosilica/camera_info"/>
+    <remap from="prosilica_rect/image_rect"  to="prosilica/image_rect"/>
+    <remap from="prosilica_rect/image"       to="prosilica/image_raw"/>
+    <remap from="prosilica_rect/features"    to="prosilica/features"/>
+
     <remap from="narrow_left_rect/camera_info" to="narrow_stereo/left/camera_info"/>
     <remap from="narrow_left_rect/image_rect"  to="narrow_stereo/left/image_rect"/>
     <remap from="narrow_left_rect/image"       to="narrow_stereo/left/image_raw"/>

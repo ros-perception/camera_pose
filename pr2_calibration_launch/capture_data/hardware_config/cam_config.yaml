@@ -239,3 +239,43 @@ forearm_right_rect:
         subpixel_zero_zone: 1
       led_detector:
         active: False
+
+# ----- Prosilica (Rectified) -----
+prosilica_rect:
+  cb_detector_config:  /prosilica/cb_detector_config
+  led_detector_config: /prosilica/led_detector
+  settler_config:      /prosilica/monocam_settler_config
+
+  configs:
+    cb_7x6:
+      settler:
+        tolerance: 2.00
+        ignore_failures: True
+        max_step: 3.0
+        cache_size: 100
+      cb_detector:
+        active: True
+        num_x: 7
+        num_y: 6
+        width_scaling: 0.25
+        height_scaling: 0.25
+        subpixel_window: 4
+        subpixel_zero_zone: 1
+      led_detector:
+        active: False
+    small_cb_4x5:
+      settler:
+        tolerance: 2.00
+        ignore_failures: True
+        max_step: 3.0
+        cache_size: 100
+      cb_detector:
+        active: True
+        num_x: 4
+        num_y: 5
+        width_scaling: 0.25
+        height_scaling: 0.25
+        subpixel_window: 4
+        subpixel_zero_zone: 1
+      led_detector:
+        active: False

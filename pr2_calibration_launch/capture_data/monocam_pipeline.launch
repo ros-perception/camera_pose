@@ -7,7 +7,7 @@
 
   <node type="image_annotator"
         pkg="laser_cb_detector"
-        name="narrow_left_cb_annotator"
+        name="cb_annotator"
         output="screen">
     <remap from="annotated" to="image_rect_annotated" />
     <remap from="image" to="image_rect_throttle" />
