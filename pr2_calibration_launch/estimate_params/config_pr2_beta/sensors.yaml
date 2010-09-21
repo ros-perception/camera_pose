@@ -33,6 +33,14 @@
         dh_link_num:  1  # Connects after head pan
         after_chain:  [head_chain_tip_adj, head_plate_frame_joint, double_stereo_frame_joint, wide_stereo_frame_joint, wide_stereo_optical_frame_joint]
 
+    - sensor_id:    prosilica_rect
+      camera_id:    prosilica_rect
+      chain:
+        before_chain: [head_pan_joint]
+        chain_id:     head_chain
+        dh_link_num:  1  # Connects after head pan
+        after_chain:  [head_chain_tip_adj, head_plate_frame_joint, high_def_joint, high_def_optical_joint]
+
     - camera_id: forearm_left_rect
       sensor_id: forearm_left_rect
       chain:

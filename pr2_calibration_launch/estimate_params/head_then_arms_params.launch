@@ -60,9 +60,24 @@
           - wide_right_rect
           - tilt_laser
         </rosparam>
-        <param name="output_filename" type="string" value="head_laser_calibrated" />
+        <param name="output_filename" type="string" value="head_laser_3" />
       </group>
 
+      <group ns="A - 04 - Computing Prosilica location relative to other head sensors">
+        <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_head_laser_4.yaml" />
+        <param name="use_cov" type="bool" value="True" />
+        <rosparam>
+          sensors:
+          - narrow_left_rect
+          - narrow_right_rect
+          - wide_left_rect
+          - wide_right_rect
+          - tilt_laser
+          - prosilica_rect
+        </rosparam>
+        <param name="output_filename" type="string" value="head_laser_calibrated" />
+      </group>
+      
       <group ns="B - 01 - Locking Head Sensors. Estimating Arm Joint Offsets">
         <param name="free_params" textfile="$(find pr2_calibration_launch)/estimate_params/config_pr2_beta/free_arms_only_1.yaml" />
         <param name="use_cov" type="bool" value="True" />

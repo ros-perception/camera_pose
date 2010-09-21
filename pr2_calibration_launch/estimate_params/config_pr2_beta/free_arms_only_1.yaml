@@ -48,6 +48,9 @@
     wide_stereo_optical_frame_joint:   [ 0, 0, 0, 0, 0, 0 ]
     narrow_stereo_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
 
+    high_def_frame_joint:              [ 0, 0, 0, 0, 0, 0 ]
+    high_def_optical_frame_joint:      [ 0, 0, 0, 0, 0, 0 ]
+
     l_forearm_roll_adj:                [ 0, 0, 0, 0, 0, 0 ]
     l_forearm_cam_frame_joint:         [ 1, 1, 1, 1, 1, 1 ]
     l_forearm_cam_optical_frame_joint: [ 0, 0, 0, 0, 0, 0 ]
