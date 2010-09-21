@@ -11,7 +11,8 @@
         output="screen">
     <remap from="annotated" to="image_rect_annotated" />
     <remap from="image" to="image_rect_throttle" />
-    <param name="marker_size" type="int" value="4" />
+    <param name="marker_size" type="int" value="3" />
+    <param name="scaling" type="double" value=".5" />
   </node>
 
   <node type="monocam_settler_action"
