@@ -193,6 +193,30 @@ class TestPR2Fk(LoadData):
         cmds = self.loadCommands('head_commands')
         self.run_test(full_chain, 'torso_lift_link', 'narrow_stereo_optical_frame', cmds)
 
+    def test_high_def(self):
+        print ""
+        config_str = '''
+        before_chain: [head_pan_joint]
+        chain_id:     head_chain
+        after_chain:  [head_chain_tip_adj, head_plate_frame_joint, high_def_frame_joint]
+        dh_link_num:  1 '''
+        full_chain = FullChainRobotParams(yaml.load(config_str))
+        full_chain.update_config(self.robot_params)
+        cmds = self.loadCommands('head_commands')
+        self.run_test(full_chain, 'torso_lift_link', 'high_def_frame', cmds)
+
+    def test_high_def_optical(self):
+        print ""
+        config_str = '''
+        before_chain: [head_pan_joint]
+        chain_id:     head_chain
+        after_chain:  [head_chain_tip_adj, head_plate_frame_joint, high_def_frame_joint, high_def_optical_frame_joint]
+        dh_link_num:  1 '''
+        full_chain = FullChainRobotParams(yaml.load(config_str))
+        full_chain.update_config(self.robot_params)
+        cmds = self.loadCommands('head_commands')
+        self.run_test(full_chain, 'torso_lift_link', 'high_def_optical_frame', cmds)
+
     def check_tilt_laser(self, cmd):
         actual_T = self.robot_params.tilting_lasers["tilt_laser"].compute_pose([cmd])
         expected_T = self.getExpected("torso_lift_link", "laser_tilt_link", [cmd])

@@ -74,6 +74,10 @@
     r_forearm_cam_frame_joint: [0.135, 0, 0.044,  1.5254330523304880, -0.4410147640455078, 0.4410147640455078]
     r_forearm_cam_optical_frame_joint: [0, 0, 0, -1.2091995761561452, 1.2091995761561452, -1.2091995761561452]
 
+    # Prosilica Frames
+    high_def_frame_joint: [0, -0.109, 0.035, 0, 0, 0]
+    high_def_optical_frame_joint: [0, 0, 0, -1.2091995761561452, 1.2091995761561452, -1.2091995761561452]
+
   rectified_cams:
     wide_left_rect:
       baseline_shift: 0.0
