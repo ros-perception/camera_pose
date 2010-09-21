@@ -89,7 +89,7 @@ wide_left_rect:
   configs:
     cb_7x6:
       settler:
-        tolerance: 2.00
+        tolerance: 2.50
         ignore_failures: True
         max_step: 1.0
         cache_size: 100
@@ -129,7 +129,7 @@ wide_right_rect:
   configs:
     cb_7x6:
       settler:
-        tolerance: 2.00
+        tolerance: 2.50
         ignore_failures: True
         max_step: 1.0
         cache_size: 100
