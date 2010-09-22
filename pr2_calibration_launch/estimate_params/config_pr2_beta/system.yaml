@@ -103,6 +103,12 @@
       cx_shift: 0.0
       cy_shift: 0.0
       cov: {u: 0.125, v: 0.125}
+    prosilica_rect:
+      baseline_shift: 0.0
+      f_shift: 0.0
+      cx_shift: 0.0
+      cy_shift: 0.0
+      cov: {u: 0.25, v: 0.25}
     forearm_left_rect:
       baseline_shift: 0.0
       f_shift: 0.0

@@ -26,3 +26,10 @@
   plot_ops:
     color: r
     marker: o
+
+- name: "Tilt Laser: Prosilica"
+  3d: tilt_laser
+  cam: prosilica_rect
+  plot_ops:
+    color: m
+    marker: o

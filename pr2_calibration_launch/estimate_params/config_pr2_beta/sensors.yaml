@@ -39,7 +39,7 @@
         before_chain: [head_pan_joint]
         chain_id:     head_chain
         dh_link_num:  1  # Connects after head pan
-        after_chain:  [head_chain_tip_adj, head_plate_frame_joint, high_def_joint, high_def_optical_joint]
+        after_chain:  [head_chain_tip_adj, head_plate_frame_joint, high_def_frame_joint, high_def_optical_frame_joint]
 
     - camera_id: forearm_left_rect
       sensor_id: forearm_left_rect
