@@ -10,7 +10,7 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/pr2_calibration</url>
   <depend stack="common_msgs" /> <!-- geometry_msgs, sensor_msgs -->
-  <depend stack="geometry" /> <!-- kdl, tf -->
+  <depend stack="geometry" /> <!-- tf, kdl -->
   <depend stack="image_pipeline" /> <!-- stereo_image_proc, image_view -->
   <depend stack="pr2_apps" /> <!-- pr2_teleop -->
   <depend stack="pr2_common" /> <!-- pr2_msgs -->
@@ -18,5 +18,6 @@
   <depend stack="robot_calibration" /> <!-- laser_joint_processor, laser_cb_detector, dense_laser_assembler, monocam_settler, interval_intersection, calibration_msgs, image_cb_detector, laser_joint_projector -->
   <depend stack="robot_model" /> <!-- kdl_parser -->
   <depend stack="ros" /> <!-- rostest, rospy, message_filters -->
+  <depend stack="visualization_common" /> <!-- visualization_msgs -->
 
 </stack>
