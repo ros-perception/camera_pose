@@ -1,0 +1,30 @@
+<package>
+  <description brief="Extracts checkerboard corners from a dense laser snapshot">
+     Extracts checkerboard corners from a dense laser snapshot.
+     This package is experimental and unstable. Expect its APIs to change.
+  </description>
+  <author>Vijay Pradeep</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://pr.willowgarage.com/wiki/laser_cb_detector</url>
+
+  <!-- ROS -->
+  <depend package="roscpp"/>
+  <depend package="message_filters" />
+  <depend package="std_msgs"/>
+
+  <!-- common_msgs -->
+  <depend package="actionlib_msgs" />
+
+  <!-- robot_calibration -->
+  <depend package="calibration_msgs"/>
+
+  <!-- opencv -->
+  <depend package="opencv2" />
+  <depend package="cv_bridge" />
+  <platform os="ubuntu" version="9.04"/>
+  <platform os="ubuntu" version="9.10"/>
+  <platform os="ubuntu" version="10.04"/>
+</package>
+
+

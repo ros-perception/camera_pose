@@ -1,0 +1,25 @@
+<package>
+  <description brief="Get joint angles from detcted corners in a snapshot">
+     Computes joint angles associated with a specific set of detected checkerboard corners.
+     This package is experimental and unstable.
+     Expect its APIs to change.
+  </description>
+  <author>Vijay Pradeep</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/laser_joint_processor</url>
+
+  <!-- ROS -->
+  <depend package="message_filters" />
+  
+  <!-- robot_calibration -->
+  <depend package="settlerlib"/>
+  <depend package="joint_states_settler"/>
+
+  <depend package="opencv2"/>
+  <platform os="ubuntu" version="9.04"/>
+  <platform os="ubuntu" version="9.10"/>
+  <platform os="ubuntu" version="10.04"/>
+</package>
+
+
