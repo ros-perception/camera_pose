@@ -105,7 +105,7 @@ def interval_req_callback(scans) :
     sorted_scans = sorted(scans, lambda x,y:cmp(x.pos[0],y.pos[0]))
 
 
-    msg_header = roslib.msg.Header()
+    msg_header = rospy.Header()
     msg_header.stamp = scans[-1].scan.header.stamp
     msg_header.frame_id = scans[-1].scan.header.frame_id
 
