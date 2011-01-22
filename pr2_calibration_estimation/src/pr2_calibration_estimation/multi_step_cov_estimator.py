@@ -39,7 +39,7 @@ import sys
 import rospy
 import time
 import numpy
-import rosrecord
+import rosbag
 import yaml
 import os.path
 import numpy
@@ -180,12 +180,13 @@ if __name__ == '__main__':
 
     # Count how many checkerboard poses we need to track
     msg_count = 0
-    f = open(bag_filename)
+    # f = open(bag_filename)
+    bag = rosbag.Bag(bag_filename)
     multisensors = []
-    for topic, msg, t in rosrecord.logplayer(f):
+    for topic, msg, t in bag.read_messages(topics=['robot_measurement']):
         if topic == "robot_measurement":
             msg_count+=1
-    f.close()
+    bag.close()
 
     if 'initial_poses' in config.keys():
         previous_pose_guesses = numpy.array(yaml.load(config['initial_poses']))
