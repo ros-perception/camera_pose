@@ -8,7 +8,7 @@
   </description>
   <author>Maintained by Vijay Pradeep</author>
   <license>BSD</license>
-  <review status="API & Doc Reviewed" notes=""/>
+  <review status="API and Doc Reviewed" notes=""/>
   <url>http://ros.org/wiki/pr2_calibration</url>
   <depend stack="common" /> <!-- actionlib -->
   <depend stack="common_msgs" /> <!-- geometry_msgs, actionlib_msgs, trajectory_msgs, sensor_msgs, visualization_msgs -->
