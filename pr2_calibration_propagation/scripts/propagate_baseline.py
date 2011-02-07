@@ -38,7 +38,7 @@ import roslib; roslib.load_manifest('pr2_calibration_propagation')
 import sensor_msgs.msg
 import sensor_msgs.srv
 import rospy
-from ros import rosrecord
+import rosbag
 
 import math
 import sys
@@ -66,7 +66,8 @@ def main():
 
     # ****** Look for cam info in the calibration bagfile ******
     cam_info = None
-    for topic, msg, t in rosrecord.logplayer(bag_filename):
+    bag = rosbag.Bag(bag_filename)
+    for topic, msg, t in bag.read_messages():
         if topic == "robot_measurement":
             for cam_measurement in msg.M_cam:
                 if cam_measurement.camera_id == config_cam_name:

@@ -7,7 +7,8 @@ import pr2_calibration_propagation.update_urdf as update_urdf
 import math
 import pdb
 import sys
-from ros import rosrecord
+# from ros import rosrecord
+import rosbag
 
 
 
@@ -31,13 +32,15 @@ if __name__ == '__main__':
     measurement_filename     = rospy.myargv()[3]
     output_filename          = rospy.myargv()[4]
 
+    bag = rosbag.Bag(measurement_filename)
     xml_in = None
-    for topic, msg, t in rosrecord.logplayer(measurement_filename):
+    for topic, msg, t in bag.read_messages():
         if topic == "robot_description" or topic == "/robot_description":
             xml_in = msg.data
     if xml_in is None:
         print "Error: Could not find URDF in bagfile. Make sure topic 'robot_description' exists"
         sys.exit(-1)
+    bag.close()
 
     #read in files
     system_default = yaml.load(file(initial_yaml_filename, 'r'))

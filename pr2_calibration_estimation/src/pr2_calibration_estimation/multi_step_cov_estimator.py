@@ -222,9 +222,10 @@ if __name__ == '__main__':
         cur_sensors = load_requested_sensors(all_sensors_dict, cur_step['sensors'])
 
         # Load all the sensors from bag
-        f = open(bag_filename)
+        # f = open(bag_filename)
+        bag = rosbag.Bag(bag_filename)
         multisensors = []
-        for topic, msg, t in rosrecord.logplayer(f):
+        for topic, msg, t in bag.read_messages(topics=['robot_measurement']):
             if topic == "robot_measurement":
                 # Hack to rename laser id
                 for cur_laser in msg.M_laser:
@@ -233,7 +234,7 @@ if __name__ == '__main__':
                 ms = MultiSensor(cur_sensors)
                 ms.sensors_from_message(msg)
                 multisensors.append(ms)
-        f.close()
+        bag.close()
 
         # Display sensor count statistics
         print "Executing step with the following Sensors:"
