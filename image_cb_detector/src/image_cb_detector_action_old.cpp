@@ -48,13 +48,14 @@ using namespace image_cb_detector;
 class ImageCbDetectorOldAction
 {
 public:
-  ImageCbDetectorOldAction() : as_("cb_detector_config"), it_(nh_)
+  ImageCbDetectorOldAction() : as_("cb_detector_config", false), it_(nh_)
   {
     as_.registerGoalCallback( boost::bind(&ImageCbDetectorOldAction::goalCallback, this) );
     as_.registerPreemptCallback( boost::bind(&ImageCbDetectorOldAction::preemptCallback, this) );
 
     pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("features",1);
     sub_ = it_.subscribe("image", 2, boost::bind(&ImageCbDetectorOldAction::imageCallback, this, _1));
+    as_.start();
   }
 
   void goalCallback()
