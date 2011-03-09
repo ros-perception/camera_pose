@@ -16,7 +16,8 @@
   <depend package="image_transport" />
   <depend package="sensor_msgs" />
   <depend package="geometry_msgs" />
-
+  <depend package="stereo_msgs" />
+  <depend package="message_filters" />
   <depend package="actionlib" />
   <depend package="actionlib_msgs"/>
   <export>
