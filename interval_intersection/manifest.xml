@@ -25,6 +25,8 @@
   <!-- robot_calibration -->
   <depend package="calibration_msgs"/>
 
+  <depend package="rospy"/>
+
   <export>
     <cpp cflags="-I${prefix}/msg/cpp" />
   </export>
