@@ -63,9 +63,10 @@ public:
 
     pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("features",1);
 
+    image_synchronizer_.registerCallback(boost::bind(&StereoCbDetectorAction::syncCb, this, _1, _2));
+
     sub_image_.subscribe(nh_, "image", 10);
     sub_disparity_.subscribe(nh_, "disparity", 10);
-    image_synchronizer_.registerCallback(boost::bind(&StereoCbDetectorAction::syncCb, this, _1, _2));
 
     as_.start();
   }
@@ -117,8 +118,21 @@ public:
       // Figure out the depth reading
       sensor_msgs::ImageConstPtr disp_image = actionlib::share_member(disparity, disparity->image); 
       cv::Mat disparity = bridge_.imgMsgToCv(disp_image, "passthrough");  // "32FC1"
-      
-      const unsigned int N = features.image_points.size();
+
+      for (unsigned int i=0; i < features.image_points.size(); i++)
+      {
+        double cur_d = disparity.at<float>( floor(features.image_points[i].y + 0.499), floor(features.image_points[i].x + 0.499));
+        //printf("%lf  ", cur_d);
+        if ( cur_d == 0.0 )
+        {
+          ROS_DEBUG("Got NaNs");
+          features.success = 0;
+        }
+        features.image_points[i].d = cur_d;
+      }
+      //printf("\n");
+
+      /* const unsigned int N = features.image_points.size();
 
       // Allocate Maps
       cv::Mat_<double> map_x(N,1);
@@ -142,6 +156,7 @@ public:
       {
         features.image_points[i].d = dest_disparity.at<double>(i,0);
       }
+      */
 
       pub_.publish(features);
     }
@@ -157,10 +172,10 @@ private:
   image_transport::ImageTransport it_;
 
   typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, stereo_msgs::DisparityImage > ApproxTimeSync;
-  message_filters::Synchronizer<ApproxTimeSync> image_synchronizer_;
 
   message_filters::Subscriber<sensor_msgs::Image> sub_image_;
   message_filters::Subscriber<stereo_msgs::DisparityImage> sub_disparity_;
+  message_filters::Synchronizer<ApproxTimeSync> image_synchronizer_;
 
   sensor_msgs::CvBridge bridge_;
 };
