@@ -75,6 +75,8 @@ public:
   {
     boost::mutex::scoped_lock lock(run_mutex_);
 
+    ROS_INFO("In StereoCbDetector Goal Callback");
+
     // Stop the previously running goal (if it exists)
     if (as_.isActive())
       as_.setPreempted();
@@ -122,12 +124,13 @@ public:
       for (unsigned int i=0; i < features.image_points.size(); i++)
       {
         double cur_d = disparity.at<float>( floor(features.image_points[i].y + 0.499), floor(features.image_points[i].x + 0.499));
-        //printf("%lf  ", cur_d);
-        if ( cur_d == 0.0 )
+
+        /*if ( cur_d == 0.0 )
         {
           ROS_DEBUG("Got NaNs");
           features.success = 0;
         }
+        */
         features.image_points[i].d = cur_d;
       }
       //printf("\n");
