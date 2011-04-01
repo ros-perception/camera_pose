@@ -289,8 +289,22 @@ class ErrorCalc:
         return J_scaled
 
 def build_opt_vector(robot_params, free_dict, pose_guess_arr):
+    """
+    Construct vector of all the parameters that we're optimizing over. This includes
+    both the free system parameters and the checkerboard poses
+    Inputs:
+    - robot_params: Dictionary with all of the system parameters
+    - free_dict: Dictionary that specifies which system parameters are free
+    - pose_guess_arr: Mx6 array storing the current checkerboard poses, where M is
+                      the number of calibration samples
+    Returns: Vector of length (F + Mx6), where F is the number of 1's in the free_dict
+    """
+
+    # Convert the robot parameter dictionary into a vector
     expanded_param_vec = robot_params.deflate()
     free_list = robot_params.calc_free(free_dict)
+
+    # Pull out only the free system parameters from the system parameter vector
     opt_param_vec = array(expanded_param_vec[numpy.where(free_list)].T)[0]
 
     assert(pose_guess_arr.shape[1] == 6)
