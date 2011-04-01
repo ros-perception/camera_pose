@@ -97,6 +97,10 @@ class CameraChainSensor:
 
 
     def compute_residual_scaled(self, target_pts):
+        '''
+        Computes the residual, and then scales it by sqrt(Gamma), where Gamma
+        is the information matrix for this measurement (Cov^-1).
+        '''
         r = self.compute_residual(target_pts)
         gamma_sqrt = self.compute_marginal_gamma_sqrt(target_pts)
         r_scaled = gamma_sqrt * matrix(r).T
@@ -128,10 +132,12 @@ class CameraChainSensor:
         camera_pix = numpy.matrix([[pt.x, pt.y] for pt in self._M_cam.image_points])
         return camera_pix
 
-    # Compute the expected pixel coordinates for a set of target points.
-    # target_pts: 4xN matrix, storing feature points of the target, in homogeneous coords
-    # Returns: target points projected into pixel coordinates, in a Nx2 matrix
     def compute_expected(self, target_pts):
+        """
+        Compute the expected pixel coordinates for a set of target points.
+        target_pts: 4xN matrix, storing feature points of the target, in homogeneous coords
+        Returns: target points projected into pixel coordinates, in a Nx2 matrix
+        """
         return self._compute_expected(self._M_chain.chain_state, target_pts)
 
     def _compute_expected(self, chain_state, target_pts):
@@ -144,10 +150,12 @@ class CameraChainSensor:
         return pixel_pts.T
 
     def compute_expected_J(self, target_pts):
-        '''
-        Calculate the jacobian between points in the world, and camera cooridinates.
-        For n points, J is a 2nx3n matrix
-        '''
+        """
+        The output Jacobian J shows how moving target_pts in cartesian space affects
+        the expected measurement in (u,v) camera coordinates.
+        For n points in target_pts, J is a 2nx3n matrix
+        Note: This doesn't seem to be used anywhere, except maybe in some drawing code
+        """
         epsilon = 1e-8
         N = len(self._M_cam.image_points)
         Jt = zeros([N*3, N*2])
@@ -166,6 +174,12 @@ class CameraChainSensor:
 
 
     def compute_cov(self, target_pts):
+        '''
+        Computes the measurement covariance in pixel coordinates for the given
+        set of target points (target_pts)
+        Input:
+         - target_pts: 4xN matrix, storing N feature points of the target, in homogeneous coords
+        '''
         epsilon = 1e-8
 
         num_joints = len(self._M_chain.chain_state.position)
@@ -174,6 +188,7 @@ class CameraChainSensor:
         x = JointState()
         x.position = self._M_chain.chain_state.position[:]
 
+        # Compute the Jacobian from the chain's joint angles to pixel residuals
         f0 = reshape(array(self._compute_expected(x, target_pts)), [-1])
         for i in range(num_joints):
             x.position = [cur_pos for cur_pos in self._M_chain.chain_state.position]
@@ -181,8 +196,11 @@ class CameraChainSensor:
             fTest = reshape(array(self._compute_expected(x, target_pts)), [-1])
             Jt[i] = (fTest - f0)/epsilon
         cov_angles = [x*x for x in self._chain.calc_block._chain._cov_dict['joint_angles']]
+
+        # Transform the chain's covariance from joint angle space into pixel space using the just calculated jacobian
         chain_cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
         cam_cov = matrix(zeros(chain_cov.shape))
+
         # Convert StdDev into variance
         var_u = self._camera._cov_dict['u'] * self._camera._cov_dict['u']
         var_v = self._camera._cov_dict['v'] * self._camera._cov_dict['v']
@@ -190,7 +208,7 @@ class CameraChainSensor:
             cam_cov[2*k  , 2*k]   = var_u
             cam_cov[2*k+1, 2*k+1] = var_v
 
-        #import code; code.interact(local=locals())
+        # Both chain and camera covariances are now in measurement space, so we can simply add them together
         cov = chain_cov + cam_cov
         return cov
 

@@ -117,7 +117,7 @@ class ErrorCalc:
           where S is the number of sensors in this multisensor.
 
         Sensor Jacobian:
-          A single sensor jacobian is create by concatenating jacobians for the system parameters and checkerboards
+          A single sensor jacobian is created by concatenating jacobians for the system parameters and checkerboards
 
           J_sensor_m_s = [ J_params_m_s | J_m_s_pose0 | J_m_s_pose1 | --- | J_m_s_CB_poseC ]
 
