@@ -48,13 +48,14 @@ using namespace joint_states_settler;
 class JointStatesSettlerAction
 {
 public:
-  JointStatesSettlerAction() : as_("settler_config")
+  JointStatesSettlerAction() : as_("settler_config", false)
   {
     as_.registerGoalCallback( boost::bind(&JointStatesSettlerAction::goalCallback, this) );
     as_.registerPreemptCallback( boost::bind(&JointStatesSettlerAction::preemptCallback, this) );
     interval_pub_ = nh_.advertise<calibration_msgs::Interval>("settled_interval", 1);
     pruned_pub_ = nh_.advertise<sensor_msgs::JointState>("pruned_joint_states", 1);
     sub_ = nh_.subscribe("joint_states", 1, &JointStatesSettlerAction::jointStatesCallback, this);
+    as_.start();
   }
 
   void goalCallback()

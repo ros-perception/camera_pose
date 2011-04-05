@@ -49,7 +49,7 @@ using namespace monocam_settler;
 class MonocamSettlerAction
 {
 public:
-  MonocamSettlerAction() : as_("monocam_settler_config")
+  MonocamSettlerAction() : as_("monocam_settler_config", false)
   {
     // Set up action callbacks
     as_.registerGoalCallback( boost::bind(&MonocamSettlerAction::goalCallback, this) );
@@ -57,6 +57,7 @@ public:
 
     pub_ = nh_.advertise<calibration_msgs::Interval>("settled_interval", 1);
     sub_ = nh_.subscribe("features", 1, &MonocamSettlerAction::msgCallback, this);
+    as_.start();
   }
 
   void goalCallback()

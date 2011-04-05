@@ -50,11 +50,35 @@ from pr2_calibration_estimation.full_chain import FullChainRobotParams
 from sensor_msgs.msg import JointState
 
 class CameraChainBundler:
+    """
+    Tool used to generate a list of CameraChain sensors from a single calibration sample message
+    """
     def __init__(self, valid_configs):
+        """
+        Inputs:
+        - valid_configs: A list of dictionaries, where each list elem stores the configuration of a potential
+                         camera chain that we might encounter.
+          Example (in yaml format):
+            - camera_id: forearm_right_rect
+              sensor_id: forearm_right_rect
+              chain:
+                before_chain: [r_shoulder_pan_joint]
+                chain_id:     right_arm_chain
+                after_chain:  [r_forearm_roll_adj, r_forearm_cam_frame_joint,
+                               r_forearm_cam_optical_frame_joint]
+                dh_link_num:  4
+        """
         self._valid_configs = valid_configs
 
     # Construct a CameraChainSensor for every camera chain sensor that exists in the given robot measurement
     def build_blocks(self, M_robot):
+        """
+        Input:
+        - M_robot: A calibration sample of type calibration_msgs/RobotMeasurement
+        Returns:
+        - sensors: A list of CameraChainSensor objects that corresponds to all camera chain sensors found
+                   in the calibration message that was passed in.
+        """
         sensors = []
         for cur_config in self._valid_configs:
             if cur_config["camera_id"] in [ x.camera_id for x in M_robot.M_cam ] and \
@@ -69,6 +93,14 @@ class CameraChainBundler:
 
 class CameraChainSensor:
     def __init__(self, config_dict, M_cam, M_chain):
+        """
+        Generates a single sensor block for a single configuration
+        Inputs:
+        - config_dict: The configuration for this specific sensor. This looks exactly like
+                       a single element from the valid_configs list passed into CameraChainBundler.__init__
+        - M_cam: The camera measurement of type calibration_msgs/CameraMeasurement
+        - M_chain: The chain measurement of type calibration_msgs/ChainMeasurement
+        """
 
         self.sensor_type = "camera"
         self.sensor_id = config_dict["camera_id"]
@@ -82,11 +114,23 @@ class CameraChainSensor:
         self.terms_per_sample = 2
 
     def update_config(self, robot_params):
+        """
+        On each optimization cycle the set of system parameters that we're optimizing over will change. Thus,
+        after each change in parameters we must call update_config to ensure that our calculated residual reflects
+        the newest set of system parameters.
+        """
         self._camera = robot_params.rectified_cams[ self._config_dict["camera_id"] ]
 
         self._chain.update_config(robot_params)
 
     def compute_residual(self, target_pts):
+        """
+        Computes the measurement residual for the current set of system parameters and target points
+        Input:
+        - target_pts: 4XN matrix, storing features point locations in world cartesian homogenous coordinates.
+        Output:
+        - r: 2N long vector, storing pixel residuals for the target points in the form [u1, v1, u2, v2, ..., uN, vN]
+        """
         z_mat = self.get_measurement()
         h_mat = self.compute_expected(target_pts)
         assert(z_mat.shape[1] == 2)
@@ -97,12 +141,20 @@ class CameraChainSensor:
 
 
     def compute_residual_scaled(self, target_pts):
+        """
+        Computes the residual, and then scales it by sqrt(Gamma), where Gamma
+        is the information matrix for this measurement (Cov^-1).
+        """
         r = self.compute_residual(target_pts)
         gamma_sqrt = self.compute_marginal_gamma_sqrt(target_pts)
         r_scaled = gamma_sqrt * matrix(r).T
         return array(r_scaled.T)[0]
 
     def compute_marginal_gamma_sqrt(self, target_pts):
+        """
+        Calculates the square root of the information matrix for the measurement of the
+        current set of system parameters at the passed in set of target points.
+        """
         import scipy.linalg
         cov = self.compute_cov(target_pts)
         gamma = matrix(zeros(cov.shape))
@@ -125,16 +177,31 @@ class CameraChainSensor:
 
     # Get the observed measurement in a Nx2 Matrix
     def get_measurement(self):
+        """
+        Get the target's pixel coordinates as measured by the actual sensor
+        """
         camera_pix = numpy.matrix([[pt.x, pt.y] for pt in self._M_cam.image_points])
         return camera_pix
 
-    # Compute the expected pixel coordinates for a set of target points.
-    # target_pts: 4xN matrix, storing feature points of the target, in homogeneous coords
-    # Returns: target points projected into pixel coordinates, in a Nx2 matrix
     def compute_expected(self, target_pts):
+        """
+        Compute the expected pixel coordinates for a set of target points.
+        target_pts: 4xN matrix, storing feature points of the target, in homogeneous coords
+        Returns: target points projected into pixel coordinates, in a Nx2 matrix
+        """
         return self._compute_expected(self._M_chain.chain_state, target_pts)
 
     def _compute_expected(self, chain_state, target_pts):
+        """
+        Compute what measurement we would expect to see, based on the current system parameters
+        and the specified target point locations.
+
+        Inputs:
+        - chain_state: The joint angles of this sensor's chain of type sensor_msgs/JointState.
+        - target_pts: 4XN matrix, storing features point locations in world cartesian homogenous coordinates.
+
+        Returns: target points projected into pixel coordinates, in a Nx2 matrix
+        """
         # Camera pose in root frame
         camera_pose_root = self._chain.calc_block.fk(chain_state)
         cam_frame_pts = camera_pose_root.I * target_pts
@@ -144,10 +211,12 @@ class CameraChainSensor:
         return pixel_pts.T
 
     def compute_expected_J(self, target_pts):
-        '''
-        Calculate the jacobian between points in the world, and camera cooridinates.
-        For n points, J is a 2nx3n matrix
-        '''
+        """
+        The output Jacobian J shows how moving target_pts in cartesian space affects
+        the expected measurement in (u,v) camera coordinates.
+        For n points in target_pts, J is a 2nx3n matrix
+        Note: This doesn't seem to be used anywhere, except maybe in some drawing code
+        """
         epsilon = 1e-8
         N = len(self._M_cam.image_points)
         Jt = zeros([N*3, N*2])
@@ -166,6 +235,12 @@ class CameraChainSensor:
 
 
     def compute_cov(self, target_pts):
+        '''
+        Computes the measurement covariance in pixel coordinates for the given
+        set of target points (target_pts)
+        Input:
+         - target_pts: 4xN matrix, storing N feature points of the target, in homogeneous coords
+        '''
         epsilon = 1e-8
 
         num_joints = len(self._M_chain.chain_state.position)
@@ -174,6 +249,7 @@ class CameraChainSensor:
         x = JointState()
         x.position = self._M_chain.chain_state.position[:]
 
+        # Compute the Jacobian from the chain's joint angles to pixel residuals
         f0 = reshape(array(self._compute_expected(x, target_pts)), [-1])
         for i in range(num_joints):
             x.position = [cur_pos for cur_pos in self._M_chain.chain_state.position]
@@ -181,8 +257,11 @@ class CameraChainSensor:
             fTest = reshape(array(self._compute_expected(x, target_pts)), [-1])
             Jt[i] = (fTest - f0)/epsilon
         cov_angles = [x*x for x in self._chain.calc_block._chain._cov_dict['joint_angles']]
+
+        # Transform the chain's covariance from joint angle space into pixel space using the just calculated jacobian
         chain_cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
         cam_cov = matrix(zeros(chain_cov.shape))
+
         # Convert StdDev into variance
         var_u = self._camera._cov_dict['u'] * self._camera._cov_dict['u']
         var_v = self._camera._cov_dict['v'] * self._camera._cov_dict['v']
@@ -190,12 +269,33 @@ class CameraChainSensor:
             cam_cov[2*k  , 2*k]   = var_u
             cam_cov[2*k+1, 2*k+1] = var_v
 
-        #import code; code.interact(local=locals())
+        # Both chain and camera covariances are now in measurement space, so we can simply add them together
         cov = chain_cov + cam_cov
         return cov
 
-    # Build a dictionary that defines which parameters will in fact affect this measurement
     def build_sparsity_dict(self):
+        """
+        Build a dictionary that defines which parameters will in fact affect this measurement.
+
+        Returned dictionary should be of the following form:
+          transforms:
+            my_transformA: [1, 1, 1, 1, 1, 1]
+            my_transformB: [1, 1, 1, 1, 1, 1]
+          dh_chains:
+            my_chain:
+              dh:
+                - [1, 1, 1, 1]
+                - [1, 1, 1, 1]
+                       |
+                - [1, 1, 1, 1]
+              gearing: [1, 1, ---, 1]
+          rectified_cams:
+            my_cam:
+              baseline_shift: 1
+              f_shift: 1
+              cx_shift: 1
+              cy_shift: 1
+        """
         sparsity = dict()
         sparsity['transforms'] = {}
         for cur_transform_name in ( self._config_dict['chain']['before_chain'] + self._config_dict['chain']['after_chain'] ):

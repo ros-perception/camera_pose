@@ -167,7 +167,11 @@ if __name__ == '__main__':
                 multisensors.append(ms)
         bag.close()
 
-        # Only grab the samples that have both a narrow left rect and a right_arm_chain
+        if (len([ms for ms in multisensors if len(ms.sensors) == 2]) == 0):
+            print "********** No Data for [%s] + [%s] pair **********" % (cur_loop['cam'], cur_loop['3d'])
+            continue
+
+        # Only grab the samples that have both the requested cam and requested 3D sensor
         multisensors_pruned, cb_poses_pruned = zip(*[(ms,cb) for ms,cb in zip(multisensors, cb_poses) if len(ms.sensors) == 2])
         sample_ind = [k for k,ms in zip(range(len(multisensors)), multisensors) if len(ms.sensors) == 2]
 

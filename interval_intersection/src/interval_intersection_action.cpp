@@ -49,13 +49,14 @@ using namespace interval_intersection;
 class IntervalIntersectionAction
 {
 public:
-  IntervalIntersectionAction() : as_("interval_intersection_config")
+  IntervalIntersectionAction() : as_("interval_intersection_config", false)
   {
     as_.registerGoalCallback(    boost::bind(&IntervalIntersectionAction::goalCallback, this) );
     as_.registerPreemptCallback( boost::bind(&IntervalIntersectionAction::preemptCallback, this) );
     pub_ = nh_.advertise<calibration_msgs::Interval>("interval", 1);
 
     ROS_DEBUG("Start interval intersection with no input topics");
+    as_.start();
   }
 
   void goalCallback()
