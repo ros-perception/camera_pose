@@ -1,15 +1,10 @@
 <stack>
-  <description brief="Tools for calibrating the PR2's kinematics">
-     Provides a toolchain running through the robot calibration process. This
-     involves capturing pr2 calibration data, estimating pr2 parameters, and
-     then updating the PR2 URDF.  Note that the only support API for the stack
-     is the tutorial for calibrating the PR2. All of the internal APIs are not
-     considered to be stable.
+  <description brief="Mega Calibration">
   </description>
-  <author>Maintained by Vijay Pradeep</author>
+  <author>Maintained by ...</author>
   <license>BSD</license>  
-  <review status="API and Doc Reviewed" notes=""/>
-  <url>http://ros.org/wiki/pr2_calibration</url>
+  <review status="Unreviewed" notes=""/>
+  <url>http://ros.org/wiki/megacal</url>
   <depend stack="common" /> <!-- actionlib -->
   <depend stack="common_msgs" /> <!-- geometry_msgs, actionlib_msgs, trajectory_msgs, sensor_msgs, visualization_msgs -->
   <depend stack="geometry" /> <!-- kdl, tf -->
