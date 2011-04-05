@@ -39,6 +39,7 @@
 
 #include <ros/ros.h>
 #include "sensor_msgs/Image.h"
+#include "sensor_msgs/CameraInfo.h"
 #include "cv_bridge/CvBridge.h"
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
@@ -54,6 +55,7 @@ public:
   bool configure(const ConfigGoal& config);
 
   bool detect(const sensor_msgs::ImageConstPtr& image,
+              const sensor_msgs::CameraInfoConstPtr& info_msg,
               calibration_msgs::CalibrationPattern& result);
 private:
   bool configured_;

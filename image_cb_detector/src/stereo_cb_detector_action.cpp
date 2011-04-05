@@ -38,30 +38,46 @@
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <image_cb_detector/image_cb_detector_old.h>
+#include <message_filters/sync_policies/approximate_time.h>
+#include <message_filters/subscriber.h>
+#include <message_filters/time_synchronizer.h>
+#include <message_filters/synchronizer.h>
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/Image.h>
 #include <image_cb_detector/ConfigAction.h>
 #include <calibration_msgs/Interval.h>
+#include <stereo_msgs/DisparityImage.h>
+
+#include <cv_bridge/CvBridge.h>
 
 using namespace image_cb_detector;
 
-class ImageCbDetectorOldAction
+class StereoCbDetectorAction
 {
 public:
-  ImageCbDetectorOldAction() : as_("cb_detector_config", false), it_(nh_)
+  StereoCbDetectorAction() : as_("cb_detector_config", false), it_(nh_),
+                             image_synchronizer_(ApproxTimeSync(30), sub_image_, sub_cam_info_, sub_disparity_)
   {
-    as_.registerGoalCallback( boost::bind(&ImageCbDetectorOldAction::goalCallback, this) );
-    as_.registerPreemptCallback( boost::bind(&ImageCbDetectorOldAction::preemptCallback, this) );
+    as_.registerGoalCallback( boost::bind(&StereoCbDetectorAction::goalCallback, this) );
+    as_.registerPreemptCallback( boost::bind(&StereoCbDetectorAction::preemptCallback, this) );
 
     pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("features",1);
     pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("cb_pose",1);
-    sub_ = it_.subscribeCamera("image", 2, boost::bind(&ImageCbDetectorOldAction::imageCallback, this, _1, _2));
+
+    image_synchronizer_.registerCallback(boost::bind(&StereoCbDetectorAction::syncCb, this, _1, _2, _3));
+
+    sub_image_.subscribe(nh_, "image", 10);
+    sub_cam_info_.subscribe(nh_, "camera_info", 10);
+    sub_disparity_.subscribe(nh_, "disparity", 10);
+
     as_.start();
   }
 
   void goalCallback()
   {
     boost::mutex::scoped_lock lock(run_mutex_);
+
+    ROS_INFO("In StereoCbDetector Goal Callback");
 
     // Stop the previously running goal (if it exists)
     if (as_.isActive())
@@ -87,8 +103,7 @@ public:
     as_.setPreempted();
   }
 
-  void imageCallback(const sensor_msgs::ImageConstPtr& image,
-                     const sensor_msgs::CameraInfoConstPtr& info_msg)
+  void syncCb(const sensor_msgs::Image::ConstPtr& image, const sensor_msgs::CameraInfo::ConstPtr& cam_info, const stereo_msgs::DisparityImage::ConstPtr& disparity)
   {
     boost::mutex::scoped_lock lock(run_mutex_);
 
@@ -96,13 +111,57 @@ public:
     {
       calibration_msgs::CalibrationPattern features;
       bool success;
-      success = detector_.detect(image, info_msg, features);
+      success = detector_.detect(image, cam_info, features);
 
       if (!success)
       {
         ROS_ERROR("Error trying to detect checkerboard, not going to publish CalibrationPattern");
         return;
       }
+
+      // Figure out the depth reading
+      sensor_msgs::ImageConstPtr disp_image = actionlib::share_member(disparity, disparity->image);
+      cv::Mat disparity = bridge_.imgMsgToCv(disp_image, "passthrough");  // "32FC1"
+
+      for (unsigned int i=0; i < features.image_points.size(); i++)
+      {
+        double cur_d = disparity.at<float>( floor(features.image_points[i].y + 0.499), floor(features.image_points[i].x + 0.499));
+
+        /*if ( cur_d == 0.0 )
+        {
+          ROS_DEBUG("Got NaNs");
+          features.success = 0;
+        }
+        */
+        features.image_points[i].d = cur_d;
+      }
+      //printf("\n");
+
+      /* const unsigned int N = features.image_points.size();
+
+      // Allocate Maps
+      cv::Mat_<double> map_x(N,1);
+      cv::Mat_<double> map_y(N,1);
+
+      // Set up maps
+      for (unsigned int i=0; i<N; i++)
+      {
+        map_x.at<double>(i,0) = features.image_points[i].x;
+        map_y.at<double>(i,0) = features.image_points[i].y;
+      }
+
+      // Allocate Destination Image
+      cv::Mat_<double> dest_disparity(N,1);
+
+      // Perform the OpenCV interpolation
+      // @TODO: Check if map_x and map_y are backwards
+      cv::remap(disparity, dest_disparity, map_x, map_y, cv::INTER_LINEAR);
+
+      for (unsigned int i=0; i<N; i++)
+      {
+        features.image_points[i].d = dest_disparity.at<double>(i,0);
+      }
+      */
       pose_pub_.publish(features.object_pose);
       pub_.publish(features);
     }
@@ -117,8 +176,15 @@ private:
   ros::Publisher pose_pub_;
   ros::Publisher pub_;
   image_transport::ImageTransport it_;
-  image_transport::CameraSubscriber sub_;
 
+  typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::CameraInfo, stereo_msgs::DisparityImage > ApproxTimeSync;
+
+  message_filters::Subscriber<sensor_msgs::Image> sub_image_;
+  message_filters::Subscriber<sensor_msgs::CameraInfo> sub_cam_info_;
+  message_filters::Subscriber<stereo_msgs::DisparityImage> sub_disparity_;
+  message_filters::Synchronizer<ApproxTimeSync> image_synchronizer_;
+
+  sensor_msgs::CvBridge bridge_;
 };
 
 int main(int argc, char** argv)
@@ -127,7 +193,7 @@ int main(int argc, char** argv)
 
   ros::NodeHandle n;
 
-  ImageCbDetectorOldAction detector_action;
+  StereoCbDetectorAction detector_action;
 
   ros::spin();
 

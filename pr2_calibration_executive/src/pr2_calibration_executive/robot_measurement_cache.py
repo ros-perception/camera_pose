@@ -119,10 +119,10 @@ class RobotMeasurementCache:
 
 
         # Hardcoding a minimum duration
-        min_duration = rospy.Duration(2,0)
-        if req_duration < min_duration:
+        #min_duration = rospy.Duration(2,0)
+        #if req_duration < min_duration:
             #print "Minimum duration of [%.2fs] not yet reached" % min_duration.to_seconds()
-            return None
+        #    return None
 
 
         # Extract the cam measurements closest to the center of the interval

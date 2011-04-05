@@ -23,11 +23,16 @@ rosbuild_genmsg()
 
 rosbuild_add_library(image_cb_detector_old src/image_cb_detector_old.cpp)
 
-rosbuild_add_executable(image_cb_detector_node_old src/image_cb_detector_node_old.cpp)
-target_link_libraries(image_cb_detector_node_old image_cb_detector_old)
+# Old Code
+#rosbuild_add_executable(image_cb_detector_node_old src/image_cb_detector_node_old.cpp)
+#target_link_libraries(image_cb_detector_node_old image_cb_detector_old)
 
 rosbuild_add_executable(image_cb_detector_action_old src/image_cb_detector_action_old.cpp)
 target_link_libraries(image_cb_detector_action_old image_cb_detector_old)
+
+rosbuild_add_executable(stereo_cb_detector_action src/stereo_cb_detector_action.cpp)
+target_link_libraries(stereo_cb_detector_action image_cb_detector_old)
+
 
 #common commands for building c++ executables and libraries
 #rosbuild_add_boost_directories()
