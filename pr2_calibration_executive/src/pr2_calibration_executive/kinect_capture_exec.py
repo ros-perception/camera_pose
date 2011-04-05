@@ -59,9 +59,9 @@ class KinectCaptureExecutive:
         # Construct a manager for each sensor stream (Don't enable any of them)
         self.cam_managers   = [ (cam_id,   CamManager(  cam_id,   self.add_cam_measurement) )   for cam_id   in cam_ids ]
 
-        # Turn on all of the camera modes in minimal mode, as opposed to verbose mode
+        # Turn on all of the camera modes into verbose model, since we want the CalibrationPattern data
         for cam_manager in zip(*self.cam_managers)[1]:
-            cam_manager.enable(verbose=False)
+            cam_manager.enable(verbose=True)
 
         # Subscribe to topic containing stable intervals
         self.measurement_pub = rospy.Publisher("robot_measurement", calibration_msgs.msg.RobotMeasurement)

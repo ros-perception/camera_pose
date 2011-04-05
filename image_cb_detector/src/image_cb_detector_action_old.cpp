@@ -54,7 +54,8 @@ public:
     as_.registerPreemptCallback( boost::bind(&ImageCbDetectorOldAction::preemptCallback, this) );
 
     pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("features",1);
-    sub_ = it_.subscribe("image", 2, boost::bind(&ImageCbDetectorOldAction::imageCallback, this, _1));
+    pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("cb_pose",1);
+    sub_ = it_.subscribeCamera("image", 2, boost::bind(&ImageCbDetectorOldAction::imageCallback, this, _1, _2));
     as_.start();
   }
 
@@ -86,7 +87,8 @@ public:
     as_.setPreempted();
   }
 
-  void imageCallback(const sensor_msgs::ImageConstPtr& image)
+  void imageCallback(const sensor_msgs::ImageConstPtr& image,
+                     const sensor_msgs::CameraInfoConstPtr& info_msg)
   {
     boost::mutex::scoped_lock lock(run_mutex_);
 
@@ -94,14 +96,14 @@ public:
     {
       calibration_msgs::CalibrationPattern features;
       bool success;
-      success = detector_.detect(image, features);
+      success = detector_.detect(image, info_msg, features);
 
       if (!success)
       {
         ROS_ERROR("Error trying to detect checkerboard, not going to publish CalibrationPattern");
         return;
       }
-
+      pose_pub_.publish(features.object_pose);
       pub_.publish(features);
     }
   }
@@ -112,9 +114,10 @@ private:
   actionlib::SimpleActionServer<image_cb_detector::ConfigAction> as_;
   ImageCbDetectorOld detector_;
 
+  ros::Publisher pose_pub_;
   ros::Publisher pub_;
   image_transport::ImageTransport it_;
-  image_transport::Subscriber sub_;
+  image_transport::CameraSubscriber sub_;
 
 };
 

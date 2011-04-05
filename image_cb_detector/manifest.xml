@@ -20,6 +20,7 @@
   <depend package="message_filters" />
   <depend package="actionlib" />
   <depend package="actionlib_msgs"/>
+  <depend package="visual_pose_estimation" />
   <export>
     <cpp cflags="-I${prefix}/msg/cpp"/>
   </export>

@@ -36,6 +36,7 @@
 
 #include <ros/ros.h>
 #include <image_cb_detector/image_cb_detector_old.h>
+#include <visual_pose_estimation/pose_estimator.h>
 
 using namespace image_cb_detector;
 using namespace std;
@@ -50,7 +51,8 @@ bool ImageCbDetectorOld::configure(const ConfigGoal& config)
 
 
 bool ImageCbDetectorOld::detect(const sensor_msgs::ImageConstPtr& ros_image,
-                             calibration_msgs::CalibrationPattern& result)
+                                const sensor_msgs::CameraInfoConstPtr& info_msg,
+                                calibration_msgs::CalibrationPattern& result)
 {
   IplImage *image = NULL;
   try
@@ -125,6 +127,32 @@ bool ImageCbDetectorOld::detect(const sensor_msgs::ImageConstPtr& ros_image,
   {
     result.image_points[i].x = cv_corners[i].x / config_.width_scaling;
     result.image_points[i].y = cv_corners[i].y / config_.height_scaling;
+  }
+
+  if (found)
+  {
+    // Do the pose fitting
+    image_geometry::PinholeCameraModel cam_model;
+    cam_model.fromCameraInfo(*info_msg);
+
+    // Build checkerboard model for estimator
+    cv::Mat_<cv::Vec3f> grid_points(result.object_points.size(), 1);
+    for (unsigned int i=0; i < result.object_points.size(); i++)
+      grid_points(i, 0) = cv::Vec3f(result.object_points[i].x, result.object_points[i].y, result.object_points[i].z);
+    visual_pose_estimation::PoseEstimator estimator(grid_points);
+
+    // Build measurement vector
+    std::vector<cv::Point2f> points(result.image_points.size());
+    for (unsigned int i=0; i < result.image_points.size(); i++)
+      points[i] = cv::Point2f(result.image_points[i].x, result.image_points[i].y);
+
+    // Do the actual pose solving
+    tf::Pose tf_pose = estimator.solve(points, cam_model);
+    geometry_msgs::PoseStamped pose_msg;
+    tf::poseTFToMsg(tf_pose, pose_msg.pose);
+    pose_msg.header.stamp    = ros_image->header.stamp;
+    pose_msg.header.frame_id = ros_image->header.frame_id;
+    result.object_pose = pose_msg;
   }
 
   result.success = found;

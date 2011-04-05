@@ -56,16 +56,18 @@ class StereoCbDetectorAction
 {
 public:
   StereoCbDetectorAction() : as_("cb_detector_config", false), it_(nh_),
-                             image_synchronizer_(ApproxTimeSync(30), sub_image_, sub_disparity_)
+                             image_synchronizer_(ApproxTimeSync(30), sub_image_, sub_cam_info_, sub_disparity_)
   {
     as_.registerGoalCallback( boost::bind(&StereoCbDetectorAction::goalCallback, this) );
     as_.registerPreemptCallback( boost::bind(&StereoCbDetectorAction::preemptCallback, this) );
 
     pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("features",1);
+    pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("cb_pose",1);
 
-    image_synchronizer_.registerCallback(boost::bind(&StereoCbDetectorAction::syncCb, this, _1, _2));
+    image_synchronizer_.registerCallback(boost::bind(&StereoCbDetectorAction::syncCb, this, _1, _2, _3));
 
     sub_image_.subscribe(nh_, "image", 10);
+    sub_cam_info_.subscribe(nh_, "camera_info", 10);
     sub_disparity_.subscribe(nh_, "disparity", 10);
 
     as_.start();
@@ -101,7 +103,7 @@ public:
     as_.setPreempted();
   }
 
-  void syncCb(const sensor_msgs::Image::ConstPtr& image, const stereo_msgs::DisparityImage::ConstPtr& disparity)
+  void syncCb(const sensor_msgs::Image::ConstPtr& image, const sensor_msgs::CameraInfo::ConstPtr& cam_info, const stereo_msgs::DisparityImage::ConstPtr& disparity)
   {
     boost::mutex::scoped_lock lock(run_mutex_);
 
@@ -109,7 +111,7 @@ public:
     {
       calibration_msgs::CalibrationPattern features;
       bool success;
-      success = detector_.detect(image, features);
+      success = detector_.detect(image, cam_info, features);
 
       if (!success)
       {
@@ -118,7 +120,7 @@ public:
       }
 
       // Figure out the depth reading
-      sensor_msgs::ImageConstPtr disp_image = actionlib::share_member(disparity, disparity->image); 
+      sensor_msgs::ImageConstPtr disp_image = actionlib::share_member(disparity, disparity->image);
       cv::Mat disparity = bridge_.imgMsgToCv(disp_image, "passthrough");  // "32FC1"
 
       for (unsigned int i=0; i < features.image_points.size(); i++)
@@ -160,7 +162,7 @@ public:
         features.image_points[i].d = dest_disparity.at<double>(i,0);
       }
       */
-
+      pose_pub_.publish(features.object_pose);
       pub_.publish(features);
     }
   }
@@ -171,12 +173,14 @@ private:
   actionlib::SimpleActionServer<image_cb_detector::ConfigAction> as_;
   ImageCbDetectorOld detector_;
 
+  ros::Publisher pose_pub_;
   ros::Publisher pub_;
   image_transport::ImageTransport it_;
 
-  typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, stereo_msgs::DisparityImage > ApproxTimeSync;
+  typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::CameraInfo, stereo_msgs::DisparityImage > ApproxTimeSync;
 
   message_filters::Subscriber<sensor_msgs::Image> sub_image_;
+  message_filters::Subscriber<sensor_msgs::CameraInfo> sub_cam_info_;
   message_filters::Subscriber<stereo_msgs::DisparityImage> sub_disparity_;
   message_filters::Synchronizer<ApproxTimeSync> image_synchronizer_;
 
