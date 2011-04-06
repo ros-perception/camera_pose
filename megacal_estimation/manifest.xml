@@ -9,6 +9,9 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/megacal_estimation</url>
 
+  <depend package="geometry_msgs" />
+  <depend package="kdl" />
+
 </package>
 
 
