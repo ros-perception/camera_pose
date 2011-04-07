@@ -80,8 +80,11 @@ def calculate_residual_and_jacobian(cal_samples, cur_estimate):
             target_pts = matrix([ [pt.x, pt.y, pt.z, 1.0] for pt in cam_measurement.features.object_points ]).transpose()
 
             # Save the residual for this cam measurement
-            measurement_vec = matrix( concatenate([ [cur_pt.x, cur_pt.y] for cur_pt in cam_measurement.image_points], 1 ) ).T
-            residual[cur_row:end_row, 0] = sub_h(cam_pose, target_pose, target_pts, cam_measurement.cam_info) - measurement_vec
+            measurement_vec = matrix( concatenate([ [cur_pt.x, cur_pt.y] for cur_pt in cam_measurement.image_points]) ).T
+            print "measurement_vec: ", measurement_vec.shape
+            expected_measurement = sub_h(cam_pose, target_pose, target_pts, cam_measurement.cam_info)
+            print "expected: ", expected_measurement.shape
+            residual[cur_row:end_row, 0] =  expected_measurement - measurement_vec
 
             # Compute jacobian for this cam measurement
             camera_J = calculate_sub_jacobian(cam_pose, target_pose, target_pts, cam_measurement.cam_info, use_cam = True)
@@ -140,10 +143,10 @@ def sub_h(cam_pose, target_pose, target_pts, cam_info):
 
     # Strip out last row (3rd) and rescale
     #pixel_pts = pixel_pts_h[0:2,:] / pixel_pts_h[2,:]
-    pixel_pts_flat = concatenate( [pixel_pts_h[0, :]/pixel_pts_h[2, :],
-                                   pixel_pts_h[1, :]/pixel_pts_h[2, :]], 1 )
+    pixel_pts_flat = reshape( concatenate( [ pixel_pts_h[0, :]/pixel_pts_h[2, :],
+                                             pixel_pts_h[1, :]/pixel_pts_h[2, :]], 0 ).T, [-1,1] )
 
-    return pixel_pts_flat.T
+    return pixel_pts_flat
 
 def to4x4(kdl_frame):
     # Init output matrix

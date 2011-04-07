@@ -39,8 +39,14 @@ for topic, msg, t in bag:
     assert topic == 'robot_measurement'
 
 cal_samples = [msg for topic, msg, t in bag]
+#cal_samples = cal_samples[:1]
+#cal_samples[0].M_cam = cal_samples[0].M_cam[:1]
 
 residual, J = estimate.calculate_residual_and_jacobian(cal_samples, cal_estimate)
 
+#m = matrix( [[pt.x, pt.y] for pt in cal_samples[0].M_cam[0].image_points] )
+
 print "Residual:\n%s" % residual
 print "J:\n%s" % J
+
+#print "RMS Error: %s" % sqrt(sum(array(residual) * array(residual))/(residual.shape[0]*2))
