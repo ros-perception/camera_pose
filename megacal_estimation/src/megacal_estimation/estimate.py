@@ -29,15 +29,22 @@ import roslib; roslib.load_manifest('megacal_estimation')
 
 import PyKDL
 from tf_conversions import posemath
-#import megacal_estimation.msg.CalibrationEstimate
-#import megacal_estimation.msg.CameraPose
+from megacal_estimation.msg import CalibrationEstimate
+from megacal_estimation.msg import CameraPose
 from numpy import *
 
 pose_width = 6
 feature_width = 2
 
-def estimate(cal_samples, prior_estimate):
-    return best_estimate
+def refine_estimate(cal_samples, prior_estimate):
+    residual, J = calculate_residual_and_jacobian(cal_samples, prior_estimate)
+    step = J.T*residual
+
+    # Update
+    next_estimate = CalibrationEstimate()
+    for
+
+    return next_estimate
 
 
 def calculate_residual_and_jacobian(cal_samples, cur_estimate):
