@@ -11,6 +11,10 @@
   <depend package="kdl" />
   <depend package="calibration_msgs" />
 
+  <depend package="geometry_msgs" />
+  <depend package="kdl" />
+  <depend package="tf_conversions" />
+
 </package>
 
 
