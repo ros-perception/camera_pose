@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 import sys, time, optparse
 import itertools
 import collections
@@ -57,7 +55,7 @@ def bfs(root_cam, observations, cameras_seen, checkerboards_seen):
             assert checkerboards
             if cam2 not in cameras_seen:
                 q.append(cam2)
-                
+
                 # Cam2Pose = Cam1Pose * Cam1->CB * CB->Cam2
                 cameras_seen[cam2] = cam1_pose * checkerboards[0][0] * checkerboards[0][1].Inverse()
 
@@ -73,10 +71,3 @@ def find_initial_poses(bag_filename, root_cam = None):
     checkerboard_poses = {}
     bfs(root_cam, mutual_observations, camera_poses, checkerboard_poses)
     return camera_poses, checkerboard_poses
-
-BAG = '/u/vpradeep/kinect_bags/kinect_extrinsics_2011-04-05-16-01-28.bag'
-camera_poses, checkerboard_poses = find_initial_poses(BAG)
-
-print camera_poses
-print "\n\n"
-print checkerboard_poses

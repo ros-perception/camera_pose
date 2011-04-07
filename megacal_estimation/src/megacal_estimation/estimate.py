@@ -48,11 +48,11 @@ def calculate_residual_and_jacobian(cal_samples, cur_estimate):
     num_cols = len(cur_estimate.cameras) * pose_width + len(cur_estimate.targets) * pose_width
     num_rows = sum ([ sum([  len(cam.image_points) for cam in cur_sample.M_cam]) for cur_sample in cal_samples]) * feature_width
 
-    J = zeros([num_rows, num_cols])
-    residual = zeros([num_rows, 1])
+    J = matrix(zeros([num_rows, num_cols]))
+    residual = matrix(zeros([num_rows, 1]))
 
     cam_pose_dict  = dict( [ (cur_camera.camera_id, posemath.fromMsg(cur_camera.pose))  for cur_camera in cur_estimate.cameras] )
-    cam_index_dict = dict( [ (cur_camera.camera_id, cur_index)        for cur_camera, cur_index  in zip ( cur_estimate.cameras, range(cur_estimate.cameras) )] )
+    cam_index_dict = dict( [ (cur_camera.camera_id, cur_index)        for cur_camera, cur_index  in zip ( cur_estimate.cameras, range(len(cur_estimate.cameras)) )] )
 
     targets_col_offset = len(cur_estimate.cameras) * pose_width
 
@@ -80,7 +80,7 @@ def calculate_residual_and_jacobian(cal_samples, cur_estimate):
             target_pts = matrix([ [pt.x, pt.y, pt.z, 1.0] for pt in cam_measurement.features.object_points ]).transpose()
 
             # Save the residual for this cam measurement
-            measurement_vec = matrix( concatenate([ [cur_pt.x, cur_pt.y] for cur_pt in cam_measurement.image_pts]), 1 )
+            measurement_vec = matrix( concatenate([ [cur_pt.x, cur_pt.y] for cur_pt in cam_measurement.image_points], 1 ) ).T
             residual[cur_row:end_row, 0] = sub_h(cam_pose, target_pose, target_pts, cam_measurement.cam_info) - measurement_vec
 
             # Compute jacobian for this cam measurement
@@ -91,7 +91,8 @@ def calculate_residual_and_jacobian(cal_samples, cur_estimate):
             J[cur_row:end_row, cam_index*pose_width:((cam_index+1)*pose_width)] = camera_J
 
             # Insert target jacobian into big matrix
-            J[cur_row:end_row, targets_col_offset + target_index*pose_width:(target_index+1)*pose_width] = target_J
+            col_start = targets_col_offset + target_index*pose_width
+            J[cur_row:end_row, col_start:(col_start+pose_width)] = target_J
 
             cur_row = end_row
     return residual, J
@@ -107,7 +108,7 @@ def calculate_sub_jacobian(cam_pose, target_pose, target_pts, cam_info, use_cam)
 
     m0 = sub_h(cam_pose, target_pose, target_pts, cam_info)
 
-    J = zeros([ target_pts.shape[1]*feature_width, pose_width])
+    J = matrix(zeros([ target_pts.shape[1]*feature_width, pose_width]))
 
     eps = 1e-5
     for axis in range(pose_width):
@@ -150,7 +151,7 @@ def to4x4(kdl_frame):
     T[3,3] = 1.0
 
     # Copy position into matrix
-    T[0:3,3] = [ kdl_frame.p[0], kdl_frame.p[1], kdl_frame.p[2] ];
+    T[0:3,3] = matrix([ kdl_frame.p[0], kdl_frame.p[1], kdl_frame.p[2] ]).T
 
     # Generate pointer to rotation submatrix
     R = T[0:3,0:3]
