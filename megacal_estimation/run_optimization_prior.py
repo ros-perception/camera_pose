@@ -16,6 +16,8 @@ from megacal_estimation.msg import CameraPose
 import rosbag
 from megacal_estimation import init_optimization_prior
 from megacal_estimation import estimate
+from megacal_estimation import generate_urdf
+
 
 BAG = '/u/vpradeep/kinect_bags/kinect_extrinsics_2011-04-05-16-01-28.bag'
 camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(BAG)
@@ -50,3 +52,14 @@ print "Residual:\n%s" % residual
 print "J:\n%s" % J
 
 #print "RMS Error: %s" % sqrt(sum(array(residual) * array(residual))/(residual.shape[0]*2))
+
+urdf = generate_urdf.generate_urdf(cal_estimate.cameras)
+
+out_filename = 'multinect_urdf.xml'
+f = open(out_filename, 'w')
+f.write(urdf)
+f.close()
+print urdf
+
+print "Wrote urdf to [%s]" % out_filename
+
