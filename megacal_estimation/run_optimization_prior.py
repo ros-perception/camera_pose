@@ -4,6 +4,7 @@ import sys, time, optparse
 import itertools
 import collections
 
+
 import roslib
 roslib.load_manifest('megacal_estimation')
 import PyKDL
@@ -16,7 +17,7 @@ from megacal_estimation.msg import CameraPose
 import rosbag
 from megacal_estimation import init_optimization_prior
 from megacal_estimation import estimate
-from megacal_estimation import generate_urdf
+from megacal_estimation import dump_estimate
 
 
 BAG = '/u/vpradeep/kinect_bags/kinect_extrinsics_2011-04-05-16-01-28.bag'
@@ -53,13 +54,22 @@ print "J:\n%s" % J
 
 #print "RMS Error: %s" % sqrt(sum(array(residual) * array(residual))/(residual.shape[0]*2))
 
-urdf = generate_urdf.generate_urdf(cal_estimate.cameras)
+urdf = dump_estimate.to_urdf(cal_estimate.cameras)
 
-out_filename = 'multinect_urdf.xml'
-f = open(out_filename, 'w')
+urdf_filename = 'multinect_urdf.xml'
+f = open(urdf_filename, 'w')
 f.write(urdf)
 f.close()
 print urdf
 
-print "Wrote urdf to [%s]" % out_filename
+print "Wrote urdf to [%s]" % urdf_filename
+
+y = dump_estimate.to_yaml(cal_estimate.cameras)
+yaml_filename = "multinect_extrinsics.yaml"
+f = open(yaml_filename, 'w')
+f.write(y)
+f.close()
+print y
+
+print "Wrote yaml to [%s]" % yaml_filename
 
