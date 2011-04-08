@@ -32,27 +32,28 @@ cal_estimate = CalibrationEstimate()
 
 camera_a = CameraPose()
 camera_a.camera_id = 'cam_a'
-#camera_a.pose = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0, pi/2.0, 0), PyKDL.Vector(0, 0 ,0)))
-camera_a.pose = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 0 ,0)))
+camera_a.pose = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0, pi/2.0, 0), PyKDL.Vector(0, 0 ,0)))
+#camera_a.pose = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 0 ,0)))
 
 camera_b = CameraPose()
 camera_b.camera_id = 'cam_b'
-#camera_b.pose = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0,pi/2.0,0), PyKDL.Vector(0, -1, 0)))
-camera_b.pose = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, -1, 0)))
+camera_b.pose = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0,pi/2.0,0), PyKDL.Vector(0, -1, 0)))
+#camera_b.pose = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, -1, 0)))
 
-#target = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0, pi/2.0, 0), PyKDL.Vector(1, 0, 0)))
-target = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 0, 1)))
+target_1 = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0, pi/7.0, 0), PyKDL.Vector(1, 0, 0)))
+#target_1 = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 0, 1)))
+target_2 = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0, pi/3.0, 0), PyKDL.Vector(2, 0, 0)))
+#target_2 = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 0, 1)))
 
 cal_estimate.cameras = [camera_a, camera_b]
-cal_estimate.targets = [target]
-
+cal_estimate.targets = [target_1, target_2]
 print cal_estimate
+
 
 
 # generate samples
 scale = 0.00
-offset = PyKDL.Vector(0, 0.001, 0)
-cal_sample = RobotMeasurement()
+offset = PyKDL.Vector(0, 0.1, 0)
 P = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]
 P_mat = reshape( matrix(P, float), (3,4) )
 
@@ -64,42 +65,33 @@ for c in check_points:
     pnt.z = c[2]
     cal_pattern.object_points.append(pnt)
 
-meas_a = CameraMeasurement()
-meas_a.camera_id = 'cam_a'
-for pnt_c in check_points:
-    pnt_a = posemath.fromMsg(camera_a.pose).Inverse() * posemath.fromMsg(target) * pnt_c
-    p = P_mat * matrix([pnt_a[0], pnt_a[1], pnt_a[2], 1]).T
-    pnt = ImagePoint()
-    pnt.x = (p[0]/p[2]) + random.random()*scale
-    pnt.y = (p[1]/p[2]) + random.random()*scale
-    pnt.d = 1
-    meas_a.image_points.append(pnt)
-meas_a.cam_info.P = P
-meas_a.features = cal_pattern
+cal_samples = []
+for target in cal_estimate.targets:
+    cal_sample = RobotMeasurement()
+    for camera in cal_estimate.cameras:
+        meas = CameraMeasurement()    
+        meas.camera_id = camera.camera_id
+        for pnt_c in check_points:
+            pnt_msg = posemath.fromMsg(camera.pose).Inverse() * posemath.fromMsg(target) * pnt_c
+            pnt_mat = P_mat * matrix([pnt_msg[0], pnt_msg[1], pnt_msg[2], 1]).T
+            pnt = ImagePoint()
+            pnt.x = (pnt_mat[0]/pnt_mat[2]) + random.random()*scale
+            pnt.y = (pnt_mat[1]/pnt_mat[2]) + random.random()*scale
+            pnt.d = 1
+            meas.image_points.append(pnt)
+        meas.cam_info.P = P
+        meas.features = cal_pattern
+        cal_sample.M_cam.append(meas)
+    cal_samples.append(cal_sample)
+print cal_samples
 
-meas_b = CameraMeasurement()
-meas_b.camera_id = 'cam_b'
-for pnt_c in check_points:
-    pnt_b = posemath.fromMsg(camera_b.pose).Inverse() * posemath.fromMsg(target) * pnt_c
-    p = P_mat * matrix([pnt_b[0], pnt_b[1], pnt_b[2], 1]).T
-    pnt = ImagePoint()
-    pnt.x = (p[0]/p[2]) + random.random()*scale
-    pnt.y = (p[1]/p[2]) + random.random()*scale
-    pnt.d = 1
-    meas_b.image_points.append(pnt)
-meas_b.cam_info.P = P
-meas_b.features = cal_pattern
 
-cal_sample.M_cam = [meas_a, meas_b]
+# add offset
+cal_estimate.cameras[0].pose = posemath.toMsg(posemath.fromMsg(cal_estimate.cameras[0].pose) * PyKDL.Frame(offset))
 
-print cal_sample
-
-# modify prior
-target = posemath.toMsg(posemath.fromMsg(target) * PyKDL.Frame(offset))
-cal_estimate.targets = [target]
 
 # Run optimization
-estimate.enhance([cal_sample], cal_estimate)
+estimate.enhance(cal_samples, cal_estimate)
 
 
 # Just run oplus & sub h

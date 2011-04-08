@@ -111,7 +111,7 @@ def calculate_residual_and_jacobian(cal_samples, cur_estimate):
             # Save the residual for this cam measurement
             measurement_vec = matrix( concatenate([ [cur_pt.x, cur_pt.y] for cur_pt in cam_measurement.image_points]) ).T
             expected_measurement = sub_h(cam_pose, target_pose, target_pts, cam_measurement.cam_info)
-            residual[cur_row:end_row, 0] =  -expected_measurement + measurement_vec
+            residual[cur_row:end_row, 0] =  measurement_vec - expected_measurement 
 
             # Compute jacobian for this cam measurement
             camera_J = calculate_sub_jacobian(cam_pose, target_pose, target_pts, cam_measurement.cam_info, use_cam = True)
