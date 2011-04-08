@@ -32,19 +32,41 @@ from tf_conversions import posemath
 from megacal_estimation.msg import CalibrationEstimate
 from megacal_estimation.msg import CameraPose
 from numpy import *
+from copy import deepcopy
 
 pose_width = 6
 feature_width = 2
+num_iterations = 2
+step_scale = 0.1
 
-def refine_estimate(cal_samples, prior_estimate):
-    residual, J = calculate_residual_and_jacobian(cal_samples, prior_estimate)
-    step = J.T*residual
+def enhance(cal_samples, prior_estimate):
+    next_estimate = deepcopy(prior_estimate)
+    for i in range(num_iterations):
+        residual, J = calculate_residual_and_jacobian(cal_samples, next_estimate)
+        step = linalg.pinv(J)*residual
+        print "Residual: ",residual.T
+        print "Jacobian: ",J
+        print "Jacobian pinv: ",linalg.pinv(J)
+        print "Correction: ",step.T
+        print "Correction small: ",J[:,0].T*residual
+        oplus(next_estimate, step*step_scale)
 
-    # Update
-    next_estimate = CalibrationEstimate()
-    for
 
-    return next_estimate
+def oplus(cur_estimate, step):
+    # loop over camera's
+    for camera, camera_index in zip(cur_estimate.cameras, [r*pose_width for r in range(len(cur_estimate.cameras))]):
+        t = PyKDL.Twist()
+        for i in range(pose_width):
+            t[i] = step[camera_index+i]
+        camera.pose = posemath.toMsg(PyKDL.addDelta(posemath.fromMsg(camera.pose), t, 1.0))
+
+    # loop over targets
+    for target, target_index in zip(cur_estimate.targets, [(r+len(cur_estimate.cameras))*pose_width for r in range(len(cur_estimate.targets))]):
+        t = PyKDL.Twist()
+        for i in range(pose_width):
+            t[i] = step[target_index+i]
+        target = posemath.toMsg(PyKDL.addDelta(posemath.fromMsg(target), t, 1.0))
+
 
 
 def calculate_residual_and_jacobian(cal_samples, cur_estimate):
@@ -60,8 +82,6 @@ def calculate_residual_and_jacobian(cal_samples, cur_estimate):
 
     cam_pose_dict  = dict( [ (cur_camera.camera_id, posemath.fromMsg(cur_camera.pose))  for cur_camera in cur_estimate.cameras] )
     cam_index_dict = dict( [ (cur_camera.camera_id, cur_index)        for cur_camera, cur_index  in zip ( cur_estimate.cameras, range(len(cur_estimate.cameras)) )] )
-
-    targets_col_offset = len(cur_estimate.cameras) * pose_width
 
     # Start filling in the jacobian
     cur_row = 0;
@@ -88,24 +108,19 @@ def calculate_residual_and_jacobian(cal_samples, cur_estimate):
 
             # Save the residual for this cam measurement
             measurement_vec = matrix( concatenate([ [cur_pt.x, cur_pt.y] for cur_pt in cam_measurement.image_points]) ).T
-            print "measurement_vec: ", measurement_vec.shape
             expected_measurement = sub_h(cam_pose, target_pose, target_pts, cam_measurement.cam_info)
-            print "expected: ", expected_measurement.shape
             residual[cur_row:end_row, 0] =  expected_measurement - measurement_vec
 
             # Compute jacobian for this cam measurement
             camera_J = calculate_sub_jacobian(cam_pose, target_pose, target_pts, cam_measurement.cam_info, use_cam = True)
             target_J = calculate_sub_jacobian(cam_pose, target_pose, target_pts, cam_measurement.cam_info, use_cam = False)
-
-            # Insert camera jacobian into big matrix
             J[cur_row:end_row, cam_index*pose_width:((cam_index+1)*pose_width)] = camera_J
-
-            # Insert target jacobian into big matrix
-            col_start = targets_col_offset + target_index*pose_width
+            col_start = (len(cur_estimate.cameras) + target_index)*pose_width
             J[cur_row:end_row, col_start:(col_start+pose_width)] = target_J
 
             cur_row = end_row
     return residual, J
+
 
 def calculate_sub_jacobian(cam_pose, target_pose, target_pts, cam_info, use_cam):
     """
@@ -113,11 +128,10 @@ def calculate_sub_jacobian(cam_pose, target_pose, target_pts, cam_info, use_cam)
              False -> compute J for the target pose
     """
 
-    target_pose_1 = target_pose
-    cam_pose_1    = cam_pose
+    target_pose_1 = kdlcopy(target_pose)
+    cam_pose_1    = kdlcopy(cam_pose)
 
     m0 = sub_h(cam_pose, target_pose, target_pts, cam_info)
-
     J = matrix(zeros([ target_pts.shape[1]*feature_width, pose_width]))
 
     eps = 1e-5
@@ -133,6 +147,16 @@ def calculate_sub_jacobian(cam_pose, target_pose, target_pts, cam_info, use_cam)
         J[:, axis] = (m1 - m0) / eps
 
     return J
+
+def kdlcopy(pose):
+    f = PyKDL.Frame()
+    for i in range(3):
+        f.p[i] = pose.p[i]
+    for i in range(3):
+        for j in range(3):
+            f.M[i,j] = pose.M[i,j]
+    return f
+
 
 def sub_h(cam_pose, target_pose, target_pts, cam_info):
     '''
@@ -170,16 +194,3 @@ def to4x4(kdl_frame):
             R[i,j] = kdl_frame.M[i,j]
     return T
 
-def oplus(kdl_frame, update):
-    '''
-    update: parameter vector of size 6
-    dims:
-      0 -> Translate x
-      1 -> Translate y
-      2 -> Translate z
-      3 -> Rot x
-      4 -> Rot y
-      5 -> Rot z
-    '''
-    t = PyKDL.Twist( PyKDL.Vector(*update[:3]), PyKDL.Vector(*update[3:]) )
-    return PyKDL.addDelta(kdl_frame, t, 1.0)

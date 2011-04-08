@@ -22,31 +22,17 @@ camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(BA
 
 cal_estimate = CalibrationEstimate()
 cal_estimate.targets = [ posemath.toMsg(checkerboard_poses[i]) for i in range(len(checkerboard_poses)) ]
+cal_estimate.targets = [ cal_estimate.targets[0] ]
 cal_estimate.cameras = [ CameraPose(camera_id, posemath.toMsg(camera_pose)) for camera_id, camera_pose in camera_poses.iteritems()]
-
 print cal_estimate
 
-#print camera_poses
-#print "\n\n"
-#print checkerboard_poses
 
 # Run optimization
-
 bag = rosbag.Bag(BAG)
-
-
 for topic, msg, t in bag:
     assert topic == 'robot_measurement'
-
 cal_samples = [msg for topic, msg, t in bag]
-#cal_samples = cal_samples[:1]
-#cal_samples[0].M_cam = cal_samples[0].M_cam[:1]
+cal_samples = [cal_samples[0]]
 
-residual, J = estimate.calculate_residual_and_jacobian(cal_samples, cal_estimate)
 
-#m = matrix( [[pt.x, pt.y] for pt in cal_samples[0].M_cam[0].image_points] )
-
-print "Residual:\n%s" % residual
-print "J:\n%s" % J
-
-#print "RMS Error: %s" % sqrt(sum(array(residual) * array(residual))/(residual.shape[0]*2))
+estimate.enhance(cal_samples, cal_estimate)
