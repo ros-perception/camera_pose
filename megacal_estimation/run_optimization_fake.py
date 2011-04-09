@@ -22,7 +22,7 @@ from megacal_estimation import estimate
 
 # checkerboard points in checkerboard frame
 check_points = []
-for x in range(0,2):
+for x in range(0, 2):
     for y in range(-1, 1):
         check_points.append(PyKDL.Vector(x, y, 1))
 
@@ -50,11 +50,11 @@ cal_estimate.targets = [target_1, target_2]
 print cal_estimate
 
 
-
 # generate samples
 scale = 0.00
 offset = PyKDL.Vector(0, 0.1, 0)
-P = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]
+#P = [1,    0,   1,      0,     0,   1,     1,      0,     0, 0, 1, 0]
+P = [525,   0,   319.5,  0,     0,   525,   239.5,  0,     0, 0, 1,  0]
 P_mat = reshape( matrix(P, float), (3,4) )
 
 cal_pattern = CalibrationPattern()
@@ -92,36 +92,3 @@ cal_estimate.cameras[0].pose = posemath.toMsg(posemath.fromMsg(cal_estimate.came
 
 # Run optimization
 estimate.enhance(cal_samples, cal_estimate)
-
-
-# Just run oplus & sub h
-
-# print "---------- Vijay's Minimal Test ----------"
-# set_printoptions(linewidth=300, precision=8, suppress=True)
-# from sensor_msgs.msg import CameraInfo
-# cam_pose = PyKDL.Frame(PyKDL.Vector(0,0,0))
-# target_pose = PyKDL.Frame(PyKDL.Vector(0,0,1))
-# target_pts = [ [ 0, 0, 1 ],
-#                [-1, 0,-1 ],
-#                [ 1, 1, 1 ],
-#                [ 1, 1, 1] ]
-# cam_info = CameraInfo()
-# cam_info.P = [1, 0, 0, 0,
-#               0, 1, 0, 0,
-#               0, 0, 1, 0]
-# before = estimate.sub_h(cam_pose, target_pose, target_pts, cam_info)
-# eps = 1e-6
-# step = matrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]).transpose()
-# step[3,0] = eps
-# print "Step:\n", step
-# cam_pose_1 = estimate.pose_oplus(cam_pose, step)
-# after = estimate.sub_h(cam_pose_1, target_pose, target_pts, cam_info)
-
-# print "Cam Pose Before:\n", cam_pose
-# print "Cam Pose After:\n", cam_pose_1
-
-# print "Before:\n", before
-# print "After:\n", after
-
-# J = (after - before) / eps
-# print "J:\n", J

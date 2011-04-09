@@ -36,8 +36,8 @@ from copy import deepcopy
 
 pose_width = 6
 feature_width = 2
-num_iterations = 100
-step_scale = 0.1
+num_iterations = 200000
+step_scale = 0.0000001
 
 
 def enhance(cal_samples, prior_estimate):
@@ -47,10 +47,20 @@ def enhance(cal_samples, prior_estimate):
         residual, J = calculate_residual_and_jacobian(cal_samples, next_estimate)
         #step = linalg.pinv(J)*residual
         step = J.T*residual
-        print "Residual: \n",residual.T
+        next_estimate = oplus(next_estimate, step*step_scale)
+
+        print "RMS: ", rms(residual)
+#        print "Residual: \n",residual.T
 #        print "Jacobian: \n",J
 #        print "Correction: \n",step.T
-        oplus(next_estimate, step*step_scale)
+        
+
+
+def rms(residual):
+    return sqrt(rms_sq(residual))
+
+def rms_sq(residual):
+    return sum(array(residual) * array(residual) / len(residual))
 
 
 def pose_oplus(kdl_pose, step):
@@ -62,14 +72,17 @@ def pose_oplus(kdl_pose, step):
 
 
 def oplus(cur_estimate, step):
+    result = deepcopy(cur_estimate)
+
     # loop over camera's
-    for camera, camera_index in zip(cur_estimate.cameras, [r*pose_width for r in range(len(cur_estimate.cameras))]):
-        camera.pose = posemath.toMsg(pose_oplus(posemath.fromMsg(camera.pose), step[camera_index:camera_index+pose_width]))
+    for camera, res, camera_index in zip(cur_estimate.cameras, result.cameras, [r*pose_width for r in range(len(cur_estimate.cameras))]):
+        res.pose = posemath.toMsg(pose_oplus(posemath.fromMsg(camera.pose), step[camera_index:camera_index+pose_width]))
 
     # loop over targets
-    for target, target_index in zip(cur_estimate.targets, [(r+len(cur_estimate.cameras))*pose_width for r in range(len(cur_estimate.targets))]):
-        target = posemath.toMsg(pose_oplus(posemath.fromMsg(target), step[target_index:target_index+pose_width]))
+    for target, res, target_index in zip(cur_estimate.targets, result.targets, [(r+len(cur_estimate.cameras))*pose_width for r in range(len(cur_estimate.targets))]):
+        res = posemath.toMsg(pose_oplus(posemath.fromMsg(target), step[target_index:target_index+pose_width]))
 
+    return result
 
 def calculate_residual_and_jacobian(cal_samples, cur_estimate):
     """
