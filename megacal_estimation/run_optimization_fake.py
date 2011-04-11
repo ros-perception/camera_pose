@@ -43,18 +43,18 @@ camera_b.pose = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, -1, 0)))
 #target_1 = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0, pi/7.0, 0), PyKDL.Vector(1, 0, 0)))
 target_1 = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 0, 1)))
 #target_2 = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0, pi/3.0, 0), PyKDL.Vector(2, 0, 0)))
-#target_2 = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 0, 1)))
+target_2 = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 1, 1)))
 
 cal_estimate.cameras = [camera_a, camera_b]
-cal_estimate.targets = [target_1]
+cal_estimate.targets = [target_1, target_2]
 print cal_estimate
 
 
 # generate samples
 scale = 0.00
 offset = PyKDL.Vector(0, 0.1, 0)
-P = [1,    0,   0,      0,     0,   1,     0,      0,     0, 0, 1, 0]
-#P = [525,   0,   319.5,  0,     0,   525,   239.5,  0,     0, 0, 1,  0]
+#P = [1,    0,   0,      0,     0,   1,     0,      0,     0, 0, 1, 0]
+P = [525,   0,   319.5,  0,     0,   525,   239.5,  0,     0, 0, 1,  0]
 P_mat = reshape( matrix(P, float), (3,4) )
 
 cal_pattern = CalibrationPattern()

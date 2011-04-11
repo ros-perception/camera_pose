@@ -40,7 +40,7 @@ import rospy
 pose_width = 6
 feature_width = 2
 num_iterations = 200000
-step_scale = 0.0000001
+step_scale = 0.00000001
 
 
 def enhance(cal_samples, prior_estimate):
@@ -116,8 +116,9 @@ def oplus(cur_estimate, step):
         res.pose = posemath.toMsg(pose_oplus(posemath.fromMsg(camera.pose), step[camera_index:camera_index+pose_width]))
 
     # loop over targets
-    for target, res_index, target_index in zip(cur_estimate.targets, range(len(result.targets)), [(r+len(cur_estimate.cameras))*pose_width for r in range(len(cur_estimate.targets))]):
-        result.targets[res_index] = posemath.toMsg(pose_oplus(posemath.fromMsg(target), step[target_index:target_index+pose_width]))
+    for i, target in enumerate(cur_estimate.targets): 
+        target_index = (len(cur_estimate.cameras) + i) * pose_width
+        result.targets[i] = posemath.toMsg(pose_oplus(posemath.fromMsg(target), step[target_index:target_index+pose_width]))
 
     return result
 
