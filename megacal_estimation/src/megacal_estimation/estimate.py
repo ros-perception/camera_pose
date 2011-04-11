@@ -39,27 +39,25 @@ import rospy
 
 pose_width = 6
 feature_width = 2
-num_iterations = 200000
-step_scale = 0.00000001
+num_iterations = 10000
+step_scale = 0.5
 
 
 def enhance(cal_samples, prior_estimate):
     rospy.init_node('enhance')
     tf_pub = rospy.Publisher('/tf', tfMessage)
 
-    set_printoptions(linewidth=300, precision=5, suppress=True)
+    set_printoptions(linewidth=4000, precision=4, threshold=5000000000000000000000000000, suppress=True)
     next_estimate = deepcopy(prior_estimate)
+    lam = 1.0  # lambda
     for i in range(num_iterations):
         residual, J = calculate_residual_and_jacobian(cal_samples, next_estimate)
-        #step = linalg.pinv(J)*residual
-        step = J.T*residual
+        Jpinv = linalg.pinv(J, 1e-5)
+        step = Jpinv*residual
         next_estimate = oplus(next_estimate, step*step_scale)
 
         tf_pub.publish(to_tf(next_estimate))
-        print "RMS: ", rms(residual)
-#        print "Residual: \n",residual.T
-#        print "Jacobian: \n",J
-#        print "Correction: \n",step.T
+        print "RMS: %.16f" % rms(residual)
 
         if rospy.is_shutdown():
             return
@@ -189,7 +187,7 @@ def calculate_sub_jacobian(cam_pose, target_pose, target_pts, cam_info, use_cam)
     m0 = sub_h(cam_pose, target_pose, target_pts, cam_info)
     J = matrix(zeros([ target_pts.shape[1]*feature_width, pose_width]))
 
-    eps = 1e-4
+    eps = 1e-8
     for axis in range(pose_width):
         step = matrix(zeros([pose_width,1]))
         step[axis,0] = eps;

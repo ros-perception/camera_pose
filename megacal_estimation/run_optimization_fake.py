@@ -22,7 +22,7 @@ from megacal_estimation import estimate
 
 # checkerboard points in checkerboard frame
 check_points = []
-for x in range(0, 4):
+for x in range(0, 2):
     for y in range(-1, 1):
         check_points.append(PyKDL.Vector(x, y, 1))
 
@@ -41,9 +41,9 @@ camera_b.camera_id = 'cam_b'
 camera_b.pose = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, -1, 0)))
 
 #target_1 = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0, pi/7.0, 0), PyKDL.Vector(1, 0, 0)))
-target_1 = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 0, 1)))
+target_1 = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, -2, 1)))
 #target_2 = posemath.toMsg(PyKDL.Frame(PyKDL.Rotation.RPY(0, pi/3.0, 0), PyKDL.Vector(2, 0, 0)))
-target_2 = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 1, 1)))
+target_2 = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 2, 1)))
 
 cal_estimate.cameras = [camera_a, camera_b]
 cal_estimate.targets = [target_1, target_2]
@@ -52,7 +52,8 @@ print cal_estimate
 
 # generate samples
 scale = 0.00
-offset = PyKDL.Vector(0, 0.1, 0)
+offset = PyKDL.Frame(PyKDL.Rotation.RotX(0.0000001), PyKDL.Vector(0, 0.1, 0))
+
 #P = [1,    0,   0,      0,     0,   1,     0,      0,     0, 0, 1, 0]
 P = [525,   0,   319.5,  0,     0,   525,   239.5,  0,     0, 0, 1,  0]
 P_mat = reshape( matrix(P, float), (3,4) )
@@ -87,7 +88,7 @@ print cal_samples
 
 
 # add offset
-cal_estimate.cameras[0].pose = posemath.toMsg(posemath.fromMsg(cal_estimate.cameras[0].pose) * PyKDL.Frame(offset))
+cal_estimate.cameras[0].pose = posemath.toMsg(posemath.fromMsg(cal_estimate.cameras[0].pose) * offset)
 #cal_estimate.cameras[1].pose = posemath.toMsg(posemath.fromMsg(cal_estimate.cameras[1].pose) * PyKDL.Frame(offset))
 
 # Run optimization
