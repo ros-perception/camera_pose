@@ -31,8 +31,11 @@ import PyKDL
 from tf_conversions import posemath
 from megacal_estimation.msg import CalibrationEstimate
 from megacal_estimation.msg import CameraPose
+from tf.msg import tfMessage
+from geometry_msgs.msg import TransformStamped, Transform
 from numpy import *
 from copy import deepcopy
+import rospy
 
 pose_width = 6
 feature_width = 2
@@ -41,6 +44,9 @@ step_scale = 0.0000001
 
 
 def enhance(cal_samples, prior_estimate):
+    rospy.init_node('enhance')
+    tf_pub = rospy.Publisher('/tf', tfMessage)
+
     set_printoptions(linewidth=300, precision=5, suppress=True)
     next_estimate = deepcopy(prior_estimate)
     for i in range(num_iterations):
@@ -49,11 +55,42 @@ def enhance(cal_samples, prior_estimate):
         step = J.T*residual
         next_estimate = oplus(next_estimate, step*step_scale)
 
+        tf_pub.publish(to_tf(next_estimate))
         print "RMS: ", rms(residual)
 #        print "Residual: \n",residual.T
 #        print "Jacobian: \n",J
 #        print "Correction: \n",step.T
+
+        if rospy.is_shutdown():
+            return
         
+
+def pose_to_transform(pose, name, time):
+    tr = Transform()
+    tr.translation.x = pose.position.x
+    tr.translation.y = pose.position.y
+    tr.translation.z = pose.position.z
+    tr.rotation.x = pose.orientation.x
+    tr.rotation.y = pose.orientation.y
+    tr.rotation.z = pose.orientation.z
+    tr.rotation.w = pose.orientation.w
+
+    trs = TransformStamped()
+    trs.transform = tr
+    trs.header.stamp = time
+    trs.header.frame_id = 'world'
+    trs.child_frame_id = name
+    return trs
+
+
+def to_tf(estimate):
+    time = rospy.Time.now()
+    msg = tfMessage()
+    for camera in estimate.cameras:
+        msg.transforms.append(pose_to_transform(camera.pose, camera.camera_id, time))
+    for target, target_id in zip(estimate.targets, range(len(estimate.targets))):
+        msg.transforms.append(pose_to_transform(target, 'target_%d'%target_id, time))
+    return msg
 
 
 def rms(residual):
