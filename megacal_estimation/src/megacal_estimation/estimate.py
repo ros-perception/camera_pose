@@ -79,8 +79,8 @@ def oplus(cur_estimate, step):
         res.pose = posemath.toMsg(pose_oplus(posemath.fromMsg(camera.pose), step[camera_index:camera_index+pose_width]))
 
     # loop over targets
-    for target, res, target_index in zip(cur_estimate.targets, result.targets, [(r+len(cur_estimate.cameras))*pose_width for r in range(len(cur_estimate.targets))]):
-        res = posemath.toMsg(pose_oplus(posemath.fromMsg(target), step[target_index:target_index+pose_width]))
+    for target, res_index, target_index in zip(cur_estimate.targets, range(len(result.targets)), [(r+len(cur_estimate.cameras))*pose_width for r in range(len(cur_estimate.targets))]):
+        result.targets[res_index] = posemath.toMsg(pose_oplus(posemath.fromMsg(target), step[target_index:target_index+pose_width]))
 
     return result
 
