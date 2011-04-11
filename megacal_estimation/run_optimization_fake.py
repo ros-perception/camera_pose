@@ -51,8 +51,8 @@ print cal_estimate
 
 
 # generate samples
-scale = 0.00
-offset = PyKDL.Frame(PyKDL.Rotation.RotX(0.0000001), PyKDL.Vector(0, 0.1, 0))
+noise = 5.0
+offset = PyKDL.Frame(PyKDL.Rotation.RPY(0.1, 0.1, 0), PyKDL.Vector(0, 0.1, 0))
 
 #P = [1,    0,   0,      0,     0,   1,     0,      0,     0, 0, 1, 0]
 P = [525,   0,   319.5,  0,     0,   525,   239.5,  0,     0, 0, 1,  0]
@@ -76,8 +76,8 @@ for target in cal_estimate.targets:
             pnt_msg = posemath.fromMsg(camera.pose).Inverse() * posemath.fromMsg(target) * pnt_c
             pnt_mat = P_mat * matrix([pnt_msg[0], pnt_msg[1], pnt_msg[2], 1]).T
             pnt = ImagePoint()
-            pnt.x = (pnt_mat[0]/pnt_mat[2]) + random.random()*scale
-            pnt.y = (pnt_mat[1]/pnt_mat[2]) + random.random()*scale
+            pnt.x = (pnt_mat[0]/pnt_mat[2]) + random.random()*noise
+            pnt.y = (pnt_mat[1]/pnt_mat[2]) + random.random()*noise
             pnt.d = 1
             meas.image_points.append(pnt)
         meas.cam_info.P = P

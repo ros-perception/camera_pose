@@ -56,8 +56,12 @@ def enhance(cal_samples, prior_estimate):
         step = Jpinv*residual
         next_estimate = oplus(next_estimate, step*step_scale)
 
+        fixup_state(next_estimate)
+
         tf_pub.publish(to_tf(next_estimate))
         print "RMS: %.16f" % rms(residual)
+        print i
+#        print "Jacobian pinv:", Jpinv.T
 
         if rospy.is_shutdown():
             return
@@ -109,16 +113,31 @@ def pose_oplus(kdl_pose, step):
 def oplus(cur_estimate, step):
     result = deepcopy(cur_estimate)
 
-    # loop over camera's
+    # Updates the cameras
     for camera, res, camera_index in zip(cur_estimate.cameras, result.cameras, [r*pose_width for r in range(len(cur_estimate.cameras))]):
         res.pose = posemath.toMsg(pose_oplus(posemath.fromMsg(camera.pose), step[camera_index:camera_index+pose_width]))
 
-    # loop over targets
+    # Updates the targets
     for i, target in enumerate(cur_estimate.targets): 
         target_index = (len(cur_estimate.cameras) + i) * pose_width
         result.targets[i] = posemath.toMsg(pose_oplus(posemath.fromMsg(target), step[target_index:target_index+pose_width]))
 
     return result
+
+def normalize_quat(q):
+    d = sqrt(q.x**2 + q.y**2 + q.z**2 + q.w**2)
+    q.x /= d
+    q.y /= d
+    q.z /= d
+    q.w /= d
+
+# Normalizes quaternions
+def fixup_state(estimate):
+    for camera in estimate.cameras:
+        normalize_quat(camera.pose.orientation)
+
+    for target in estimate.targets:
+        normalize_quat(target.orientation)
 
 def calculate_residual_and_jacobian(cal_samples, cur_estimate):
     """
