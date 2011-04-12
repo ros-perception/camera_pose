@@ -48,48 +48,6 @@ void generateConfigList(const std::string& config_yaml, std::vector<CameraConfig
 
 }
 
-
-class TransformFinder
-{
-
-private:
-  const geometry_msgs::TransformStamped orig_transform_;
-  const std::string child_id_;
-  const std::string parent_id_;
-  bool found_;
-
-public:
-  TransformFinder(const geometry_msgs::TransformStamped& orig_transform,
-                  const std::string& child_id,
-                  const std::string parent_id) :
-    orig_transform_(orig_transform),
-    child_id_(child_id),
-    parent_id_(parent_id)
-    { }
-
-  void start()
-  {
-    tf2::BufferClient tf_client("tf2");
-
-    tf_client.lookupTransform(
-
-    found_ = true;
-  }
-
-  bool found()
-  {
-    return found_;
-  }
-
-  bool getTransform(geometry_msgs::TransformStamped& transform_out)
-  {
-    if (!found)
-      return false;
-    transform_out = transform_out_;
-  }
-};
-
-
 class CalPublisher
 {
 private:
@@ -104,9 +62,15 @@ public:
   CalPublisher()
   {
     ros::NodeHandle pnh("~");
+
+    // Extract the cameras poses from the yaml string on param server
     std::string cal_yaml;
     if(!pnh.getParam("cal_estimate", cal_yaml))
       ROS_FATAL("Could not find parameter [~cal_estimate]. Shutting down cal_publisher node");
+    
+
+    std::string world_id;
+    pnh.param<std::string>("world_id", world_id, "world_frame");
 
     generateCameraList(cal_yaml, cameras_);
     transform_cache_.resize(cameras_.size());
