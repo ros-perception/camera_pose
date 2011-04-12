@@ -60,7 +60,6 @@ def enhance(cal_samples, prior_estimate):
 
         tf_pub.publish(to_tf(next_estimate))
         print "RMS: %.16f" % rms(residual)
-        print i
 #        print "Jacobian pinv:", Jpinv.T
 
         if rospy.is_shutdown():
@@ -113,11 +112,10 @@ def pose_oplus(kdl_pose, step):
 def oplus(cur_estimate, step):
     result = deepcopy(cur_estimate)
 
-    # Updates the cameras
+    # loop over camera's
     for camera, res, camera_index in zip(cur_estimate.cameras, result.cameras, [r*pose_width for r in range(len(cur_estimate.cameras))]):
         res.pose = posemath.toMsg(pose_oplus(posemath.fromMsg(camera.pose), step[camera_index:camera_index+pose_width]))
-
-    # Updates the targets
+    # loop over targets
     for i, target in enumerate(cur_estimate.targets): 
         target_index = (len(cur_estimate.cameras) + i) * pose_width
         result.targets[i] = posemath.toMsg(pose_oplus(posemath.fromMsg(target), step[target_index:target_index+pose_width]))

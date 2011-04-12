@@ -22,18 +22,13 @@ camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(BA
 
 cal_estimate = CalibrationEstimate()
 cal_estimate.targets = [ posemath.toMsg(checkerboard_poses[i]) for i in range(len(checkerboard_poses)) ]
-#cal_estimate.targets = [ cal_estimate.targets[0] ]
-
 cal_estimate.cameras = [ CameraPose(camera_id, posemath.toMsg(camera_pose)) for camera_id, camera_pose in camera_poses.iteritems()]
-print cal_estimate
-
 
 # Run optimization
 bag = rosbag.Bag(BAG)
 for topic, msg, t in bag:
     assert topic == 'robot_measurement'
 cal_samples = [msg for topic, msg, t in bag]
-#cal_samples = [cal_samples[0]]
 
 
 estimate.enhance(cal_samples, cal_estimate)
