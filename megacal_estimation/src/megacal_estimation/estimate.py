@@ -39,7 +39,7 @@ import rospy
 
 pose_width = 6
 feature_width = 2
-num_iterations = 10000
+num_iterations = 50
 step_scale = 0.5
 
 
@@ -64,7 +64,8 @@ def enhance(cal_samples, prior_estimate):
 #        print "Jacobian pinv:", Jpinv.T
 
         if rospy.is_shutdown():
-            return
+            return next_estimate
+    return next_estimate
         
 
 def pose_to_transform(pose, name, time):

@@ -22,13 +22,12 @@ def to_urdf(cameras):
     urdf += '</robot>\n'
     return urdf
 
-def to_yaml(cameras):
+def to_dict_list(cameras):
     d = [ {'camera_id': cam.camera_id,
            'position':
              {'x':cam.pose.position.x, 'y':cam.pose.position.y, 'z':cam.pose.position.z},
            'orientation':
-             {'x':cam.pose.orientation.x, 'y':cam.pose.orientation.y, 'z':cam.pose.orientation.z, 'w':cam.pose.orientation.z}
+             {'x':float(cam.pose.orientation.x), 'y':float(cam.pose.orientation.y), 'z':float(cam.pose.orientation.z), 'w':float(cam.pose.orientation.w)}
            } for cam in cameras]
-    return yaml.dump(d)
-
+    return d
 
