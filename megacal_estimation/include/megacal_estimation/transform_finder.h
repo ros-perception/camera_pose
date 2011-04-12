@@ -6,22 +6,22 @@
 namespace megacal_estimation
 {
 
-void TransformMsgToKDL(const geometry_msgs::TransformStamped& t, KDL::Frame& k)
+void TransformMsgToKDL(const geometry_msgs::Transform& t, KDL::Frame& k)
 {
-  k = KDL::Frame(KDL::Rotation::Quaternion(t.orientation.x, t.orientation.y, t.orientation.z, t.orientation.w),
-		 KDL::Vector(t.position.x, t.position.y, t.position.z))
+  k = KDL::Frame(KDL::Rotation::Quaternion(t.rotation.x, t.rotation.y, t.rotation.z, t.rotation.w),
+		 KDL::Vector(t.translation.x, t.translation.y, t.translation.z));
 }
 
-void TransformKDLToMsg(const KDL::Frame& k, geometry_msgs::TransformStamped& t)
+void TransformKDLToMsg(const KDL::Frame& k, geometry_msgs::Transform& t)
 {
-  t.position.x = k.p[0];
-  t.position.y = k.p[1];
-  t.position.z = k.p[2];
+  t.translation.x = k.p[0];
+  t.translation.y = k.p[1];
+  t.translation.z = k.p[2];
 
-  KDL::RotationGetQuaternion(t.orientation.x,
-			     t.orientation.y,
-			     t.orientation.z,
-			     t.orientation.w);
+  k.M.GetQuaternion(t.rotation.x,
+		    t.rotation.y,
+		    t.rotation.z,
+		    t.rotation.w);
 }
 
 class TransformFinder
@@ -65,12 +65,12 @@ public:
 
     // orig = orig_parent_to_parent * parent_to_child * child_to_orig_child
     KDL::Frame op2p, c2oc, op2oc;
-    TransformMsgToKDL(orig_parent_to_parent, op2p);
-    TransformMsgToKDL(child_to_orig_child, c2oc);
-    TransformMsgToKDL(orig_transform_, op2oc);
-    KDL::Frame p2c = op2p.inverse() * op2oc * c2oc.inverse();
+    TransformMsgToKDL(orig_parent_to_parent.transform, op2p);
+    TransformMsgToKDL(child_to_orig_child.transform, c2oc);
+    TransformMsgToKDL(orig_transform_.transform, op2oc);
+    KDL::Frame p2c = op2p.Inverse() * op2oc * c2oc.Inverse();
 
-    TransformKDLToMsg(p2c, transform_out_);
+    TransformKDLToMsg(p2c, transform_out_.transform);
     transform_out_.header.frame_id = parent_id_;
     transform_out_.child_frame_id = child_id_;
     found_ = true;
@@ -83,9 +83,10 @@ public:
 
   bool getTransform(geometry_msgs::TransformStamped& transform_out)
   {
-    if (!found)
+    if (!found_)
       return false;
     transform_out = transform_out_;
+    return true;
   }
 };
 

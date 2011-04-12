@@ -21,21 +21,21 @@ struct CameraConfig
   std::string new_parent_frame_id;
 };
 
-void operator >> (const YAML::Node& node, geometry_msgs::CamConfig config)
+void operator >> (const YAML::Node& node, CameraConfig& config)
 {
-  node["position"]["x"]    >> config.orig_transform.position.x;
-  node["position"]["y"]    >> config.orig_transform.position.y;
-  node["position"]["z"]    >> config.orig_transform.position.z;
-  node["orientation"]["x"] >> config.orig_transform.orientation.x;
-  node["orientation"]["y"] >> config.orig_transform.orientation.y;
-  node["orientation"]["z"] >> config.orig_transform.orientation.z;
-  node["orientation"]["w"] >> config.orig_transform.orientation.w;
+  node["position"]["x"]    >> config.orig_transform.transform.translation.x;
+  node["position"]["y"]    >> config.orig_transform.transform.translation.y;
+  node["position"]["z"]    >> config.orig_transform.transform.translation.z;
+  node["orientation"]["x"] >> config.orig_transform.transform.rotation.x;
+  node["orientation"]["y"] >> config.orig_transform.transform.rotation.y;
+  node["orientation"]["z"] >> config.orig_transform.transform.rotation.z;
+  node["orientation"]["w"] >> config.orig_transform.transform.rotation.w;
   node["tf"]["calibrated_frame"] >> config.orig_transform.child_frame_id;
   node["tf"]["child_frame"] >> config.new_child_frame_id;
   node["tf"]["parent_frame"] >> config.new_child_frame_id;
 }
 
-void generateCameraList(const std::string& cam_yaml, std::vector<CameraConfig>& cameras)
+void generateCameraList(const std::string& cal_yaml, std::vector<CameraConfig>& cameras)
 {
   std::stringstream cal_yaml_stream(cal_yaml);
   YAML::Parser parser(cal_yaml_stream);
@@ -56,10 +56,9 @@ class CalPublisher
 {
 private:
   ros::NodeHandle nh_;
-  std::vector<CameraPose> cameras_;
+  std::vector<CameraConfig> cameras_;
   std::vector<ThreadInfo> threads_;
-  boost::mutex mutex_;
-
+  ros::Timer timer_;
 public:
   CalPublisher()
   {
@@ -80,10 +79,10 @@ public:
     threads_.resize(cameras_.size());
     for (unsigned int i=0; i < threads_.size(); i++)
     {
-      threads_.tf_finder.reset(new TransformFinder(cameras_[i].orig_transform,
+      threads_[i].tf_finder.reset(new TransformFinder(cameras_[i].orig_transform,
 						   cameras_[i].new_child_frame_id,
 						   cameras_[i].new_parent_frame_id));
-      threads_.thread_ptr.reset(new boost::thread( boost::bind(&TransformFinder::start, threads_[i].tf_finder)) );
+      threads_[i].thread_ptr.reset(new boost::thread( boost::bind(&TransformFinder::start, threads_[i].tf_finder)) );
     }
 
     timer_ = nh_.createTimer(ros::Duration(1.0), boost::bind(&CalPublisher::publishTF, this, _1));
@@ -93,7 +92,7 @@ public:
   {
     for (unsigned int i=0; i < threads_.size(); i++)
     {
-      threads_[i]->thread_ptr->join();
+      threads_[i].thread_ptr->join();
       printf("Thread %u: Joined\n", i);
     }
   }
@@ -104,7 +103,7 @@ private:
     printf("**** Publishing TF ****\n");
     for (unsigned int i=0; i < threads_.size(); i++)
     {
-      if (threads_.tf_finder->found())
+      if (threads_[i].tf_finder->found())
 	printf("%u) Found\n", i);
       else
 	printf("%u) Waiting\n", i);
