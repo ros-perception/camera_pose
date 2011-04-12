@@ -43,7 +43,10 @@ class FilterIntervals:
             if self.feature and diff(self.feature, self.last_feature) > self.min_motion and duration > self.min_duration:
                 self.last_feature = self.feature
                 self.pub.publish(msg)
-                beep(440, 63, 0.5) 
+                try:
+                    beep(440, 63, 0.5) 
+                except:
+                    print "Beep beep"
 
 
     def feature_cb(self, msg):
