@@ -1,13 +1,15 @@
 
-
+#include <kdl/frames.hpp>
+#include <geometry_msgs/TransformStamped.h>
+#include <tf2_ros/buffer_client.h>
 
 namespace megacal_estimation
 {
 
 void TransformMsgToKDL(const geometry_msgs::TransformStamped& t, KDL::Frame& k)
 {
-  k = KDL::Frame(KDL::Quaternion(msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w),
-		 KDL::Vector(msg.position.x, msg.position.y, msg.position.z))
+  k = KDL::Frame(KDL::Rotation::Quaternion(t.orientation.x, t.orientation.y, t.orientation.z, t.orientation.w),
+		 KDL::Vector(t.position.x, t.position.y, t.position.z))
 }
 
 void TransformKDLToMsg(const KDL::Frame& k, geometry_msgs::TransformStamped& t)
@@ -16,10 +18,10 @@ void TransformKDLToMsg(const KDL::Frame& k, geometry_msgs::TransformStamped& t)
   t.position.y = k.p[1];
   t.position.z = k.p[2];
 
-  KDL::GetQuaternion(t.orientation.x,
-		     t.orientation.y,
-		     t.orientation.z,
-		     t.orientation.w);
+  KDL::RotationGetQuaternion(t.orientation.x,
+			     t.orientation.y,
+			     t.orientation.z,
+			     t.orientation.w);
 }
 
 class TransformFinder
