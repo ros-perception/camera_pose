@@ -20,7 +20,8 @@ from megacal_estimation import dump_estimate
 
 import yaml
 
-BAG = '/u/vpradeep/kinect_bags/kinect_extrinsics_2011-04-05-16-01-28.bag'
+import sys
+BAG = sys.argv[1]
 camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(BAG)
 
 cal_estimate = CalibrationEstimate()
