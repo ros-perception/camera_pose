@@ -13,7 +13,7 @@
 using namespace megacal_estimation;
 
 
-void operator >> (const YAML::Node& node, CameraPose& cam_pose)
+void operator >> (const YAML::Node& node, geometry_msgs::)
 {
   node["camera_id"]        >> cam_pose.camera_id;
   node["position"]["x"]    >> cam_pose.position.x;
@@ -67,12 +67,14 @@ public:
     std::string cal_yaml;
     if(!pnh.getParam("cal_estimate", cal_yaml))
       ROS_FATAL("Could not find parameter [~cal_estimate]. Shutting down cal_publisher node");
-    
-
-    std::string world_id;
-    pnh.param<std::string>("world_id", world_id, "world_frame");
-
     generateCameraList(cal_yaml, cameras_);
+
+    // Extract the configuration for each of the calibrated cameras
+
+    // Get the root frame from the calibrated transforms
+    std::string root_id;
+    pnh.param<std::string>("root_id", root_id, "world_frame");
+
     transform_cache_.resize(cameras_.size());
     transform_found_.resize(cameras_.size(), false);
 
