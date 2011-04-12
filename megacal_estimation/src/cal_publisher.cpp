@@ -36,6 +36,60 @@ void generateCameraList(const std::string& cam_yaml, std::vector<CameraPose>& ca
     doc[i] >> cameras[i];
 }
 
+struct CameraConfig
+{
+  std::string calibrated_frame;
+  std::string transform_child;
+  std::string transform_parent;
+};
+
+void generateConfigList(const std::string& config_yaml, std::vector<CameraConfig>& camera_configs)
+{
+
+}
+
+
+class TransformFinder
+{
+
+private:
+  const geometry_msgs::TransformStamped orig_transform_;
+  const std::string child_id_;
+  const std::string parent_id_;
+  bool found_;
+
+public:
+  TransformFinder(const geometry_msgs::TransformStamped& orig_transform,
+                  const std::string& child_id,
+                  const std::string parent_id) :
+    orig_transform_(orig_transform),
+    child_id_(child_id),
+    parent_id_(parent_id)
+    { }
+
+  void start()
+  {
+    tf2::BufferClient tf_client("tf2");
+
+    tf_client.lookupTransform(
+
+    found_ = true;
+  }
+
+  bool found()
+  {
+    return found_;
+  }
+
+  bool getTransform(geometry_msgs::TransformStamped& transform_out)
+  {
+    if (!found)
+      return false;
+    transform_out = transform_out_;
+  }
+};
+
+
 class CalPublisher
 {
 private:
@@ -44,6 +98,7 @@ private:
   std::vector<CameraPose> cameras_;
   std::vector<geometry_msgs::PoseStamped> transform_cache_;
   std::vector<bool> transform_found_;
+  boost::mutex mutex_;
 
 public:
   CalPublisher()
