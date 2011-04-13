@@ -6,14 +6,9 @@ import roslib
 roslib.load_manifest('megacal_estimation')
 import PyKDL
 from calibration_msgs.msg import *
+from tf_conversions import posemath
 
 import rosbag
-
-def pose_msg_to_kdl(m):
-    return PyKDL.Frame(PyKDL.Rotation.Quaternion(m.orientation.x, m.orientation.y,
-                                                 m.orientation.z, m.orientation.w),
-                       PyKDL.Vector(m.position.x, m.position.y, m.position.z))
-
 
 
 def read_observations(bag_filename):
@@ -28,8 +23,8 @@ def read_observations(bag_filename):
         for M_cam1, M_cam2 in itertools.combinations(msg.M_cam, 2):
             cam1 = M_cam1.camera_id
             cam2 = M_cam2.camera_id
-            p1 = pose_msg_to_kdl(M_cam1.features.object_pose.pose)
-            p2 = pose_msg_to_kdl(M_cam2.features.object_pose.pose)
+            p1 = posemath.fromMsg(M_cam1.features.object_pose.pose)
+            p2 = posemath.fromMsg(M_cam2.features.object_pose.pose)
 
             mutual_observations[cam1][cam2].append( (p1, p2, checkerboard_id) )
             mutual_observations[cam2][cam1].append( (p2, p1, checkerboard_id) )

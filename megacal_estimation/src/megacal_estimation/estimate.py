@@ -39,14 +39,9 @@ import rospy
 
 pose_width = 6
 feature_width = 2
-num_iterations = 50
-step_scale = 0.5
 
 
-def enhance(cal_samples, prior_estimate):
-    rospy.init_node('enhance')
-    tf_pub = rospy.Publisher('/tf', tfMessage)
-
+def enhance(cal_samples, prior_estimate, num_iterations = 20, step_size = 0.5):
     set_printoptions(linewidth=4000, precision=4, threshold=5000000000000000000000000000, suppress=True)
     next_estimate = deepcopy(prior_estimate)
     lam = 1.0  # lambda
@@ -54,14 +49,9 @@ def enhance(cal_samples, prior_estimate):
         residual, J = calculate_residual_and_jacobian(cal_samples, next_estimate)
         Jpinv = linalg.pinv(J, 1e-5)
         step = Jpinv*residual
-        next_estimate = oplus(next_estimate, step*step_scale)
-
+        next_estimate = oplus(next_estimate, step*step_size)
         fixup_state(next_estimate)
-
-        tf_pub.publish(to_tf(next_estimate))
-        print "RMS: %.16f" % rms(residual)
-#        print "Jacobian pinv:", Jpinv.T
-
+        rospy.loginfo("RMS: %.16f"% rms(residual))
         if rospy.is_shutdown():
             return next_estimate
     return next_estimate
