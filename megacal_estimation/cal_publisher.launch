@@ -1,0 +1,7 @@
+<launch>
+  <node type="cal_publisher" pkg="megacal_estimation" name="cal_publisher" output="screen">
+    <param name="cal_estimate" textfile="$(find megacal_estimation)/kinect_cal.yaml" />
+  </node>
+
+  <node type="buffer_server" pkg="tf2_ros" name="tf2_buffer_server" output="screen"/>
+</launch>
