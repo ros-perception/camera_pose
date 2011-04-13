@@ -4,6 +4,7 @@ import roslib; roslib.load_manifest('megacal_estimation')
 import tf2_ros
 import rospy
 import threading
+import PyKDL
 from tf_conversions import posemath
 from geometry_msgs.msg import TransformStamped
 from calibration_msgs.msg import CameraCalibration
@@ -11,16 +12,21 @@ from calibration_msgs.msg import CameraCalibration
 name_mapping = {'openni_rgb_optical_frame':'openni_camera'}
 
 def get_parent(name):
+    res = name
     for child, parent in name_mapping.iteritems():
-        name = name.replace(child, parent)
-    return name
+        res = res.replace(child, parent)
+    return res
 
+
+def fromTrMsg(t):
+    return PyKDL.Frame(PyKDL.Rotation.Quaternion(t.rotation.x, t.rotation.y, t.rotation.z, t.rotation.w),
+                       PyKDL.Vector(t.translation.x, t.translation.y, t.translation.z))
 
 class CameraPublisher(threading.Thread):
     def __init__(self, name, pose):
         threading.Thread.__init__(self)
         self.lock = threading.Lock()
-        self.name = name
+        self.name = name+'/openni_rgb_optical_frame'  # what is name used by calibration?
         self.pose = pose
         self.pub = tf2_ros.TransformBroadcaster()
         self.start()
@@ -30,14 +36,15 @@ class CameraPublisher(threading.Thread):
             self.pose = pose
 
     def run(self):
-        rospy.loginfo('Looking up tf offset for frame %s'%self.name)
-        tf = tf2_ros.BufferClient('tf2_server')
+        rospy.loginfo("Connecting to tf2 server")
+        tf = tf2_ros.BufferClient('tf2_buffer_server')
         tf.wait_for_server()
-        offset = posemath.fromMsg(tf.lookup_transform(get_parent(self.name), self.name, rospy.Time(),
-                                                      rospy.Duration(100)).pose)
+        rospy.loginfo('Looking up tf offset from frame %s to frame %s'%(self.name, get_parent(self.name)))
+        offset = fromTrMsg(tf.lookup_transform(get_parent(self.name), self.name, rospy.Time(),
+                                               rospy.Duration(100)).transform)
 
+        rospy.loginfo('Start publishing tf for frame %s'%self.name)
         while not rospy.is_shutdown():
-            rospy.loginfo('Start publishing tf for frame %s'%self.name)
             with self.lock:
                 res = posemath.toMsg(posemath.fromMsg(self.pose) * offset)
             transform = TransformStamped()

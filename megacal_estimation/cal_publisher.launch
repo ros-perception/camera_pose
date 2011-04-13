@@ -1,5 +1,7 @@
 <launch>
   <node type="publish_tf.py" pkg="megacal_estimation" name="cal_publisher" output="screen"/>
 
+  <node type="run_optimization_online.py" pkg="megacal_estimation" name="cal_optimizer" output="screen"/>
+
   <node type="buffer_server" pkg="tf2_ros" name="tf2_buffer_server" output="screen"/>
 </launch>
