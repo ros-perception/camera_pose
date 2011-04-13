@@ -11,15 +11,13 @@ from tf_conversions import posemath
 import rosbag
 
 
-def read_observations(bag_filename):
+def read_observations(meas):
     # Stores the checkerboards observed by two cameras
     # camera_id -> camera_id -> [ (cb pose, cb pose, cb id) ]
     mutual_observations = collections.defaultdict(lambda: collections.defaultdict(list))
 
-    bag = rosbag.Bag(bag_filename)
     checkerboard_id = 0
-    for topic, msg, t in bag:
-        assert topic == 'robot_measurement'
+    for msg in meas:
         for M_cam1, M_cam2 in itertools.combinations(msg.M_cam, 2):
             cam1 = M_cam1.camera_id
             cam2 = M_cam2.camera_id
@@ -30,8 +28,6 @@ def read_observations(bag_filename):
             mutual_observations[cam2][cam1].append( (p2, p1, checkerboard_id) )
 
         checkerboard_id += 1
-
-    bag.close()
     return mutual_observations
 
 # Populates cameras_seen and checkerboards_seen
@@ -58,8 +54,9 @@ def bfs(root_cam, observations, cameras_seen, checkerboards_seen):
                 if cb[2] not in checkerboards_seen:
                     checkerboards_seen[cb[2]] = cam1_pose * cb[0]
 
-def find_initial_poses(bag_filename, root_cam = None):
-    mutual_observations = read_observations(bag_filename)
+def find_initial_poses(meas, root_cam = None):
+    mutual_observations = read_observations(meas)
+
     if not root_cam:
         root_cam = mutual_observations.keys()[0]
     camera_poses = {}

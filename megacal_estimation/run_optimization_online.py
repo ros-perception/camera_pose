@@ -16,9 +16,6 @@ from megacal_estimation.msg import CameraPose
 from megacal_estimation import init_optimization_prior
 from megacal_estimation import estimate
 
-camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(BAG)
-
-
 
 class Estimator:
     def __init__(self):
@@ -30,11 +27,12 @@ class Estimator:
 
     def meas_cb(self, msg):
         # add measurements to list
+        self.meas.append(msg)
 
         # initialize state if needed
         if not self.state:
             self.state = CalibrationEstimate()
-            camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(BAG)
+            camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(self.meas)
             self.state.targets = [ posemath.toMsg(c) for c in checkerboard_poses ]
             self.state.cameras = [ CameraPose(camera_id, posemath.toMsg(camera_pose)) for camera_id, camera_pose in camera_poses.iteritems()]
 
@@ -42,11 +40,13 @@ class Estimator:
         self.state = estimate.enhance(self.meas, self.state)
 
 
-# Run optimization
-bag = rosbag.Bag(BAG)
-for topic, msg, t in bag:
-    assert topic == 'robot_measurement'
-cal_samples = [msg for topic, msg, t in bag]
+def main():
+    rospy.init_node('online_calibration')
+    e = Estimator()
+    
+    rospy.spin()
+
+
 
 
 

@@ -19,24 +19,27 @@ from megacal_estimation import estimate
 from megacal_estimation import dump_estimate
 
 import yaml
-
 import sys
-BAG = sys.argv[1]
-camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(BAG)
 
-cal_estimate = CalibrationEstimate()
-cal_estimate.targets = [ posemath.toMsg(checkerboard_poses[i]) for i in range(len(checkerboard_poses)) ]
-
-cal_estimate.cameras = [ CameraPose(camera_id, posemath.toMsg(camera_pose)) for camera_id, camera_pose in camera_poses.iteritems()]
-print cal_estimate
-
-
-# Run optimization
+# read data from bag
+if len(sys.argv) >= 2:
+    BAG = sys.argv[1]
+else:
+    BAG = '/u/vpradeep/kinect_bags/kinect_extrinsics_2011-04-05-16-01-28.bag'
 bag = rosbag.Bag(BAG)
 for topic, msg, t in bag:
     assert topic == 'robot_measurement'
 cal_samples = [msg for topic, msg, t in bag]
 
+
+# create prior
+camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(cal_samples)
+cal_estimate = CalibrationEstimate()
+cal_estimate.targets = [ posemath.toMsg(checkerboard_poses[i]) for i in range(len(checkerboard_poses)) ]
+cal_estimate.cameras = [ CameraPose(camera_id, posemath.toMsg(camera_pose)) for camera_id, camera_pose in camera_poses.iteritems()]
+
+
+# Run optimization
 new_cal_estimate = estimate.enhance(cal_samples, cal_estimate)
 cam_dict_list = dump_estimate.to_dict_list(new_cal_estimate.cameras)
 
