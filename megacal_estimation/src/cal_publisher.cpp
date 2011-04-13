@@ -1,11 +1,8 @@
 
-
-
 #include <sstream>
 #include <ros/ros.h>
 #include <yaml-cpp/yaml.h>
-#include <tf/transform_listener.h>
-#include <tf/transform_broadcaster.h>
+#include <tf2_ros/transform_broadcaster.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <megacal_estimation/CameraPose.h>
@@ -32,7 +29,7 @@ void operator >> (const YAML::Node& node, CameraConfig& config)
   node["orientation"]["w"] >> config.orig_transform.transform.rotation.w;
   node["tf"]["calibrated_frame"] >> config.orig_transform.child_frame_id;
   node["tf"]["child_frame"] >> config.new_child_frame_id;
-  node["tf"]["parent_frame"] >> config.new_child_frame_id;
+  node["tf"]["parent_frame"] >> config.new_parent_frame_id;
 }
 
 void generateCameraList(const std::string& cal_yaml, std::vector<CameraConfig>& cameras)
@@ -59,6 +56,7 @@ private:
   std::vector<CameraConfig> cameras_;
   std::vector<ThreadInfo> threads_;
   ros::Timer timer_;
+  tf2::TransformBroadcaster tfb_;
 public:
   CalPublisher()
   {
@@ -100,14 +98,21 @@ public:
 private:
   void publishTF(const ros::TimerEvent& event)
   {
+    std::vector<geometry_msgs::TransformStamped> transforms_out;
     printf("**** Publishing TF ****\n");
     for (unsigned int i=0; i < threads_.size(); i++)
     {
-      if (threads_[i].tf_finder->found())
+      geometry_msgs::TransformStamped cur_transform;
+      if (threads_[i].tf_finder->getTransform(cur_transform))
+      {
 	printf("%u) Found\n", i);
+	cur_transform.header.stamp = event.current_expected;
+	transforms_out.push_back(cur_transform);
+      }
       else
 	printf("%u) Waiting\n", i);
     }
+    tfb_.sendTransform(transforms_out);
   }
 };
 

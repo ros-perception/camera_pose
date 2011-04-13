@@ -1,4 +1,5 @@
 
+#include <tf/transform_listener.h>
 #include <kdl/frames.hpp>
 #include <geometry_msgs/TransformStamped.h>
 #include <tf2_ros/buffer_client.h>
@@ -44,24 +45,47 @@ public:
    **/
   TransformFinder(const geometry_msgs::TransformStamped& orig_transform,
                   const std::string& child_id,
-                  const std::string parent_id) :
+                  const std::string& parent_id) :
     orig_transform_(orig_transform),
     child_id_(child_id),
-    parent_id_(parent_id)
+    parent_id_(parent_id),
+      found_(false)
     { }
 
   void start()
   {
-    tf2::BufferClient tf_client("tf2");
+    tf2::BufferClient tf_client("tf2_buffer_server");
+
+    tf_client.waitForServer();
+
+    //! \todo Debug Bootup race conditions
+    ros::Duration( (rand() % 100)/100.0).sleep();
+
+
+    geometry_msgs::Transform identity_transform;
+    identity_transform.translation.x = 0.0;
+    identity_transform.translation.y = 0.0;
+    identity_transform.translation.z = 0.0;
+    identity_transform.rotation.x = 0.0;
+    identity_transform.rotation.y = 0.0;
+    identity_transform.rotation.z = 0.0;
+    identity_transform.rotation.w = 1.0;
 
     // Lookup Child -> Orig.Child
     geometry_msgs::TransformStamped child_to_orig_child;
     ROS_INFO("Trying to find [%s] -> [%s]", child_id_.c_str(), orig_transform_.child_frame_id.c_str());
-    child_to_orig_child = tf_client.lookupTransform(orig_transform_.child_frame_id, child_id_, ros::Time(0.0), ros::Duration(30.0));
+    if (orig_transform_.child_frame_id == child_id_)
+      child_to_orig_child.transform = identity_transform;
+    else
+      child_to_orig_child = tf_client.lookupTransform(orig_transform_.child_frame_id, child_id_, ros::Time(0.0), ros::Duration(10.0));
     // Lookup Orig.Parent to Parent
     geometry_msgs::TransformStamped orig_parent_to_parent;
     ROS_INFO("Trying to find [%s] -> [%s]", orig_transform_.header.frame_id.c_str(), parent_id_.c_str());
-    orig_parent_to_parent = tf_client.lookupTransform(parent_id_, orig_transform_.header.frame_id, ros::Time(0.0), ros::Duration(30.0));
+    if (parent_id_ == orig_transform_.header.frame_id)
+      orig_parent_to_parent.transform = identity_transform;
+    else
+      orig_parent_to_parent = tf_client.lookupTransform(parent_id_, orig_transform_.header.frame_id, ros::Time(0.0), ros::Duration(10.0));
+    ROS_INFO("Found!");
 
     // orig = orig_parent_to_parent * parent_to_child * child_to_orig_child
     KDL::Frame op2p, c2oc, op2oc;
