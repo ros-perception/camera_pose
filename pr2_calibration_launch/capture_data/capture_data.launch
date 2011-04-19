@@ -1,6 +1,0 @@
-<launch>
-  <include file="$(find pr2_calibration_launch)/capture_data/all_viewers.launch"/>
-  <include file="$(find pr2_calibration_launch)/capture_data/all_pipelines.launch"/>
-  <include file="$(find pr2_calibration_launch)/capture_data/capture_exec_pr2.launch"/>
-  <include file="$(find pr2_calibration_launch)/capture_data/teleop_joystick.launch"/>
-</launch>

@@ -1,0 +1,74 @@
+<launch>
+
+  <!-- machine name="default_machine" address="localhost" default="false" / -->
+
+
+  <group ns="kinect_a">
+    <param name="tf_prefix" value="kinect_a" />
+
+    <!-- Overriding the frames -->
+    <param name="openni_node1/rgb_frame_id" value="kinect_a/openni_rgb_optical_frame" />
+    <param name="openni_node1/depth_frame_id" value="kinect_a/openni_depth_optical_frame" />
+
+    <!-- Throttle images -->
+    <node type="throttle" pkg="topic_tools" name="image_throttle" args="messages camera/rgb/image_rect_color 20 camera/rgb/image_throttle" />
+
+    <!-- Checkerboard detector -->
+    <node pkg="image_cb_detector" type="image_cb_detector_action_old" name="stereo_cb_detector" output="screen">
+      <remap from="image" to="camera/rgb/image_throttle" />
+      <remap from="camera_info" to="camera/rgb/camera_info" />
+    </node>
+    <node pkg="megacal_estimation" type="start_cb_detector_action_old.py" name="start_cb_detector_action_old" 
+          args="4 5 0.02492"  output="screen"/>
+
+    <!-- image settler -->
+    <node type="monocam_settler_action" pkg="monocam_settler" name="monocam_settler" output="screen"/>
+    <node pkg="megacal_estimation" type="start_monocam_settler_action.py" name="start_monocam_settler_action" />
+  </group>
+
+
+
+  <group ns="kinect_b">
+    <param name="tf_prefix" value="kinect_b" />
+
+    <!-- Overriding the frames -->
+    <param name="openni_node1/rgb_frame_id" value="kinect_b/openni_rgb_optical_frame" />
+    <param name="openni_node1/depth_frame_id" value="kinect_b/openni_depth_optical_frame" />
+
+    <!-- Throttle images -->
+    <node type="throttle" pkg="topic_tools" name="image_throttle" args="messages camera/rgb/image_rect_color 20 camera/rgb/image_throttle" />
+
+    <!-- Checkerboard detector -->
+    <node pkg="image_cb_detector" type="image_cb_detector_action_old" name="stereo_cb_detector" output="screen">
+      <remap from="image" to="camera/rgb/image_throttle" />
+      <remap from="camera_info" to="camera/rgb/camera_info" />
+    </node>
+    <node pkg="megacal_estimation" type="start_cb_detector_action_old.py" name="start_cb_detector_action_old" 
+          args="4 5 0.02492"  output="screen"/>
+
+    <!-- image settler -->
+    <node type="monocam_settler_action" pkg="monocam_settler" name="monocam_settler" output="screen"/>
+    <node pkg="megacal_estimation" type="start_monocam_settler_action.py" name="start_monocam_settler_action" />
+  </group>
+
+
+
+  <node type="interval_intersection_action" pkg="interval_intersection" name="interval_intersection" output="screen" />
+  <node pkg="megacal_estimation" type="start_interval_intersection.py" name="start_interval_intersection" />
+  <node pkg="megacal_estimation" type="filter_intervals.py" name="filter_intervals">
+     <param name="min_duration" value="1.0" />
+  </node>
+
+  <node pkg="megacal_estimation" type="multicam_capture_exec.py" name="capture_exec" output="screen">
+    <remap from="kinect_a/camera_info" to="kinect_a/camera/rgb/camera_info" />
+    <remap from="kinect_a/image" to="kinect_a/camera/rgb/image_throttle" />
+    <remap from="kinect_a/image_rect" to="kinect_a/camera/rgb/image_throttle" />
+    <remap from="kinect_b/camera_info" to="kinect_b/camera/rgb/camera_info" />
+    <remap from="kinect_b/image" to="kinect_b/camera/rgb/image_throttle" />
+    <remap from="kinect_b/image_rect" to="kinect_b/camera/rgb/image_throttle" />
+    <remap from="request_interval" to="interval_filtered" />
+  </node>
+
+  <node type="run_optimization_online.py" pkg="megacal_estimation" name="cal_optimizer" output="screen"/>
+
+</launch>

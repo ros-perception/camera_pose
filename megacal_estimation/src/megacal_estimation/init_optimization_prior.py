@@ -1,9 +1,10 @@
 import sys, time, optparse
 import itertools
+import numpy
 import collections
-
 import roslib
 roslib.load_manifest('megacal_estimation')
+import cv
 import PyKDL
 from calibration_msgs.msg import *
 from tf_conversions import posemath
@@ -11,18 +12,41 @@ from tf_conversions import posemath
 import rosbag
 
 
+def get_target_pose(cam):
+    # Populate object_points
+    object_points = cv.fromarray(numpy.array([ [p.x, p.y, p.z ] for p in cam.features.object_points]))
+    image_points = cv.fromarray(numpy.array([[p.x, p.y] for p in cam.features.image_points]))
+    dist_coeffs = cv.fromarray(numpy.array([ [0.0, 0.0, 0.0, 0.0] ]))
+    camera_matrix = numpy.array( [ [ cam.cam_info.P[0], cam.cam_info.P[1], cam.cam_info.P[2]  ],
+                                   [ cam.cam_info.P[4], cam.cam_info.P[5], cam.cam_info.P[6]  ],
+                                   [ cam.cam_info.P[8], cam.cam_info.P[9], cam.cam_info.P[10] ] ] )
+    rot = cv.CreateMat(3, 1, cv.CV_32FC1)
+    trans = cv.CreateMat(3, 1, cv.CV_32FC1)
+    cv.FindExtrinsicCameraParams2(object_points, image_points, camera_matrix, dist_coeffs, rot, trans)
+    # print "Rot: %f, %f, %f" % ( rot[0,0], rot[1,0], rot[2,0] )
+    # print "Trans: %f, %f, %f" % ( trans[0,0], trans[1,0], trans[2,0] )
+    rot3x3 = cv.CreateMat(3, 3, cv.CV_32FC1)
+    cv.Rodrigues2(rot, rot3x3)
+    f = PyKDL.Frame()
+    for i in range(3):
+        f.p[i] = trans[i,0]
+    for i in range(3):
+        for j in range(3):
+            f.M[i,j] = rot3x3[i,j]
+    return f
+
 def read_observations(meas):
     # Stores the checkerboards observed by two cameras
     # camera_id -> camera_id -> [ (cb pose, cb pose, cb id) ]
     mutual_observations = collections.defaultdict(lambda: collections.defaultdict(list))
-
+    
     checkerboard_id = 0
     for msg in meas:
         for M_cam1, M_cam2 in itertools.combinations(msg.M_cam, 2):
             cam1 = M_cam1.camera_id
             cam2 = M_cam2.camera_id
-            p1 = posemath.fromMsg(M_cam1.features.object_pose.pose)
-            p2 = posemath.fromMsg(M_cam2.features.object_pose.pose)
+            p1 = get_target_pose(M_cam1)
+            p2 = get_target_pose(M_cam2)
 
             mutual_observations[cam1][cam2].append( (p1, p2, checkerboard_id) )
             mutual_observations[cam2][cam1].append( (p2, p1, checkerboard_id) )

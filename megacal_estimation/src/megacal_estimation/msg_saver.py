@@ -61,7 +61,7 @@ if (os.path.isfile(bag_filename)):
         print "Couldn't find any messages on topic [%s]" % topic_name
     bag.close()
 else:
-    print "Couldn't find file [%s]. Skipping publishing"
+    print "Couldn't find file [%s]. Skipping publishing" % bag_filename
 
 # Listen on the same topic, so that we can update the bag
 sub = rospy.Subscriber(topic_name, msg_class, callback)

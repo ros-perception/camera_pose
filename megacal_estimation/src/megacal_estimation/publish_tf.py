@@ -7,7 +7,7 @@ import threading
 import PyKDL
 from tf_conversions import posemath
 from geometry_msgs.msg import TransformStamped
-from calibration_msgs.msg import CameraCalibration
+from megacal_estimation.msg import CameraCalibration
 
 name_mapping = {'openni_rgb_optical_frame':'openni_camera'}
 
@@ -46,7 +46,7 @@ class CameraPublisher(threading.Thread):
         rospy.loginfo('Start publishing tf for frame %s'%self.name)
         while not rospy.is_shutdown():
             with self.lock:
-                res = posemath.toMsg(posemath.fromMsg(self.pose) * offset)
+                res = posemath.toMsg(posemath.fromMsg(self.pose) * offset.Inverse())
             transform = TransformStamped()
             transform.header.frame_id = 'world'
             transform.child_frame_id = get_parent(self.name)

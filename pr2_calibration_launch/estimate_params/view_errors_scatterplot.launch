@@ -1,8 +1,0 @@
-<launch>
-
-  <include file="$(find pr2_calibration_launch)/estimate_params/head_then_arms_params.launch" />
-
-  <node pkg="pr2_calibration_estimation" type="post_process.py" name="scatter viewer" output="screen"
-        args="/tmp/pr2_calibration/cal_measurements.bag /tmp/pr2_calibration/" respawn="False"/>
-
-</launch>
