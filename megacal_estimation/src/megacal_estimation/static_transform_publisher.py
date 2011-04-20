@@ -15,6 +15,7 @@ class StaticPublisher:
         self.pose_msg = TransformStamped()
         self.pose_msg.header.frame_id = pose['parent_id']
         self.pose_msg.child_frame_id = pose['child_id']
+        rospy.logerr("static from %s to %s"%(pose['parent_id'], pose['child_id']))
         self.pose_msg.transform.translation.x = pose['translation'][0]
         self.pose_msg.transform.translation.y = pose['translation'][1]
         self.pose_msg.transform.translation.z = pose['translation'][2]

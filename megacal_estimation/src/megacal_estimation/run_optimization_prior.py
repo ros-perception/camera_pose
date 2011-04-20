@@ -45,12 +45,12 @@ cam_dict_list = dump_estimate.to_dict_list(new_cal_estimate.cameras)
 
 # For now, hardcode what transforms we care about
 tf_config = dict();
-tf_config['kinect_a'] = {'calibrated_frame':'kinect_a/openni_rgb_optical_frame',
+tf_config['camera_a'] = {'calibrated_frame':'camera_a/openni_rgb_optical_frame',
                          'parent_frame': 'world_frame',
-                         'child_frame': 'kinect_a/openni_camera'}
-tf_config['kinect_b'] = {'calibrated_frame':'kinect_b/openni_rgb_optical_frame',
+                         'child_frame': 'camera_a/openni_camera'}
+tf_config['camera_b'] = {'calibrated_frame':'camera_b/openni_rgb_optical_frame',
                          'parent_frame': 'world_frame',
-                         'child_frame': 'kinect_b/openni_camera'}
+                         'child_frame': 'camera_b/openni_camera'}
 
 # Insert TF Data into output file
 for cam_dict in cam_dict_list:
@@ -62,6 +62,6 @@ for cam_dict in cam_dict_list:
                           'parent_frame': 'world_frame',
                           'child_frame': cam_id}
 
-f = open('kinect_cal.yaml', 'w')
+f = open('camera_cal.yaml', 'w')
 f.write(yaml.dump(cam_dict_list))
 f.close()

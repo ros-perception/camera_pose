@@ -4,17 +4,20 @@ import roslib; roslib.load_manifest('megacal_estimation')
 import rospy
 import actionlib
 
-from interval_intersection.msg import *
+from monocam_settler.msg import *
 
 if __name__ == '__main__':
-    rospy.init_node('start_interval_intersection')
-    client = actionlib.SimpleActionClient('interval_intersection_config', ConfigAction)
+    rospy.init_node('start_monocam_settler')
+    client = actionlib.SimpleActionClient('monocam_settler_config', ConfigAction)
     print "Waiting for Server"
     client.wait_for_server()
     print "Found Server"
 
     goal = ConfigGoal()
     # Fill in the goal here
-    goal.topics = ['camera_a/settled_interval', 'camera_b/settled_interval']
+    goal.tolerance = 1.0;
+    goal.ignore_failures = 1;
+    goal.max_step = rospy.Duration(1.0)
+    goal.cache_size = 100;
     client.send_goal_and_wait(goal)
     print "Done sending goal"

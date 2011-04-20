@@ -46,7 +46,7 @@ from pr2_calibration_executive.robot_measurement_cache import RobotMeasurementCa
 
 from calibration_msgs.msg import RobotMeasurement
 
-class KinectCaptureExecutive:
+class CameraCaptureExecutive:
     def __init__(self, cam_ids):
         self.cam_ids = cam_ids
         self.cache = RobotMeasurementCache()
@@ -84,8 +84,10 @@ class KinectCaptureExecutive:
         m_robot = self.cache.request_robot_measurement(msg.start, msg.end, min_duration=rospy.Duration(0.01))
 
         # We found a sample, so we can deactive (kind of a race condition, since 'active' triggers capture() to exit... I don't care)
-        if m_robot is not None:
-            m_robot.target_id = 'large_cb_7x6'
+        if m_robot:
+            # Change camera ids to be the tf frame IDs
+            for cam in m_robot.M_cam:
+                cam.camera_id = cam.image.header.frame_id
             self.measurement_pub.publish(m_robot)
         else:
             print "Couldn't get measurement in interval"
@@ -100,5 +102,5 @@ class KinectCaptureExecutive:
 
 if __name__ == '__main__':
     rospy.init_node('capture_exec')
-    executive = KinectCaptureExecutive(['kinect_a', 'kinect_b'])
+    executive = CameraCaptureExecutive(['camera_a', 'camera_b'])
     rospy.spin()
