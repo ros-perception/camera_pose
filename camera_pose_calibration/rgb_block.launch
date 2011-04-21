@@ -1,5 +1,9 @@
 <launch>
   <arg name="ns" />
+  <arg name="checker_rows" />
+  <arg name="checker_cols" />
+  <arg name="checker_size" />
+
 
   <group ns="$(arg ns)">
     <param name="tf_prefix" value="$(arg ns)" />
@@ -13,7 +17,7 @@
       <remap from="camera_info" to="rgb/camera_info" />
     </node>
     <node pkg="camera_pose_calibration" type="start_cb_detector_action_old.py" name="start_cb_detector_action_old" 
-          args="4 5 0.02492"  output="screen"/>
+          args="$(arg checker_rows) $(arg checker_cols) $(arg checker_size)"  output="screen"/>
 
     <!-- image settler -->
     <node type="monocam_settler_action" pkg="monocam_settler" name="monocam_settler" output="screen"/>

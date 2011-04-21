@@ -50,7 +50,7 @@ class CalibrationPublishManager:
                     self.publish_list[camera] = CameraPublisher(pose, camera)
                 # modify existing entry
                 else:
-                    self.publish_list[camera].set_pose(pose)
+                    self.publish_list[camera].set_pose(pose, camera)
 
 
     def publish(self):
