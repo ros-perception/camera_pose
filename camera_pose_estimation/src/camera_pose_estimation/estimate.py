@@ -25,12 +25,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import roslib; roslib.load_manifest('camera_pose_estimation')
+import roslib; roslib.load_manifest('camera_pose_calibration')
 
 import PyKDL
 from tf_conversions import posemath
-from camera_pose_estimation.msg import CalibrationEstimate
-from camera_pose_estimation.msg import CameraPose
+from camera_pose_calibration.msg import CalibrationEstimate
+from camera_pose_calibration.msg import CameraPose
 from tf.msg import tfMessage
 from geometry_msgs.msg import TransformStamped, Transform
 from numpy import *

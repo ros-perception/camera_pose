@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 import roslib;
-roslib.load_manifest('camera_pose_estimation')
+roslib.load_manifest('camera_pose_calibration')
 
 import rospy
-import camera_pose_estimation.msg
+import camera_pose_calibration.msg
 import std_msgs.msg
 import rosbag
 import sys

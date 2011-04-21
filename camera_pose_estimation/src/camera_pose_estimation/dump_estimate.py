@@ -1,6 +1,6 @@
 
 import yaml
-from camera_pose_estimation.msg import CameraPose
+from camera_pose_calibration.msg import CameraPose
 
 from tf_conversions import posemath
 

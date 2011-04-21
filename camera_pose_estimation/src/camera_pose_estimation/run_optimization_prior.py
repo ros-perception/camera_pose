@@ -5,18 +5,18 @@ import itertools
 import collections
 
 import roslib
-roslib.load_manifest('camera_pose_estimation')
+roslib.load_manifest('camera_pose_calibration')
 import PyKDL
 from tf_conversions import posemath
 from calibration_msgs.msg import *
 
-from camera_pose_estimation.msg import CalibrationEstimate
-from camera_pose_estimation.msg import CameraPose
+from camera_pose_calibration.msg import CalibrationEstimate
+from camera_pose_calibration.msg import CameraPose
 
 import rosbag
-from camera_pose_estimation import init_optimization_prior
-from camera_pose_estimation import estimate
-from camera_pose_estimation import dump_estimate
+from camera_pose_calibration import init_optimization_prior
+from camera_pose_calibration import estimate
+from camera_pose_calibration import dump_estimate
 
 import yaml
 import sys

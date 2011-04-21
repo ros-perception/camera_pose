@@ -1,5 +1,5 @@
 <package>
-  <description brief="camera_pose_estimation">
+  <description brief="camera_pose_calibration">
 
     camera pose estimation
 
@@ -7,7 +7,7 @@
   <author>Vijay Pradeep</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/camera_pose_estimation</url>
+  <url>http://ros.org/wiki/camera_pose_calibration</url>
 
   <depend package="geometry_msgs" />
   <depend package="calibration_msgs" />
