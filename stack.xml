@@ -1,10 +1,10 @@
 <stack>
-  <description brief="Mega Calibration">
+  <description brief="Camera Estimatino">
   </description>
-  <author>Maintained by Vijay, Stu, Eitan, Patrick, Wim</author>
+  <author>Maintained by Vijay, Wim</author>
   <license>BSD</license>  
   <review status="Unreviewed" notes=""/>
-  <url>http://ros.org/wiki/megacal</url>
+  <url>http://ros.org/wiki/camera_estimation</url>
   <depend stack="common" /> <!-- yaml_cpp -->
   <depend stack="common_msgs" /> <!-- geometry_msgs -->
   <depend stack="geometry" /> <!-- kdl, tf_conversions -->

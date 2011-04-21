@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import roslib; roslib.load_manifest('megacal_estimation')
+import roslib; roslib.load_manifest('camera_pose_estimation')
 import tf2_ros
 import rospy
 import PyKDL

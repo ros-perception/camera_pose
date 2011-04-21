@@ -7,16 +7,16 @@ from numpy import *
 import random
 
 import roslib
-roslib.load_manifest('megacal_estimation')
+roslib.load_manifest('camera_pose_estimation')
 import PyKDL
 from tf_conversions import posemath
 
 from geometry_msgs.msg import Point32
 from calibration_msgs.msg import RobotMeasurement, CameraMeasurement, ImagePoint, CalibrationPattern
-from megacal_estimation.msg import CalibrationEstimate, CameraPose
+from camera_pose_estimation.msg import CalibrationEstimate, CameraPose
 
-from megacal_estimation import init_optimization_prior
-from megacal_estimation import estimate
+from camera_pose_estimation import init_optimization_prior
+from camera_pose_estimation import estimate
 
 
 

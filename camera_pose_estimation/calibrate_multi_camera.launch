@@ -1,20 +1,20 @@
 <launch>
 
-  <include file="$(find megacal_estimation)/rgb_block.launch">
+  <include file="$(find camera_pose_estimation)/rgb_block.launch">
     <arg name="ns" value="camera_a" />
   </include>
 
-  <include file="$(find megacal_estimation)/rgb_block.launch">
+  <include file="$(find camera_pose_estimation)/rgb_block.launch">
     <arg name="ns" value="camera_b" />
   </include>
 
   <node type="interval_intersection_action" pkg="interval_intersection" name="interval_intersection" output="screen" />
-  <node pkg="megacal_estimation" type="start_interval_intersection.py" name="start_interval_intersection" />
-  <node pkg="megacal_estimation" type="filter_intervals.py" name="filter_intervals">
+  <node pkg="camera_pose_estimation" type="start_interval_intersection.py" name="start_interval_intersection" />
+  <node pkg="camera_pose_estimation" type="filter_intervals.py" name="filter_intervals">
      <param name="min_duration" value="1.0" />
   </node>
 
-  <node pkg="megacal_estimation" type="multicam_capture_exec.py" name="capture_exec" output="screen">
+  <node pkg="camera_pose_estimation" type="multicam_capture_exec.py" name="capture_exec" output="screen">
     <remap from="camera_a/camera_info" to="camera_a/rgb/camera_info" />
     <remap from="camera_a/image" to="camera_a/rgb/image_throttle" />
     <remap from="camera_a/image_rect" to="camera_a/rgb/image_throttle" />
@@ -24,6 +24,6 @@
     <remap from="request_interval" to="interval_filtered" />
   </node>
 
-  <node type="run_optimization_online.py" pkg="megacal_estimation" name="cal_optimizer" output="screen"/>
+  <node type="run_optimization_online.py" pkg="camera_pose_estimation" name="cal_optimizer" output="screen"/>
 
 </launch>

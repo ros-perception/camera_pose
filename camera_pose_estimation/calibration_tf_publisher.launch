@@ -1,0 +1,8 @@
+<launch>
+  <node type="msg_saver.py" pkg="camera_pose_estimation" name="cal_saver" output="screen"
+        args="camera_calibration camera_pose_estimation/CameraCalibration /tmp/megacal_cache.bag" />
+
+  <node type="buffer_server" pkg="tf2_ros" name="tf2_buffer_server" output="screen"/>
+
+  <node type="calibration_transform_publisher.py" pkg="camera_pose_estimation" name="cal_publisher" output="screen"/>
+</launch>

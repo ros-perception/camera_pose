@@ -2,7 +2,7 @@
 
 
 
-import roslib; roslib.load_manifest('megacal_estimation')
+import roslib; roslib.load_manifest('camera_pose_estimation')
 import rospy
 import threading
 from calibration_msgs.msg import Interval, CalibrationPattern

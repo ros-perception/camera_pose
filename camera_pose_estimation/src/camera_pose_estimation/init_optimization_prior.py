@@ -3,7 +3,7 @@ import itertools
 import numpy
 import collections
 import roslib
-roslib.load_manifest('megacal_estimation')
+roslib.load_manifest('camera_pose_estimation')
 import cv
 import PyKDL
 from calibration_msgs.msg import *

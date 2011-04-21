@@ -1,13 +1,13 @@
 #!/usr/bin/python
 
-import roslib; roslib.load_manifest('megacal_estimation')
+import roslib; roslib.load_manifest('camera_pose_estimation')
 import tf2_ros
 import rospy
 import PyKDL
 import threading
 from tf_conversions import posemath
 from geometry_msgs.msg import TransformStamped, Pose
-from megacal_estimation.msg import CameraCalibration
+from camera_pose_estimation.msg import CameraCalibration
 
 
 class CameraPublisher:

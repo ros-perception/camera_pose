@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import roslib; roslib.load_manifest('megacal_estimation')
+import roslib; roslib.load_manifest('camera_pose_estimation')
 import rospy
 import actionlib
 import sys

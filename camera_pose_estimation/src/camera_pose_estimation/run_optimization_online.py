@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import roslib
-roslib.load_manifest('megacal_estimation')
+roslib.load_manifest('camera_pose_estimation')
 
 import sys, time, optparse
 import itertools
@@ -12,12 +12,12 @@ import PyKDL
 
 from tf_conversions import posemath
 from std_msgs.msg import Empty
-from megacal_estimation.msg import CalibrationEstimate
-from megacal_estimation.msg import CameraPose
+from camera_pose_estimation.msg import CalibrationEstimate
+from camera_pose_estimation.msg import CameraPose
 from calibration_msgs.msg import RobotMeasurement
-from megacal_estimation.msg import CameraCalibration
-from megacal_estimation import init_optimization_prior
-from megacal_estimation import estimate
+from camera_pose_estimation.msg import CameraCalibration
+from camera_pose_estimation import init_optimization_prior
+from camera_pose_estimation import estimate
 
 
 class Estimator:
