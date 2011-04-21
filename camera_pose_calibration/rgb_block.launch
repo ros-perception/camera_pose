@@ -1,0 +1,22 @@
+<launch>
+  <arg name="ns" />
+
+  <group ns="$(arg ns)">
+    <param name="tf_prefix" value="$(arg ns)" />
+
+    <!-- Throttle images -->
+    <node type="throttle" pkg="topic_tools" name="image_throttle" args="messages rgb/image_rect_color 20 rgb/image_throttle" />
+
+    <!-- Checkerboard detector -->
+    <node pkg="image_cb_detector" type="image_cb_detector_action_old" name="stereo_cb_detector" output="screen">
+      <remap from="image" to="rgb/image_throttle" />
+      <remap from="camera_info" to="rgb/camera_info" />
+    </node>
+    <node pkg="camera_pose_calibration" type="start_cb_detector_action_old.py" name="start_cb_detector_action_old" 
+          args="4 5 0.02492"  output="screen"/>
+
+    <!-- image settler -->
+    <node type="monocam_settler_action" pkg="monocam_settler" name="monocam_settler" output="screen"/>
+    <node pkg="camera_pose_calibration" type="start_monocam_settler_action.py" name="start_monocam_settler_action" />
+  </group>
+</launch>
