@@ -1,0 +1,4 @@
+Header header
+string camera_id
+calibration_msgs/CalibrationPattern features
+sensor_msgs/CameraInfo cam_info

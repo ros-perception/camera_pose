@@ -134,7 +134,7 @@ def calculate_residual_and_jacobian(cal_samples, cur_estimate):
     """
     # Compute the total number of rows. This is the number of poses * 6
     num_cols = len(cur_estimate.cameras) * pose_width + len(cur_estimate.targets) * pose_width
-    num_rows = sum ([ sum([  len(cam.image_points) for cam in cur_sample.M_cam]) for cur_sample in cal_samples]) * feature_width
+    num_rows = sum ([ sum([  len(cam.features.image_points) for cam in cur_sample.M_cam]) for cur_sample in cal_samples]) * feature_width
 
     J = matrix(zeros([num_rows, num_cols]))
     residual = matrix(zeros([num_rows, 1]))
@@ -160,13 +160,13 @@ def calculate_residual_and_jacobian(cal_samples, cur_estimate):
             # ROS Poses  -> KDL Poses
             target_pose = posemath.fromMsg(target_pose_msg)
 
-            end_row = cur_row + len(cam_measurement.image_points)*feature_width
+            end_row = cur_row + len(cam_measurement.features.image_points)*feature_width
 
             # ROS Target Points -> (4xN) Homogenous coords
             target_pts = matrix([ [pt.x, pt.y, pt.z, 1.0] for pt in cam_measurement.features.object_points ]).transpose()
 
             # Save the residual for this cam measurement
-            measurement_vec = matrix( concatenate([ [cur_pt.x, cur_pt.y] for cur_pt in cam_measurement.image_points]) ).T
+            measurement_vec = matrix( concatenate([ [cur_pt.x, cur_pt.y] for cur_pt in cam_measurement.features.image_points]) ).T
             expected_measurement = sub_h(cam_pose, target_pose, target_pts, cam_measurement.cam_info)
             residual[cur_row:end_row, 0] =  measurement_vec - expected_measurement 
 

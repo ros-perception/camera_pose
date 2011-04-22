@@ -12,8 +12,8 @@ import PyKDL
 from tf_conversions import posemath
 
 from geometry_msgs.msg import Point32
-from calibration_msgs.msg import RobotMeasurement, CameraMeasurement, ImagePoint, CalibrationPattern
-from camera_pose_calibration.msg import CalibrationEstimate, CameraPose
+from calibration_msgs.msg import ImagePoint, CalibrationPattern
+from camera_pose_calibration.msg import CalibrationEstimate, CameraPose, RobotMeasurement, CameraMeasurement
 
 from camera_pose_calibration import init_optimization_prior
 from camera_pose_calibration import estimate

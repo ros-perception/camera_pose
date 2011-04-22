@@ -14,8 +14,7 @@ from tf_conversions import posemath
 from std_msgs.msg import Empty
 from camera_pose_calibration.msg import CalibrationEstimate
 from camera_pose_calibration.msg import CameraPose
-from calibration_msgs.msg import RobotMeasurement
-from camera_pose_calibration.msg import CameraCalibration
+from camera_pose_calibration.msg import RobotMeasurement, CameraCalibration
 from camera_pose_calibration import init_optimization_prior
 from camera_pose_calibration import estimate
 

@@ -41,10 +41,10 @@ import threading
 import message_filters
 
 import pr2_calibration_executive
-from pr2_calibration_executive.config_manager import ConfigManager
-from pr2_calibration_executive.robot_measurement_cache import RobotMeasurementCache
+from camera_pose_calibration.robot_measurement_cache import RobotMeasurementCache
 
-from calibration_msgs.msg import RobotMeasurement, Interval, CalibrationPattern, CameraMeasurement
+from calibration_msgs.msg import Interval, CalibrationPattern
+from camera_pose_calibration.msg import RobotMeasurement, CameraMeasurement
 from sensor_msgs.msg import CameraInfo, Image
 
 
@@ -58,12 +58,9 @@ class CameraCaptureExecutive:
         self.active = False
 
         # Construct a manager for each sensor stream (Don't enable any of them)
-        image_topic = rospy.get_param('~image_topic', 'image')
-        image_rect_topic = rospy.get_param('~image_rect_topic', 'image_rect')
         cam_info_topic = rospy.get_param('~cam_info_topic', 'cam_info')
 
-        self.cam_managers   = [ (cam_id,   CamManager(  cam_id,  image_topic,
-                                                        image_rect_topic, cam_info_topic, 
+        self.cam_managers   = [ (cam_id,   CamManager(  cam_id,  cam_info_topic, 
                                                         self.add_cam_measurement) )   for cam_id   in cam_ids ]
 
         # Turn on all of the camera modes into verbose model, since we want the CalibrationPattern data
@@ -87,31 +84,29 @@ class CameraCaptureExecutive:
         #if (msg.end - msg.start) < rospy.Duration(1,0):
         #    return
 
-        self.lock.acquire()
-        # Do some query into the cache
-        m_robot = self.cache.request_robot_measurement(msg.start, msg.end, min_duration=rospy.Duration(0.01))
+        with self.lock:
+            # Do some query into the cache
+            m_robot = self.cache.request_robot_measurement(msg.start, msg.end, min_duration=rospy.Duration(0.01))
 
-        # We found a sample, so we can deactive (kind of a race condition, since 'active' triggers capture() to exit... I don't care)
-        if m_robot:
-            # Change camera ids to be the tf frame IDs
-            for cam in m_robot.M_cam:
-                cam.camera_id = cam.image.header.frame_id
-            self.measurement_pub.publish(m_robot)
-        else:
-            print "Couldn't get measurement in interval"
-        self.lock.release()
+            # We found a sample, so we can deactive (kind of a race condition, since 'active' triggers capture() to exit... I don't care)
+            if m_robot:
+                # Change camera ids to be the tf frame IDs
+                for cam in m_robot.M_cam:
+                    cam.camera_id = cam.cam_info.header.frame_id
+                self.measurement_pub.publish(m_robot)
+            else:
+                print "Couldn't get measurement in interval"
+
 
     def add_cam_measurement(self, cam_id, msg):
         #print "Adding [%s]" % cam_id
-        if len(msg.image_points) > 0:
-            self.lock.acquire()
-            self.cache.add_cam_measurement(cam_id, msg)
-            self.lock.release()
-
+        if len(msg.features.image_points) > 0:
+            with self.lock:
+                self.cache.add_cam_measurement(cam_id, msg)
 
 
 class CamManager:
-    def __init__(self, cam_id, image_topic, image_rect_topic, cam_info_topic, callback):
+    def __init__(self, cam_id, cam_info_topic, callback):
         self._cam_id = cam_id
         self._callback = callback
         self._mode = "off"
@@ -121,57 +116,29 @@ class CamManager:
         # How do I specify a queue size of 1?                                                                                                                                
         self._features_sub = message_filters.Subscriber(cam_id + "/features", CalibrationPattern)
         self._cam_info_sub = message_filters.Subscriber(cam_id + "/" + cam_info_topic, CameraInfo)
-        self._image_sub    = message_filters.Subscriber(cam_id + "/" + image_topic,    Image)
-        self._image_rect_sub=message_filters.Subscriber(cam_id + "/" + image_rect_topic, Image)
 
-        self._verbose_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub, self._image_sub, self._image_rect_sub], 10)
-        self._minimal_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub], 10)
+        self._verbose_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub], 10)
 
         self._verbose_sync.registerCallback(self.verbose_callback)
-        self._minimal_sync.registerCallback(self.minimal_callback)
 
-    def verbose_callback(self, cam_info, features, image, image_rect):
-        self._lock.acquire()
-        if self._mode is "verbose":
-            # Populate measurement message                                                                                                                                   
-            msg = CameraMeasurement()
-            msg.header.stamp = cam_info.header.stamp
-            msg.camera_id = self._cam_id
-            msg.image_points = features.image_points
-            msg.cam_info = cam_info
-            msg.verbose = True
-            msg.image = image
-            msg.image_rect = image_rect
-            msg.features = features
-            self._callback(self._cam_id, msg)
-        self._lock.release()
-
-    def minimal_callback(self, cam_info, features):
-        self._lock.acquire()
-        if self._mode is "minimal":
-            # Populate measurement message                                                                                                                                   
-            msg = CameraMeasurement()
-            msg.header.stamp = cam_info.header.stamp
-            msg.camera_id = self._cam_id
-            msg.image_points = features.image_points
-            msg.cam_info = cam_info
-            msg.verbose = False
-            self._callback(self._cam_id, msg)
-        self._lock.release()
+    def verbose_callback(self, cam_info, features):
+        with self._lock:
+            if self._mode is "verbose":
+                # Populate measurement message                                                                                                                                   
+                msg = CameraMeasurement()
+                msg.header.stamp = cam_info.header.stamp
+                msg.camera_id = self._cam_id
+                msg.cam_info = cam_info
+                msg.features = features
+                self._callback(self._cam_id, msg)
 
     def enable(self, verbose=False):
-        self._lock.acquire()
-        if verbose:
+        with self._lock:
             self._mode = "verbose"
-        else:
-            self._mode = "minimal"
-        self._lock.release()
 
     def disable(self):
-        self._lock.acquire()
-        self._mode = "off"
-        self._lock.release()
-
+        with self._lock:
+            self._mode = "off"
 
 
 if __name__ == '__main__':
