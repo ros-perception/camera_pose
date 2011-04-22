@@ -36,10 +36,13 @@ class CameraInfoConverter:
         msg.binning_x = 1
         msg.binning_y = 1
 
+        msg.height /= b_x
+        msg.width /= b_y
+
         msg.roi.x_offset = 0
         msg.roi.y_offset = 0
-        msg.roi.height = 0
-        msg.roi.width = 0
+        msg.roi.height = msg.height
+        msg.roi.width = msg.width
 
         msg.D = []
         msg.K = (P[0], P[1], P[2],
