@@ -44,13 +44,10 @@ class CalibrationPublishManager:
 
     def cal_cb(self, msg):
         with self.lock:
+            self.publish_list = {}
             for pose, camera in zip(msg.camera_pose, msg.camera_id):
-                # add new entry
-                if not camera in self.publish_list:
-                    self.publish_list[camera] = CameraPublisher(pose, camera)
-                # modify existing entry
-                else:
-                    self.publish_list[camera].set_pose(pose, camera)
+                rospy.logerr("Publishing tf for camera %s"%camera)
+                self.publish_list[camera] = CameraPublisher(pose, camera)
 
 
     def publish(self):
