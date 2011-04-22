@@ -1,7 +1,9 @@
 <stack>
   <description brief="Camera Estimatino">
+    This stack contains a set of tools to work with multiple rgb
+    camera's simultaneoulsy.
   </description>
-  <author>Maintained by Vijay, Wim</author>
+  <author>Vijay Pradeep, Wim Meeussen</author>
   <license>BSD</license>  
   <review status="Unreviewed" notes=""/>
   <url>http://ros.org/wiki/camera_estimation</url>

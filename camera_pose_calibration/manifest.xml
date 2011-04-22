@@ -1,10 +1,10 @@
 <package>
   <description brief="camera_pose_calibration">
-
-    camera pose estimation
-
+    This package provides the pipeline to calibrate the relative poses
+    between multiple rgb camera's. The calibration can be preformed
+    online, and the results are published to tf in realtime.
   </description>
-  <author>Vijay Pradeep</author>
+  <author>Vijay Pradeep, Wim Meeussen</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/camera_pose_calibration</url>
