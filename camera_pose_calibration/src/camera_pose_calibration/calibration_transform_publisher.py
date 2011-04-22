@@ -46,7 +46,6 @@ class CalibrationPublishManager:
         with self.lock:
             self.publish_list = {}
             for pose, camera in zip(msg.camera_pose, msg.camera_id):
-                rospy.logerr("Publishing tf for camera %s"%camera)
                 self.publish_list[camera] = CameraPublisher(pose, camera)
 
 
