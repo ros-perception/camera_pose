@@ -1,0 +1,1638 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="990"
+   height="765"
+   id="svg5088"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="high_level_flow.svg"
+   inkscape:export-filename="/wg/stor6_home3/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow.png"
+   inkscape:export-xdpi="89.913216"
+   inkscape:export-ydpi="89.913216">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="480.80809"
+     inkscape:cy="339.69137"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer3"
+     showgrid="false"
+     inkscape:window-width="2181"
+     inkscape:window-height="1190"
+     inkscape:window-x="206"
+     inkscape:window-y="193"
+     inkscape:window-maximized="0"
+     inkscape:snap-to-guides="false"
+     inkscape:snap-grids="false" />
+  <defs
+     id="defs5090">
+    <marker
+       inkscape:stockid="TriangleOutS"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutS"
+       style="overflow:visible">
+      <path
+         id="path7797"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="scale(0.2,0.2)" />
+    </marker>
+    <inkscape:path-effect
+       effect="skeletal"
+       id="path-effect10292"
+       is_visible="true"
+       pattern="M 0,0 0,10 10,5 z"
+       copytype="single_stretched"
+       prop_scale="1"
+       scale_y_rel="false"
+       spacing="0"
+       normal_offset="0"
+       tang_offset="0"
+       prop_units="false"
+       vertical_pattern="false"
+       fuse_tolerance="0" />
+    <inkscape:path-effect
+       effect="skeletal"
+       id="path-effect10259"
+       is_visible="true"
+       pattern="M 0,0 0,10 10,5 z"
+       copytype="single_stretched"
+       prop_scale="1"
+       scale_y_rel="false"
+       spacing="0"
+       normal_offset="0"
+       tang_offset="0"
+       prop_units="false"
+       vertical_pattern="false"
+       fuse_tolerance="0" />
+    <marker
+       inkscape:stockid="TriangleOutL"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutL"
+       style="overflow:visible">
+      <path
+         id="path7791"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="scale(0.8,0.8)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM"
+       style="overflow:visible">
+      <path
+         id="path7794"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="scale(0.4,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend"
+       style="overflow:visible">
+      <path
+         id="path7657"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Mend"
+       style="overflow:visible">
+      <path
+         id="path7675"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Send"
+       style="overflow:visible">
+      <path
+         id="path7681"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend"
+       style="overflow:visible">
+      <path
+         id="path7651"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective5096" />
+    <inkscape:perspective
+       id="perspective5083"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5115"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5152"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5180"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective6758"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective6849"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective8942"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective8967"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective8967-2"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3556"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9198"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9223"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9248"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9270"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9294"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9294-7"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9325"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3571"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5680"
+       style="overflow:visible">
+      <path
+         id="path5682"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective9360"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5680-3"
+       style="overflow:visible">
+      <path
+         id="path5682-1"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective9388"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5680-2"
+       style="overflow:visible">
+      <path
+         id="path5682-9"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective3586"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9425"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9425-3"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9425-6"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3599"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9484"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9517"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9545"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9573"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5680-7"
+       style="overflow:visible">
+      <path
+         id="path5682-12"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective10207"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-3"
+       style="overflow:visible">
+      <path
+         id="path7794-2"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="scale(0.4,0.4)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective10235"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-2"
+       style="overflow:visible">
+      <path
+         id="path7794-0"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="scale(0.4,0.4)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective10269"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective10510"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-2-8"
+       style="overflow:visible">
+      <path
+         id="path7794-0-7"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="scale(0.4,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutSn"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutSn"
+       style="overflow:visible">
+      <path
+         id="path11851"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill:#808080;fill-rule:evenodd;stroke:#808080;stroke-width:1pt;marker-start:none"
+         transform="scale(0.2,0.2)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutSW"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutSW"
+       style="overflow:visible">
+      <path
+         id="path12541"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill:#808080;fill-rule:evenodd;stroke:#808080;stroke-width:1pt;marker-start:none"
+         transform="scale(0.2,0.2)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective12746"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="TriangleOutSW"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutSW-2"
+       style="overflow:visible">
+      <path
+         id="path12541-3"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill:#808080;fill-rule:evenodd;stroke:#808080;stroke-width:1pt;marker-start:none"
+         transform="scale(0.2,0.2)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutSWY"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutSWY"
+       style="overflow:visible">
+      <path
+         id="path12841"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="scale(0.2,0.2)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutSW3"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutSW3"
+       style="overflow:visible">
+      <path
+         id="path12844"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="scale(0.2,0.2)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective3714" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3935-6-75-4-8-8"
+       id="radialGradient5212"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.5520732,0,0,0.45496912,676.34918,-67.113946)"
+       cx="297.5"
+       cy="516.5"
+       fx="297.5"
+       fy="516.5"
+       r="31.5" />
+    <linearGradient
+       id="linearGradient3935-6-75-4-8-8">
+      <stop
+         id="stop3937-9-5-8-8-1"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0.63333333"
+         id="stop3943-87-71-9-3-5" />
+      <stop
+         id="stop3939-2-37-2-1-6"
+         offset="1"
+         style="stop-color:#ffffff;stop-opacity:0;" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3935-6-75-4-8-8"
+       id="radialGradient3727"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.5520732,0,0,0.69451432,-45.01161,63.70631)"
+       cx="297.5"
+       cy="516.5"
+       fx="297.5"
+       fy="516.5"
+       r="31.5" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective13089" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3935-6-75-4-8-8-5"
+       id="radialGradient3727-1"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.5520732,0,0,0.69451432,-286.01161,214.70631)"
+       cx="297.5"
+       cy="516.5"
+       fx="297.5"
+       fy="516.5"
+       r="31.5" />
+    <linearGradient
+       id="linearGradient3935-6-75-4-8-8-5">
+      <stop
+         id="stop3937-9-5-8-8-1-3"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0.43333334"
+         id="stop3943-87-71-9-3-5-1" />
+      <stop
+         id="stop3939-2-37-2-1-6-8"
+         offset="1"
+         style="stop-color:#ffffff;stop-opacity:0;" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3935-6-75-4-8-8-5"
+       id="radialGradient13102"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.5520732,0,0,0.71568733,299.26772,45.22898)"
+       cx="297.5"
+       cy="516.5"
+       fx="297.5"
+       fy="516.5"
+       r="31.5" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective13141" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective13170" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective13170-8" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective3737" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4398" />
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Mend-1"
+       style="overflow:visible">
+      <path
+         id="path7675-8"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4665" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4689" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4732" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4762" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4805" />
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Mend-8"
+       style="overflow:visible">
+      <path
+         id="path7675-2"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4835" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective2841" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4894" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4922" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4950" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4950-8" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective5226" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective5256" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective5288" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective5313" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective5338" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective5363" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective5396" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective5421" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective5448" />
+  </defs>
+  <metadata
+     id="metadata5093">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     style="display:inline"
+     transform="translate(-128.39191,27.193117)"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       sodipodi:nodetypes="cc"
+       id="path13160-4"
+       d="M 619.76865,567.28942 569.5351,560.92546"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       sodipodi:nodetypes="cc"
+       id="path13160-8"
+       d="m 636.3274,498.98458 -53.06197,0"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       sodipodi:nodetypes="cc"
+       id="path13160"
+       d="m 629.08295,433.16355 -56.24396,4.94975"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <g
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       id="g5132"
+       transform="matrix(-0.70710678,0.70710678,-0.70710678,-0.70710678,1197.7978,696.68038)">
+      <path
+         transform="matrix(0.8660254,0.5,-0.5,0.8660254,232.95104,166.45203)"
+         d="m 249.27828,384.50504 12.8683,-7.42952 0,14.85903 -12.8683,-7.42951 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="true"
+         sodipodi:arg2="4.1887902"
+         sodipodi:arg1="3.1415927"
+         sodipodi:r2="4.289433"
+         sodipodi:r1="8.578866"
+         sodipodi:cy="384.50504"
+         sodipodi:cx="257.85715"
+         sodipodi:sides="3"
+         id="path4991-1"
+         style="fill:#737373;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="star" />
+      <rect
+         transform="matrix(0.8660254,0.5,-0.5,0.8660254,0,0)"
+         y="398.78842"
+         x="530.53876"
+         height="26.785715"
+         width="10.714286"
+         id="rect4987-2"
+         style="fill:#b10020;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    </g>
+    <g
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       id="g5132-9"
+       transform="matrix(-0.8660254,0.5,-0.5,-0.8660254,1119.1701,911.3881)">
+      <path
+         transform="matrix(0.8660254,0.5,-0.5,0.8660254,232.95104,166.45203)"
+         d="m 249.27828,384.50504 12.8683,-7.42952 0,14.85903 -12.8683,-7.42951 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="true"
+         sodipodi:arg2="4.1887902"
+         sodipodi:arg1="3.1415927"
+         sodipodi:r2="4.289433"
+         sodipodi:r1="8.578866"
+         sodipodi:cy="384.50504"
+         sodipodi:cx="257.85715"
+         sodipodi:sides="3"
+         id="path4991-1-4"
+         style="fill:#737373;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="star" />
+      <rect
+         transform="matrix(0.8660254,0.5,-0.5,0.8660254,0,0)"
+         y="398.78842"
+         x="530.53876"
+         height="26.785715"
+         width="10.714286"
+         id="rect4987-2-5"
+         style="fill:#b10020;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    </g>
+    <g
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       id="g5132-9-1"
+       transform="matrix(-1,0,0,-1,826.31079,1183.7779)">
+      <path
+         transform="matrix(0.8660254,0.5,-0.5,0.8660254,232.95104,166.45203)"
+         d="m 249.27828,384.50504 12.8683,-7.42952 0,14.85903 -12.8683,-7.42951 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="true"
+         sodipodi:arg2="4.1887902"
+         sodipodi:arg1="3.1415927"
+         sodipodi:r2="4.289433"
+         sodipodi:r1="8.578866"
+         sodipodi:cy="384.50504"
+         sodipodi:cx="257.85715"
+         sodipodi:sides="3"
+         id="path4991-1-4-0"
+         style="fill:#737373;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="star" />
+      <rect
+         transform="matrix(0.8660254,0.5,-0.5,0.8660254,0,0)"
+         y="398.78842"
+         x="530.53876"
+         height="26.785715"
+         width="10.714286"
+         id="rect4987-2-5-3"
+         style="fill:#b10020;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    </g>
+    <g
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       id="g6824"
+       transform="translate(256.79356,-126.82344)">
+      <rect
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/u/vpradeep/papers/wgpubs/iros2010_calibration/images/camera_laser.png"
+         transform="matrix(0,-1,-0.86602641,0.49999825,0,0)"
+         ry="8.7287188"
+         rx="10"
+         y="-271.94522"
+         x="-784.71802"
+         height="72.168701"
+         width="75"
+         id="rect4728-0"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.07456934;stroke-opacity:1" />
+      <rect
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/u/vpradeep/papers/wgpubs/iros2010_calibration/images/camera_laser.png"
+         transform="matrix(0,-1,-0.86602641,0.49999825,0,0)"
+         ry="8.7287188"
+         rx="10"
+         y="-274.5701"
+         x="-787.33844"
+         height="72.168701"
+         width="75"
+         id="rect4728"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.07456934;stroke-opacity:1" />
+      <g
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/u/vpradeep/papers/wgpubs/iros2010_calibration/images/camera_laser.png"
+         transform="matrix(0,0.25,0.25,-0.14433689,107.60024,631.54897)"
+         id="g4730">
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:none"
+           id="rect4122"
+           width="50"
+           height="50"
+           x="100"
+           y="302.36218" />
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:none"
+           id="rect4122-7"
+           width="50"
+           height="50"
+           x="150"
+           y="352.36218" />
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:none"
+           id="rect4122-8"
+           width="50"
+           height="50"
+           x="200"
+           y="402.36218" />
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:none"
+           id="rect4122-6"
+           width="50"
+           height="50"
+           x="200"
+           y="302.36218" />
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:none"
+           id="rect4122-3"
+           width="50"
+           height="50"
+           x="100"
+           y="402.36218" />
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:none"
+           id="rect4122-4"
+           width="50"
+           height="50"
+           x="250"
+           y="352.36218" />
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:none"
+           id="rect4122-0"
+           width="50"
+           height="50"
+           x="150"
+           y="452.36218" />
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:none"
+           id="rect4122-65"
+           width="50"
+           height="50"
+           x="250"
+           y="452.36218" />
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:none"
+           id="rect4122-72"
+           width="50"
+           height="50"
+           x="300"
+           y="302.36218" />
+        <rect
+           style="fill:#000000;fill-opacity:1;stroke:none"
+           id="rect4122-9"
+           width="50"
+           height="50"
+           x="300"
+           y="402.36218" />
+      </g>
+    </g>
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       sodipodi:nodetypes="cc"
+       id="path4168-0"
+       d="M 752.19099,508.49434 705.9522,558.2329"
+       style="fill:none;stroke:#000000;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend);display:inline" />
+    <g
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       transform="translate(195.47822,-151)"
+       id="g3045">
+      <path
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/vpradeep/work/ros/pkgs-trunk/robot_calibration/camera_offsetter/docs/offsetter_high_level.png"
+         transform="matrix(0.48321883,0,0,0.5043466,314.75619,86.66014)"
+         d="m 601.04079,1117.3798 c 0,19.1357 -28.9673,34.6482 -64.70027,34.6482 -35.73298,0 -64.70028,-15.5125 -64.70028,-34.6482 0,-19.1357 28.9673,-34.6483 64.70028,-34.6483 35.73297,0 64.70027,15.5126 64.70027,34.6483 z"
+         sodipodi:ry="34.648232"
+         sodipodi:rx="64.700272"
+         sodipodi:cy="1117.3798"
+         sodipodi:cx="536.34052"
+         id="path8161-9"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2.02564597;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+         sodipodi:type="arc" />
+      <g
+         style="font-size:10px"
+         transform="translate(243.23727,-1.3052402)"
+         id="g8995">
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+           x="330.3569"
+           y="651.41174"
+           id="text5200"><tspan
+             sodipodi:role="line"
+             id="tspan5202"
+             x="330.3569"
+             y="651.41174"
+             style="font-size:10px;font-weight:bold;text-align:center;text-anchor:middle">World</tspan><tspan
+             sodipodi:role="line"
+             x="330.3569"
+             y="663.91174"
+             style="font-size:10px;font-weight:bold;text-align:center;text-anchor:middle"
+             id="tspan6839" /></text>
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+           x="330.50809"
+           y="659.82428"
+           id="text5200-8"><tspan
+             sodipodi:role="line"
+             x="330.50809"
+             y="659.82428"
+             style="font-size:10px;font-weight:bold;text-align:center;writing-mode:lr-tb;text-anchor:middle"
+             id="tspan6839-4">Frame</tspan></text>
+      </g>
+    </g>
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:#6780ff;fill-opacity:1;stroke:#6780ff;stroke-width:1.99999988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:5.99999999, 2;stroke-dashoffset:0"
+       d="m 555.05248,432.76005 -30.18782,-0.89106"
+       id="path8907-9"
+       sodipodi:nodetypes="cc" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:#6780ff;fill-opacity:1;stroke:#6780ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:6.00000007, 2.00000002;stroke-dashoffset:0"
+       d="m 557.95732,449.54804 -25.56969,16.81444"
+       id="path8907-3-4"
+       sodipodi:nodetypes="cc" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:#6780ff;fill-opacity:1;stroke:#6780ff;stroke-width:1.99999988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:5.99999999, 2;stroke-dashoffset:0"
+       d="m 567.66871,490.9241 -29.83058,-4.7154"
+       id="path8907-9-2"
+       sodipodi:nodetypes="cc"
+       inkscape:transform-center-y="-3.3576999" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:#6780ff;fill-opacity:1;stroke:#6780ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:6.00000007, 2.00000002;stroke-dashoffset:0"
+       d="m 567.71801,506.53427 -30.16187,5.17637"
+       id="path8907-3-4-5"
+       sodipodi:nodetypes="cc" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:#6780ff;fill-opacity:1;stroke:#6780ff;stroke-width:1.99999988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:5.99999999, 2;stroke-dashoffset:0"
+       d="m 558.313,546.46995 -23.84012,-20.0324"
+       id="path8907-9-7"
+       sodipodi:nodetypes="cc" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:#6780ff;fill-opacity:1;stroke:#6780ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:6.00000007, 2.00000002;stroke-dashoffset:0"
+       d="M 551.42552,557.98188 522.81888,547.11016"
+       id="path8907-3-4-4"
+       sodipodi:nodetypes="cc" />
+    <g
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       transform="translate(264.56016,-151)"
+       id="g3040">
+      <path
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/vpradeep/work/ros/pkgs-trunk/robot_calibration/camera_offsetter/docs/offsetter_high_level.png"
+         transform="matrix(0.73205249,0,0,0.5043466,5.4699218,21.048783)"
+         d="m 601.04079,1117.3798 c 0,19.1357 -28.9673,34.6482 -64.70027,34.6482 -35.73298,0 -64.70028,-15.5125 -64.70028,-34.6482 0,-19.1357 28.9673,-34.6483 64.70028,-34.6483 35.73297,0 64.70027,15.5126 64.70027,34.6483 z"
+         sodipodi:ry="34.648232"
+         sodipodi:rx="64.700272"
+         sodipodi:cy="1117.3798"
+         sodipodi:cx="536.34052"
+         id="path8161"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.64575183;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+         sodipodi:type="arc" />
+      <text
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/vpradeep/work/ros/pkgs-trunk/robot_calibration/camera_offsetter/docs/offsetter_high_level.png"
+         xml:space="preserve"
+         style="font-size:14px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+         x="398.12375"
+         y="587.21509"
+         id="text3947-3-2-0-2-6"><tspan
+           id="tspan3140-2-1-2-3"
+           sodipodi:role="line"
+           x="398.12375"
+           y="587.21509"
+           style="font-size:10px;font-weight:bold;text-align:center;text-anchor:middle">cam_a_frame</tspan></text>
+    </g>
+    <g
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       transform="translate(258.53429,-151)"
+       id="g3035">
+      <path
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/vpradeep/work/ros/pkgs-trunk/robot_calibration/camera_offsetter/docs/offsetter_high_level.png"
+         transform="matrix(0.73205249,0,0,0.5043466,11.495793,86.66014)"
+         d="m 601.04079,1117.3798 c 0,19.1357 -28.9673,34.6482 -64.70027,34.6482 -35.73298,0 -64.70028,-15.5125 -64.70028,-34.6482 0,-19.1357 28.9673,-34.6483 64.70028,-34.6483 35.73297,0 64.70027,15.5126 64.70027,34.6483 z"
+         sodipodi:ry="34.648232"
+         sodipodi:rx="64.700272"
+         sodipodi:cy="1117.3798"
+         sodipodi:cx="536.34052"
+         id="path8161-8"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.64575183;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+         sodipodi:type="arc" />
+      <text
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/vpradeep/work/ros/pkgs-trunk/robot_calibration/camera_offsetter/docs/offsetter_high_level.png"
+         xml:space="preserve"
+         style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+         x="404.14963"
+         y="652.82648"
+         id="text3947-3-2-0-2-6-0"><tspan
+           id="tspan3140-2-1-2-3-5"
+           sodipodi:role="line"
+           x="404.14963"
+           y="652.82648"
+           style="font-size:10px;font-weight:bold;text-align:center;text-anchor:middle">cam_b_frame</tspan></text>
+    </g>
+    <g
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       transform="translate(271,-151)"
+       id="g3030">
+      <path
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/vpradeep/work/ros/pkgs-trunk/robot_calibration/camera_offsetter/docs/offsetter_high_level.png"
+         transform="matrix(0.73205249,0,0,0.5043466,-0.96992189,156.28547)"
+         d="m 601.04079,1117.3798 c 0,19.1357 -28.9673,34.6482 -64.70027,34.6482 -35.73298,0 -64.70028,-15.5125 -64.70028,-34.6482 0,-19.1357 28.9673,-34.6483 64.70028,-34.6483 35.73297,0 64.70027,15.5126 64.70027,34.6483 z"
+         sodipodi:ry="34.648232"
+         sodipodi:rx="64.700272"
+         sodipodi:cy="1117.3798"
+         sodipodi:cx="536.34052"
+         id="path8161-3"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.64575183;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+         sodipodi:type="arc" />
+      <text
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/vpradeep/work/ros/pkgs-trunk/robot_calibration/camera_offsetter/docs/offsetter_high_level.png"
+         xml:space="preserve"
+         style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+         x="391.6839"
+         y="722.45178"
+         id="text3947-3-2-0-2-6-0-0"><tspan
+           id="tspan3140-2-1-2-3-5-6"
+           sodipodi:role="line"
+           x="391.6839"
+           y="722.45178"
+           style="font-size:10px;font-weight:bold;text-align:center;text-anchor:middle">cam_c_frame</tspan></text>
+    </g>
+    <rect
+       style="fill:#d4e7fa;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+       id="rect2862-2-8-1-8-2"
+       width="123"
+       height="48"
+       x="420.95398"
+       y="315.0311"
+       ry="10"
+       rx="10"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       id="text3947-3-2-0-2-6-0-9-1"
+       y="344.25034"
+       x="481.7738"
+       style="font-size:14px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         style="font-size:14px;text-align:center;text-anchor:middle"
+         y="344.25034"
+         x="481.7738"
+         sodipodi:role="line"
+         id="tspan9474-7">Estimator</tspan></text>
+    <rect
+       style="fill:#d4e7fa;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+       id="rect2862-2-8-1-8-2-5"
+       width="123"
+       height="48"
+       x="674.02228"
+       y="314.91861"
+       ry="10"
+       rx="10"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       id="text3947-3-2-0-2-6-0-9-1-6"
+       y="344.13785"
+       x="735.54962"
+       style="font-size:14px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         style="font-size:14px;text-align:center;text-anchor:middle"
+         y="344.13785"
+         x="735.54962"
+         sodipodi:role="line"
+         id="tspan9474-7-7">TF Publisher</tspan></text>
+    <rect
+       style="fill:#d4e7fa;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+       id="rect2862-2-8-1-8-2-5-5"
+       width="123"
+       height="48"
+       x="546.48816"
+       y="221.22931"
+       ry="10"
+       rx="10"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       id="text3947-3-2-0-2-6-0-9-1-6-2"
+       y="250.44855"
+       x="607.30798"
+       style="font-size:14px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         style="font-size:14px;text-align:center;text-anchor:middle"
+         y="250.44855"
+         x="607.30798"
+         sodipodi:role="line"
+         id="tspan9474-7-7-0">Disk Saver</tspan></text>
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#TriangleOutM-2)"
+       d="m 553.30268,335.03495 c 0,0 16.40604,0 28.83879,0 11.31949,0 16.1281,-6.62512 16.1281,-21.38845 l 0,-28.90875"
+       id="path10294"
+       sodipodi:nodetypes="cscc" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#TriangleOutM-2)"
+       d="m 613.58021,275.44685 0,39.71319 c 0,15.89324 4.74755,19.83769 21.34936,19.83769 l 18.32165,0"
+       id="path10294-1"
+       sodipodi:nodetypes="cccc" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:none;stroke:#000000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:url(#TriangleOutSWY)"
+       d="m 751.07422,375.20793 c 22.86054,41.92596 13.37503,61.46937 -6.62349,83.20771"
+       id="path10530"
+       sodipodi:nodetypes="cc" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:none;stroke:#000000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:url(#TriangleOutSW3)"
+       d="M 441.03277,462.73237 C 408.09995,428.15175 412.20404,406.81923 425.89483,380.64561"
+       id="path10530-9"
+       sodipodi:nodetypes="cc" />
+    <rect
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:url(#radialGradient3727);fill-opacity:1;stroke:none;display:inline"
+       id="rect3959-8-8-2-0-4"
+       width="94.676468"
+       height="40.736855"
+       x="369.39191"
+       y="402.05469" />
+    <text
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       x="418.73309"
+       y="417.64752"
+       id="text3961-0-0-9-1-1-8-2-3-9"><tspan
+         id="tspan6214-3-7"
+         sodipodi:role="line"
+         x="418.73309"
+         y="417.64752"
+         style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1">Camera</tspan><tspan
+         id="tspan13079"
+         sodipodi:role="line"
+         x="418.73309"
+         y="432.64752"
+         style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1">Measurements</tspan></text>
+    <rect
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       style="fill:url(#radialGradient13102);fill-opacity:1;stroke:none;display:inline"
+       id="rect3959-8-8-2-0-4-7"
+       width="94.676468"
+       height="41.97876"
+       x="713.67126"
+       y="393.89227" />
+    <text
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       x="763.01245"
+       y="419.69464"
+       id="text3961-0-0-9-1-1-8-2-3-9-3"><tspan
+         id="tspan13079-3"
+         sodipodi:role="line"
+         x="763.01245"
+         y="419.69464"
+         style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1">TF</tspan></text>
+    <text
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       x="603.79803"
+       y="351.33011"
+       id="text3961-0-0-9-1-1-8-2-3-9-3-2"><tspan
+         id="tspan13079-3-1"
+         sodipodi:role="line"
+         x="603.79803"
+         y="351.33011"
+         style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1">Camera Poses</tspan></text>
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       id="path4168"
+       d="M 745.48371,488.15515 702.74515,445.41636"
+       style="fill:none;stroke:#000000;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend)" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       id="path4418"
+       d="m 738.14191,498.80688 -26.02477,0"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend-1)" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       id="path4679"
+       d="m 553.82755,335.0437 100.23239,0"
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       id="path4708"
+       d="m 375.88636,-363.14447 0,251 110.3125,0 0,-67.15625 69.28125,0 143.5625,-143.5625 0,-40.28125 -323.15625,0 z"
+       style="fill:#41ff45;fill-opacity:0.30493278;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+  <g
+     style="display:inline"
+     inkscape:label="overlay"
+     id="layer2"
+     inkscape:groupmode="layer">
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       sodipodi:nodetypes="ccccccc"
+       id="path4642"
+       d="m 388.1875,231.625 0,53.51779 95.9375,95.9375 0,233.41971 209.3125,0 0,-382.875 -305.25,0 z"
+       style="fill:#ff3a3a;fill-opacity:0.17488792;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline" />
+    <text
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#840000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       x="725.17932"
+       y="195.76086"
+       id="text3961-0-0-9-1-1-8-2-3-9-3-2-7"
+       transform="translate(-128.39191,27.193117)"><tspan
+         id="tspan13079-3-1-3"
+         sodipodi:role="line"
+         x="725.17932"
+         y="195.76086"
+         style="font-size:12px;text-align:center;text-anchor:middle;fill:#840000;fill-opacity:1">calibration_tf_publisher.launch</tspan></text>
+    <text
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#006802;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       x="322.13998"
+       y="317.79623"
+       id="text3961-0-0-9-1-1-8-2-3-9-3-2-7-5"><tspan
+         id="tspan13079-3-1-3-1"
+         sodipodi:role="line"
+         x="322.13998"
+         y="317.79623"
+         style="font-size:12px;text-align:center;text-anchor:middle;fill:#006802;fill-opacity:1">calibrate_N_cameras.launch</tspan></text>
+    <rect
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       y="418.30762"
+       x="391.18378"
+       height="196.19238"
+       width="79.422829"
+       id="rect4752"
+       style="fill:#4172ff;fill-opacity:0.30493278;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline" />
+    <text
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#0033c5;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       x="553.42633"
+       y="603.54993"
+       id="text3961-0-0-9-1-1-8-2-3-9-3-2-7-4"
+       transform="translate(-128.39191,27.193117)"><tspan
+         id="tspan13079-3-1-3-9"
+         sodipodi:role="line"
+         x="553.42633"
+         y="603.54993"
+         style="font-size:12px;text-align:center;text-anchor:middle;fill:#0033c5;fill-opacity:1">your_cams.launch</tspan></text>
+    <text
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       inkscape:transform-center-y="-21.946782"
+       inkscape:transform-center-x="78.867159"
+       id="text7210-9-0-8"
+       y="176.01337"
+       x="311.95984"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       transform="translate(-128.39191,27.193117)"><tspan
+         style="font-size:20px;fill:#1d3a58;fill-opacity:1"
+         y="176.01337"
+         x="311.95984"
+         id="tspan7212-6-9-9"
+         sodipodi:role="line">Launch File Breakdown</tspan></text>
+    <path
+       sodipodi:nodetypes="cccccccc"
+       id="path5438"
+       d="m 377.5,404 0,210.5 -142,0 0,-286.5 171,0 25.25,25.25 0,50.75 -54.25,0 z"
+       style="fill:#41ff45;fill-opacity:0.30588235;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow_launch.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+  <g
+     style="display:inline"
+     inkscape:label="EasyTitle"
+     id="layer3"
+     inkscape:groupmode="layer">
+    <text
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/u/vpradeep/ros_overlays/bullet_time/camera_pose/camera_pose_calibration/doc/high_level_flow.png"
+       inkscape:transform-center-y="-21.946782"
+       inkscape:transform-center-x="78.867159"
+       id="text7210-9-0-8-9"
+       y="218.26801"
+       x="253.68262"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:20px;fill:#1d3a58;fill-opacity:1"
+         y="218.26801"
+         x="253.68262"
+         id="tspan7212-6-9-9-5"
+         sodipodi:role="line">High Level Flow</tspan></text>
+    <flowRoot
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+       id="flowRoot4874"
+       xml:space="preserve"><flowRegion
+         id="flowRegion4876"><rect
+           y="181"
+           x="853.5"
+           height="15.5"
+           width="18"
+           id="rect4878" /></flowRegion><flowPara
+         id="flowPara4880" /></flowRoot>  </g>
+</svg>
