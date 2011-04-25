@@ -1,8 +1,8 @@
 <launch>
-  <arg name="camera1_ns" default="camera_a" />
-  <arg name="camera2_ns" default="camera_b" />
-  <arg name="camera3_ns" default="camera_c" />
-  <arg name="camera4_ns" default="camera_d" />
+  <arg name="camera1_ns" default="camera_a/rgb" />
+  <arg name="camera2_ns" default="camera_b/rgb" />
+  <arg name="camera3_ns" default="camera_c/rgb" />
+  <arg name="camera4_ns" default="camera_d/rgb" />
   <arg name="checker_rows" default="4"/>
   <arg name="checker_cols" default="5"/>
   <arg name="checker_size" default="0.02492"/>
@@ -37,18 +37,18 @@
   
   <!-- find time intervals where all camera's see a checkerboard -->  
   <node type="interval_intersection_action" pkg="interval_intersection" name="interval_intersection" output="screen" />
-  <node pkg="camera_pose_calibration" type="start_interval_intersection.py" name="start_interval_intersection" />
+  <node pkg="camera_pose_calibration" type="start_interval_intersection.py" name="start_interval_intersection"
+        args="$(arg camera1_ns) $(arg camera2_ns) $(arg camera3_ns) $(arg camera4_ns)" output="screen" />
   <node pkg="camera_pose_calibration" type="filter_intervals.py" name="filter_intervals">
      <param name="min_duration" value="1.0" />
+     <remap from="features" to="$(arg camera1_ns)/features" />
   </node>
 
 
   <!-- generate robot measurements -->
   <node pkg="camera_pose_calibration" type="multicam_capture_exec.py" name="capture_exec" 
         args="$(arg camera1_ns) $(arg camera2_ns) $(arg camera3_ns) $(arg camera4_ns)" output="screen">
-    <param name="image_topic" value="rgb/image_throttle" />
-    <param name="image_rect_topic" value="rgb/image_throttle" />
-    <param name="cam_info_topic" value="rgb/camera_info" />
+    <param name="cam_info_topic" value="camera_info" />
     <remap from="request_interval" to="interval_filtered" />
   </node>
 

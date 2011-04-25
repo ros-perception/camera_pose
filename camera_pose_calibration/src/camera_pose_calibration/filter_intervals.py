@@ -34,7 +34,7 @@ class FilterIntervals:
 
         self.pub = rospy.Publisher('interval_filtered', Interval)
         self.sub_intervals = rospy.Subscriber('interval', Interval, self.interval_cb)
-        self.sub_features = rospy.Subscriber('camera_a/features', CalibrationPattern, self.feature_cb)
+        self.sub_features = rospy.Subscriber('features', CalibrationPattern, self.feature_cb)
 
 
     def interval_cb(self, msg):
