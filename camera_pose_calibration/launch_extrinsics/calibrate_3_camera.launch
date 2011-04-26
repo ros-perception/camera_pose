@@ -8,19 +8,19 @@
 
 
   <!-- checkerboard detector for each camera -->
-  <include file="$(find camera_pose_calibration)/rgb_block.launch">
+  <include file="$(find camera_pose_calibration)/blocks/rgb_block.launch">
     <arg name="ns" value="$(arg camera1_ns)" />
     <arg name="checker_rows" value="$(arg checker_rows)" />
     <arg name="checker_cols" value="$(arg checker_cols)" />
     <arg name="checker_size" value="$(arg checker_size)" />
   </include>
-  <include file="$(find camera_pose_calibration)/rgb_block.launch">
+  <include file="$(find camera_pose_calibration)/blocks/rgb_block.launch">
     <arg name="ns" value="$(arg camera2_ns)" />
     <arg name="checker_rows" value="$(arg checker_rows)" />
     <arg name="checker_cols" value="$(arg checker_cols)" />
     <arg name="checker_size" value="$(arg checker_size)" />
   </include>
-  <include file="$(find camera_pose_calibration)/rgb_block.launch">
+  <include file="$(find camera_pose_calibration)/blocks/rgb_block.launch">
     <arg name="ns" value="$(arg camera3_ns)" />
     <arg name="checker_rows" value="$(arg checker_rows)" />
     <arg name="checker_cols" value="$(arg checker_cols)" />
