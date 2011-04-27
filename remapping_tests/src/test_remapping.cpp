@@ -35,7 +35,7 @@ int main(int argc, char** argv)
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "remapping_tester");
 
-  ASSERT_GTE(argc, 3) << "Usage: test_remappings [expected_base_namespace] [expected_sub_namespace]\n";
+  ASSERT_GE(argc, 3);
 
   std::string expected_base_ns = argv[1];
   std::string expected_sub_ns  = argv[2];
@@ -56,7 +56,7 @@ int main(int argc, char** argv)
     local_remappings.insert(std::make_pair(remap_from, remap_to));
 
     ros::NodeHandle base_nh(nh, "base_namspace", local_remappings);
-    EXPECT_STEQ(base_nh.getNamespace(), expected_base_ns);
+    EXPECT_STREQ(base_nh.getNamespace(), expected_base_ns);
     ros::NodeHandle sub_nh(base_nh, "sub_namespace");
     EXPECT_STEQ(sub_nh.getNamespace(), expected_sub_ns);
   }
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
   {
     ros::NodeHandle base_nh(nh, "base_namspace");
     ros::NodeHandle sub_nh(base_nh, "sub_namespace");
-    EXPECT_STEQ(sub_nh.getNamespace(), expected_sub_ns);
+    EXPECT_STREQ(sub_nh.getNamespace(), expected_sub_ns);
   }
 
   return RUN_ALL_TESTS();
