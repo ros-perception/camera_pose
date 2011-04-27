@@ -48,4 +48,13 @@
   <!-- optimize camera poses -->
   <node type="run_optimization_online.py" pkg="camera_pose_calibration" name="cal_optimizer" output="screen"/>
 
+
+  <!-- Visualization -->
+  <node type="capture_monitor.py" pkg="camera_pose_calibration" name="capture_monitor" output="screen"
+        args="$(arg camera1_ns) $(arg camera2_ns) $(arg camera3_ns)" />
+
+  <node type="image_view" pkg="image_view" name="aggregated_image_viewer" >
+     <remap from="image" to="aggregated_image" />
+  </node>
+
 </launch>
