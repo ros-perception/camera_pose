@@ -52,6 +52,7 @@ TEST(RemappingTest, remapping_test)
     EXPECT_TRUE(nh.getParam("remap_from", remap_from)) << "Param [~remap_from] must be defined\n";
     EXPECT_TRUE(nh.getParam("remap_to",   remap_to))   << "Param [~remap_to] must be defined\n";
 
+    // Construct the new node by passing in a dictionary of remaps
     ros::M_string local_remappings;
     local_remappings.insert(std::make_pair(remap_from, remap_to));
 
