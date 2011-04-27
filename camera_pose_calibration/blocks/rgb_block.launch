@@ -7,7 +7,7 @@
 
   <group ns="$(arg ns)">
     <!-- Throttle images -->
-    <node type="throttle" pkg="topic_tools" name="image_throttle" args="messages image_rect_color 20 image_throttle" />
+    <node type="throttle" pkg="topic_tools" name="image_throttle" args="messages image_rect 20 image_throttle" />
 
     <!-- Checkerboard detector -->
     <node pkg="image_cb_detector" type="image_cb_detector_action_old" name="stereo_cb_detector" output="screen">
