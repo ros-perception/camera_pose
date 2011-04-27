@@ -30,42 +30,50 @@
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 
-int main(int argc, char** argv)
+static int argc_;
+static char** argv_;
+
+TEST(RemappingTest, remapping_test)
 {
-  testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "remapping_tester");
+  EXPECT_TRUE(argc_ >= 3);
 
-  ASSERT_GE(argc, 3);
-
-  std::string expected_base_ns = argv[1];
-  std::string expected_sub_ns  = argv[2];
+  std::string expected_base_ns = argv_[1];
+  std::string expected_sub_ns  = argv_[2];
 
   ros::NodeHandle nh;
-  ros::NodeHandle pnh;
+  //ros::NodeHandle pnh("~");
 
   bool use_local_remap = false;
-  EXPECT_TRUE(png.getParam("use_local_remap", use_local_remap)) << "Param [~use_local_remap] must be defined\n";
+  EXPECT_TRUE(nh.getParam("use_local_remap", use_local_remap)) << "Param [~use_local_remap] must be defined\n";
 
   if (use_local_remap)
   {
     std::string remap_from, remap_to;
-    EXPECT_TRUE(pnh.getParam("remap_from", remap_from)) << "Param [~remap_from] must be defined\n";
-    EXPECT_TRUE(pnh.getParam("remap_to",   remap_to))   << "Param [~remap_to] must be defined\n";
+    EXPECT_TRUE(nh.getParam("remap_from", remap_from)) << "Param [~remap_from] must be defined\n";
+    EXPECT_TRUE(nh.getParam("remap_to",   remap_to))   << "Param [~remap_to] must be defined\n";
 
     ros::M_string local_remappings;
     local_remappings.insert(std::make_pair(remap_from, remap_to));
 
-    ros::NodeHandle base_nh(nh, "base_namspace", local_remappings);
-    EXPECT_STREQ(base_nh.getNamespace(), expected_base_ns);
+    ros::NodeHandle base_nh(nh, "base_namespace", local_remappings);
+    EXPECT_TRUE(base_nh.getNamespace() == expected_base_ns) << "Error: \"" << base_nh.getNamespace() << "\" != \""  << expected_base_ns << "\"\n";
     ros::NodeHandle sub_nh(base_nh, "sub_namespace");
-    EXPECT_STEQ(sub_nh.getNamespace(), expected_sub_ns);
+    EXPECT_TRUE(sub_nh.getNamespace() == expected_sub_ns) << "Error: \"" << sub_nh.getNamespace() << "\" != \""  << expected_sub_ns << "\"\n";
   }
   else
   {
-    ros::NodeHandle base_nh(nh, "base_namspace");
+    ros::NodeHandle base_nh(nh, "base_namespace");
+    EXPECT_TRUE(base_nh.getNamespace() == expected_base_ns) << "Error: \"" << base_nh.getNamespace() << "\" != \""  << expected_base_ns << "\"\n";
     ros::NodeHandle sub_nh(base_nh, "sub_namespace");
-    EXPECT_STREQ(sub_nh.getNamespace(), expected_sub_ns);
+    EXPECT_TRUE(sub_nh.getNamespace() == expected_sub_ns) << "Error: \"" << sub_nh.getNamespace() << "\" != \""  << expected_sub_ns << "\"\n";
   }
+}
 
+int main(int argc, char** argv)
+{
+  testing::InitGoogleTest(&argc, argv);
+  ros::init(argc, argv, "remapping_tester");
+  argc_ = argc;
+  argv_ = argv;
   return RUN_ALL_TESTS();
 }
