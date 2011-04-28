@@ -8,15 +8,6 @@ import threading
 from calibration_msgs.msg import Interval, CalibrationPattern
 
 
-def beep(frequency, amplitude, duration):
-    sample = 8000
-    half_period = int(sample/frequency/2)
-    beep = chr(amplitude)*half_period+chr(0)*half_period
-    beep *= int(duration*frequency)
-    audio = file('/dev/audio', 'wb')
-    audio.write(beep)
-    audio.close()
-
 
 def diff(f1, f2):
     if not f1 or not f2:
@@ -43,10 +34,6 @@ class FilterIntervals:
             if self.feature and diff(self.feature, self.last_feature) > self.min_motion and duration > self.min_duration:
                 self.last_feature = self.feature
                 self.pub.publish(msg)
-                try:
-                    beep(440, 63, 0.5) 
-                except:
-                    print "Beep beep"
 
 
     def feature_cb(self, msg):
