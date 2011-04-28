@@ -6,6 +6,7 @@ from cv_bridge import CvBridge, CvBridgeError
 import rospy
 import threading
 from calibration_msgs.msg import Interval
+from calibration_msgs.msg import CalibrationPattern
 from sensor_msgs.msg import Image
 
 class ImageRenderer:
@@ -13,9 +14,11 @@ class ImageRenderer:
         self.lock = threading.Lock()
         self.image = None
         self.interval = 0
+        self.features = None
         self.bridge = CvBridge()
         self.image_sub = rospy.Subscriber(ns+'/image_throttle', Image, self.image_cb)
         self.interval_sub = rospy.Subscriber(ns+'/settled_interval', Interval, self.interval_cb)
+        self.features_sub = rospy.Subscriber(ns+'/features', CalibrationPattern, self.features_cb)
         self.max_interval = 1.0
 
 
@@ -26,6 +29,11 @@ class ImageRenderer:
     def interval_cb(self, msg):
         with self.lock:
             self.interval = (msg.end - msg.start).to_sec()
+
+    def features_cb(self, msg):
+        with self.lock:
+            self.features = msg
+
 
     def render(self, window):
         with self.lock:
@@ -40,6 +48,19 @@ class ImageRenderer:
                              (int(0.05*window.width), int(window.height*0.9)), 
                              (int(window.width*0.9+0.05*window.width), int(window.height*0.95)), 
                              (0, interval*255, (1-interval)*255))
+                if self.features:
+                    w_scaling =  float (window.width) / self.image.width
+                    h_scaling =  float (window.height) / self.image.height
+                    if self.features.success:
+                        corner_color = (0,255,0)
+                    else:
+                        corner_color = (0,0,255)                    
+                    for cur_pt in self.features.image_points:
+                        cv.Circle(window, (int(cur_pt.x*w_scaling), int(cur_pt.y*h_scaling)), w_scaling*5, corner_color)
+
+                
+                    
+                
 
 
 class Aggregator:
