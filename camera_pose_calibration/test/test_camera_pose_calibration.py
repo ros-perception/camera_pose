@@ -15,15 +15,19 @@ class TestCameraPose(unittest.TestCase):
         tf_buffer = tf2_ros.Buffer()
         tf_listener = tf2_ros.TransformListener(tf_buffer)
 
-        eps_rot = 1e-1
-        eps_vel = 1e-2
-
         tr_check = PyKDL.Frame(PyKDL.Rotation.Quaternion(0.022, 0.007, -0.006, 1.000), PyKDL.Vector(-0.011, 0.027, 0.048))
-        tr_identity = tf2_ros.Stamped(PyKDL.Frame.Identity(), rospy.Time(0), 'camera_a/openni_depth_optical_frame')
-        tr_res = tf_buffer.transform(tr_identity, 'camera_c/prosilica_optical_frame', rospy.Duration(60))
-        diff = PyKDL.diff(tr_check, tr_res)
-        self.assertAlmostEqual(diff.rot.Norm(), 0.0, delta=eps_rot)
-        self.assertAlmostEqual(diff.vel.Norm(), 0.0, delta=eps_vel)
+        tr_identity = tf2_ros.Stamped(PyKDL.Frame.Identity(), rospy.Time(0), 'camera_c/prosilica_optical_frame')
+        rospy.sleep(15)
+        tr_res = tf_buffer.transform(tr_identity, 'camera_a/openni_depth_optical_frame', rospy.Duration(60))
+        diff = PyKDL.diff(tr_check*tr_res.Inverse(), PyKDL.Frame.Identity())
+
+        print "tr_check" , tr_check.p, tr_check.M.GetQuaternion()
+        print "tr_check_inv" , tr_check.Inverse().p, tr_check.Inverse().M.GetQuaternion()
+        print "tr_res" , tr_res.p, tr_res.M.GetQuaternion()
+        print "tr_res_inv" , tr_res.Inverse().p, tr_res.Inverse().M.GetQuaternion()
+        print "Diff " , diff
+        self.assertAlmostEqual(diff.rot.Norm(), 0.0, 1)
+        self.assertAlmostEqual(diff.vel.Norm(), 0.0, 1)
         
 
 
