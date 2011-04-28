@@ -5,6 +5,7 @@ import cv
 from cv_bridge import CvBridge, CvBridgeError
 import rospy
 import threading
+import numpy
 from calibration_msgs.msg import Interval
 from calibration_msgs.msg import CalibrationPattern
 from sensor_msgs.msg import Image
@@ -16,6 +17,7 @@ class ImageRenderer:
         self.interval = 0
         self.features = None
         self.bridge = CvBridge()
+        self.ns = ns
         self.image_sub = rospy.Subscriber(ns+'/image_throttle', Image, self.image_cb)
         self.interval_sub = rospy.Subscriber(ns+'/settled_interval', Interval, self.interval_cb)
         self.features_sub = rospy.Subscriber(ns+'/features', CalibrationPattern, self.features_cb)
@@ -40,13 +42,13 @@ class ImageRenderer:
             if self.image:
                 cv.Resize(self.bridge.imgmsg_to_cv(self.image, 'rgb8'), window)
                 interval = min(1,(self.interval / self.max_interval))
-                cv.Rectangle(window, 
-                             (int(0.05*window.width), int(window.height*0.9)), 
-                             (int(interval*window.width*0.9+0.05*window.width), int(window.height*0.95)), 
+                cv.Rectangle(window,
+                             (int(0.05*window.width), int(window.height*0.9)),
+                             (int(interval*window.width*0.9+0.05*window.width), int(window.height*0.95)),
                              (0, interval*255, (1-interval)*255), thickness=-1)
-                cv.Rectangle(window, 
-                             (int(0.05*window.width), int(window.height*0.9)), 
-                             (int(window.width*0.9+0.05*window.width), int(window.height*0.95)), 
+                cv.Rectangle(window,
+                             (int(0.05*window.width), int(window.height*0.9)),
+                             (int(window.width*0.9+0.05*window.width), int(window.height*0.95)),
                              (0, interval*255, (1-interval)*255))
                 if self.features:
                     w_scaling =  float (window.width) / self.image.width
@@ -54,14 +56,15 @@ class ImageRenderer:
                     if self.features.success:
                         corner_color = (0,255,0)
                     else:
-                        corner_color = (0,0,255)                    
+                        corner_color = (0,0,255)
                     for cur_pt in self.features.image_points:
                         cv.Circle(window, (int(cur_pt.x*w_scaling), int(cur_pt.y*h_scaling)), w_scaling*5, corner_color)
-
-                
-                    
-                
-
+            else:
+                # Generate random white noise (for fun)
+                noise = numpy.random.rand(window.height, window.width)*256
+                numpy.asarray(window)[:,:,0] = noise;
+                numpy.asarray(window)[:,:,1] = noise;
+                numpy.asarray(window)[:,:,2] = noise;
 
 class Aggregator:
     def __init__(self, ns_list):
@@ -83,7 +86,7 @@ class Aggregator:
         for j in range(layout[1]):
             for i in range(layout[0]):
                 self.windows.append( cv.GetSubRect(self.image_out, (i*sub_w, j*sub_h, sub_w, sub_h) ) )
-            
+
         # create renderers
         self.renderer_list = []
         for ns in ns_list:
