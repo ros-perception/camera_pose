@@ -22,7 +22,7 @@ class ImageRenderer:
         self.interval_sub = rospy.Subscriber(ns+'/settled_interval', Interval, self.interval_cb)
         self.features_sub = rospy.Subscriber(ns+'/features', CalibrationPattern, self.features_cb)
         self.max_interval = 1.0
-
+        self.font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, 1.5, thickness = 2)
 
     def image_cb(self, msg):
         with self.lock:
@@ -65,6 +65,7 @@ class ImageRenderer:
                 numpy.asarray(window)[:,:,0] = noise;
                 numpy.asarray(window)[:,:,1] = noise;
                 numpy.asarray(window)[:,:,2] = noise;
+                cv.PutText(window, self.ns, (int(window.width * .05), int(window.height * .95)), self.font, (0,0,255))
 
 class Aggregator:
     def __init__(self, ns_list):
