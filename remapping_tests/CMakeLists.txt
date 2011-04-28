@@ -24,6 +24,9 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 rosbuild_add_executable(test_remapping src/test_remapping.cpp)
 rosbuild_add_gtest_build_flags(test_remapping)
 
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/no_remappings.launch)
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/global_remappings.launch)
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/local_remappings.launch)
 
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
