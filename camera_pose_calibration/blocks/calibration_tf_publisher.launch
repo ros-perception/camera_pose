@@ -1,6 +1,8 @@
 <launch>
+  <arg name="cache_file" default="/tmp/camera_pose_calibration_cache.bag" />
+
   <node type="msg_saver.py" pkg="camera_pose_calibration" name="cal_saver" output="screen"
-        args="camera_calibration camera_pose_calibration/CameraCalibration /tmp/megacal_cache.bag" />
+        args="camera_calibration camera_pose_calibration/CameraCalibration $(arg cache_file)" />
 
   <node type="buffer_server" pkg="tf2_ros" name="tf2_buffer_server" output="screen"/>
 

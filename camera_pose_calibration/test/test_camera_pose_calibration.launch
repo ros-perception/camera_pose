@@ -1,7 +1,9 @@
 <launch>
    <node pkg="rosbag" type="play" name="rosbag_play" args="--clock -r .25 $(find camera_pose_calibration)/test/camera_pose_cal_regression_data.bag" />
 
-   <include file="$(find camera_pose_calibration)/blocks/calibration_tf_publisher.launch" />
+   <include file="$(find camera_pose_calibration)/blocks/calibration_tf_publisher.launch" >
+     <arg name="cache_file" value="" />
+   </include>
    
    <include file="$(find camera_pose_calibration)/launch_extrinsics/calibrate_3_camera.launch" >
      <arg name="camera1_ns" value="camera_a/ir" />
