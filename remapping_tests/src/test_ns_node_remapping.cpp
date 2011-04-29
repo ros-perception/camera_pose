@@ -33,6 +33,7 @@
 static int argc_;
 static char** argv_;
 
+#define PRINT(cmd) printf(#cmd"\n"); cmd; printf("\n");
 
 TEST(NamespaceRemappingTest, unqualified_remaps)
 {
@@ -41,11 +42,11 @@ TEST(NamespaceRemappingTest, unqualified_remaps)
   local_remappings.insert(std::make_pair("b", "Rb"));
   local_remappings.insert(std::make_pair("c", "Rc"));
 
-  ros::NodeHandle base("a", local_remappings);
-  ros::NodeHandle a1(base, "a");
-  ros::NodeHandle a2(base, "a", ros::M_string());
-  ros::NodeHandle  b(base, "b");
-  ros::NodeHandle  c(base, "c", ros::M_string());  // Same as b, but different constructor
+  PRINT(ros::NodeHandle base("a", local_remappings));
+  PRINT(ros::NodeHandle a1(base, "a"));
+  PRINT(ros::NodeHandle a2(base, "a", ros::M_string()));
+  PRINT(ros::NodeHandle  b(base, "b"));
+  PRINT(ros::NodeHandle  c(base, "c", ros::M_string()));  // Same as b, but different constructor
 
   EXPECT_STREQ(base.getNamespace().c_str(), "/a");
   EXPECT_STREQ(a1.getNamespace().c_str(), "/a/Ra");
@@ -59,11 +60,11 @@ TEST(NamespaceRemappingTest, qualified_remaps)
   ros::M_string local_remappings;
   local_remappings.insert(std::make_pair("/a", "/Ra"));
 
-  ros::NodeHandle a("a", local_remappings);
-  ros::NodeHandle sub_a(a, "a");
+  PRINT(ros::NodeHandle a("a", local_remappings));  // local_remappings don't apply to this nodehandle's name
+  PRINT(ros::NodeHandle sub_a(a, "a"));             // remapping were fully qualified, so don't apply to /a/a
 
-  EXPECT_STREQ(    a.getNamespace().c_str(), "/Ra");
-  EXPECT_STREQ(sub_a.getNamespace().c_str(), "/Ra/a");
+  EXPECT_STREQ(    a.getNamespace().c_str(), "/a");
+  EXPECT_STREQ(sub_a.getNamespace().c_str(), "/a/a");
 }
 
 TEST(NamespaceRemappingTest, unqualified_root_remaps)
