@@ -3,12 +3,10 @@
 import roslib
 roslib.load_manifest('camera_pose_calibration')
 
-import sys, time, optparse
 import itertools
 import collections
 import rospy
 import threading
-import PyKDL
 
 from tf_conversions import posemath
 from std_msgs.msg import Empty
@@ -39,6 +37,17 @@ class Estimator:
 
     def meas_cb(self, msg):
         with self.lock:
+            # check if cam_info is valid
+            for camera in msg.M_cam:
+                P = camera.cam_info.P
+                all_zero = True
+                for i in range(12):
+                    if P[i] != 0:
+                        all_zero = False
+                if all_zero:
+                    rospy.logfatal("Camera info of %s is all zero. You should calibrate your camera intrinsics first "%camera.camera_id)
+                    exit(-1)
+
             # add measurements to list
             self.meas.append(msg)
             print "MEAS", len(self.meas)
