@@ -10,6 +10,7 @@ from calibration_msgs.msg import Interval
 from calibration_msgs.msg import CalibrationPattern
 from sensor_msgs.msg import Image
 from camera_pose_calibration.msg import RobotMeasurement
+from camera_pose_calibration.msg import CameraCalibration
 
 
 def beep(frequency=440, amplitude=63, duration=0.5):
@@ -86,13 +87,28 @@ class ImageRenderer:
                 numpy.asarray(window)[:,:,2] = noise;
                 cv.PutText(window, self.ns, (int(window.width * .05), int(window.height * .95)), self.font, (0,0,255))
 
+
+def get_image(text, good=True, h=480, w=640):
+    if good:
+        color = (0, 255, 0)
+    else:
+        color = (0, 0, 255)
+    image = cv.CreateMat(h, w, cv.CV_8UC3)
+    font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, 1.5, thickness = 2)
+    ((text_w, text_h), _) = cv.GetTextSize(text, font)
+    cv.PutText(image, text, (w/2-text_w/2, h/2-text_h/2), font, color)
+    return image
+    
+
 class Aggregator:
     def __init__(self, ns_list):
         print "Creating aggregator for ", ns_list
 
         self.lock = threading.Lock()
         self.capture_time = rospy.Time(0)
+        self.calibrate_time = rospy.Time(0)
         self.captured_sub = rospy.Subscriber('robot_measurement', RobotMeasurement, self.captured_cb)
+        self.optimized_sub = rospy.Subscriber('camera_calibration', CameraCalibration, self.calibrated_cb)
 
         # image
         w = 640
@@ -100,11 +116,10 @@ class Aggregator:
         self.image_out = cv.CreateMat(h, w, cv.CV_8UC3)
         self.pub = rospy.Publisher('aggregated_image', Image)
         self.bridge = CvBridge()
-        self.image_success = cv.CreateMat(h, w, cv.CV_8UC3)
-        text = "Successfully captured checkerboard"
-        font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, 1.5, thickness = 2)
-        ((text_w, text_h), _) = cv.GetTextSize(text, font)
-        cv.PutText(self.image_success, text, (w/2-text_w/2, h/2-text_h/2), font, (0,255,0))
+
+        self.image_captured = get_image("Succesfully captured checkerboard")
+        self.image_optimized = get_image("Succesfully ran optimization")
+        self.image_failed = get_image("Failed to run optimization", False)
 
         # create render windows
         layouts = [ (1,1), (2,2), (2,2), (2,2), (3,3), (3,3), (3,3), (3,3), (3,3) ]
@@ -126,6 +141,12 @@ class Aggregator:
             self.capture_time = rospy.Time.now()
         beep()
 
+
+    def calibrated_cb(self, msg):
+        with self.lock:
+            self.calibrate_time = rospy.Time.now()
+
+
     def loop(self):
         r = rospy.Rate(20)
         while not rospy.is_shutdown():
@@ -134,8 +155,13 @@ class Aggregator:
                 for window, render in zip(self.windows, self.renderer_list):
                     render.render(window)
 
-                if self.capture_time+rospy.Duration(2.0) > rospy.Time.now():
-                    self.pub.publish(self.bridge.cv_to_imgmsg(self.image_success, encoding="passthrough"))
+                if self.capture_time+rospy.Duration(4.0) > rospy.Time.now():
+                    if self.capture_time+rospy.Duration(2.0) > rospy.Time.now():
+                        self.pub.publish(self.bridge.cv_to_imgmsg(self.image_captured, encoding="passthrough"))
+                    elif self.calibrate_time+rospy.Duration(5.0) > rospy.Time.now():
+                        self.pub.publish(self.bridge.cv_to_imgmsg(self.image_optimized, encoding="passthrough"))
+                    else:
+                        self.pub.publish(self.bridge.cv_to_imgmsg(self.image_failed, encoding="passthrough"))
                 else:
                     self.pub.publish(self.bridge.cv_to_imgmsg(self.image_out, encoding="passthrough"))
 
