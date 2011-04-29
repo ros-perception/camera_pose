@@ -60,7 +60,7 @@ TEST(NamespaceRemappingTest, qualified_remaps)
   local_remappings.insert(std::make_pair("/a", "/Ra"));
 
   ros::NodeHandle a("a", local_remappings);
-  ros::NodeHandle sub_a("a");
+  ros::NodeHandle sub_a(a, "a");
 
   EXPECT_STREQ(    a.getNamespace().c_str(), "/Ra");
   EXPECT_STREQ(sub_a.getNamespace().c_str(), "/Ra/a");
