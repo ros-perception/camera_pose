@@ -13,15 +13,15 @@ from camera_pose_calibration.msg import RobotMeasurement
 from camera_pose_calibration.msg import CameraCalibration
 
 
-def beep(frequency=440, amplitude=63, duration=0.5):
+def beep(conf):
     try:
-        sample = 8000
-        half_period = int(sample/frequency/2)
-        beep = chr(amplitude)*half_period+chr(0)*half_period
-        beep *= int(duration*frequency)
-        audio = file('/dev/audio', 'wb')
-        audio.write(beep)
-        audio.close()
+        with file('/dev/audio', 'wb') as audio:
+            for (frequency, amplitude, duration) in conf:
+                sample = 8000
+                half_period = int(sample/frequency/2)
+                beep = chr(amplitude)*half_period+chr(0)*half_period
+                beep *= int(duration*frequency)
+                audio.write(beep)
     except:
         print "Beep beep"
 
@@ -105,10 +105,6 @@ class Aggregator:
         print "Creating aggregator for ", ns_list
 
         self.lock = threading.Lock()
-        self.capture_time = rospy.Time(0)
-        self.calibrate_time = rospy.Time(0)
-        self.captured_sub = rospy.Subscriber('robot_measurement', RobotMeasurement, self.captured_cb)
-        self.optimized_sub = rospy.Subscriber('camera_calibration', CameraCalibration, self.calibrated_cb)
 
         # image
         w = 640
@@ -136,11 +132,17 @@ class Aggregator:
         for ns in ns_list:
             self.renderer_list.append(ImageRenderer(ns))
 
+        # subscribers
+        self.capture_time = rospy.Time(0)
+        self.calibrate_time = rospy.Time(0)
+        self.captured_sub = rospy.Subscriber('robot_measurement', RobotMeasurement, self.captured_cb)
+        self.optimized_sub = rospy.Subscriber('camera_calibration', CameraCalibration, self.calibrated_cb)
+
+
     def captured_cb(self, msg):
         with self.lock:
             self.capture_time = rospy.Time.now()
-        beep()
-
+        beep([(400, 63, 0.2)])
 
     def calibrated_cb(self, msg):
         with self.lock:
@@ -149,6 +151,8 @@ class Aggregator:
 
     def loop(self):
         r = rospy.Rate(20)
+        beep_time = rospy.Time(0)
+
         while not rospy.is_shutdown():
             r.sleep()
             with self.lock:
@@ -160,8 +164,15 @@ class Aggregator:
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_captured, encoding="passthrough"))
                     elif self.calibrate_time+rospy.Duration(5.0) > rospy.Time.now():
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_optimized, encoding="passthrough"))
+                        if beep_time+rospy.Duration(4.0) < rospy.Time.now():
+                            beep_time = rospy.Time.now()
+                            beep([(600, 63, 0.1), (800, 63, 0.1), (1000, 63, 0.3)])
                     else:
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_failed, encoding="passthrough"))
+                        if beep_time+rospy.Duration(4.0) < rospy.Time.now():
+                            beep_time = rospy.Time.now()
+                            beep([(400, 63, 0.1), (200, 63, 0.1), (100, 63, 0.6)])
+
                 else:
                     self.pub.publish(self.bridge.cv_to_imgmsg(self.image_out, encoding="passthrough"))
 
