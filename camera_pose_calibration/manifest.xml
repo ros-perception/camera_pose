@@ -1,7 +1,7 @@
 <package>
   <description brief="camera_pose_calibration">
-    This package provides the pipeline to calibrate the relative poses
-    between multiple rgb camera's. The calibration can be preformed
+    This package provides the pipeline to calibrate the relative 6D
+    poses between multiple camera's. The calibration can be preformed
     online, and the results are published to tf in realtime.
   </description>
   <author>Vijay Pradeep, Wim Meeussen</author>
