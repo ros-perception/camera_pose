@@ -1,8 +1,10 @@
 <launch>
 
-  <param name="use_local_remap" type="bool" value="false" />
-  <param name="remap_from" value="base_namespace"/>
-  <param name="remap_to"   value="remapped_base_namespace" />
-  <test test-name="no_remappings" pkg="remapping_tests" type="test_remapping"
-        args="/remapped_base_namespace /remapped_base_namespace/sub_namespace"/>
+
+    <param name="use_local_remap" type="bool" value="true" />
+    <param name="remap_from" value="sub_namespace"/>
+    <param name="remap_to"   value="remapped_sub_namespace" />
+    <test test-name="no_remappings" pkg="remapping_tests" type="test_remapping"
+          args="/base_namespace /base_namespace/remapped_sub_namespace"/>
+
 </launch>

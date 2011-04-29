@@ -1,0 +1,3 @@
+<launch>
+  <test test-name="test_ns_node_remapping" pkg="remapping_tests" type="test_ns_node_remapping"/>
+</launch>
