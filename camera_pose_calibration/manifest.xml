@@ -13,17 +13,15 @@
   <depend package="calibration_msgs" />
   <depend package="sensor_msgs" />
 
-  <depend package="kdl" />
   <depend package="image_cb_detector" />
   <depend package="monocam_settler" />
   <depend package="interval_intersection" />
   <depend package="joint_states_settler" />
-  <depend package="pr2_calibration_executive" />
+
+  <depend package="kdl" />
   <depend package="tf_conversions" />
   <depend package="tf2_ros" />
   <depend package="tf2_kdl" />
-  <depend package="kdl" />
-  <depend package="yaml_cpp" />
   <depend package="message_filters" />
   <depend package="opencv2" />
 

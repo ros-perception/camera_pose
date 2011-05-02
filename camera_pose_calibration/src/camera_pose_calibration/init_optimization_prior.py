@@ -1,15 +1,10 @@
-import sys, time, optparse
+import roslib; roslib.load_manifest('camera_pose_calibration')
 import itertools
 import numpy
 import collections
-import roslib
-roslib.load_manifest('camera_pose_calibration')
 import cv
 import PyKDL
-from calibration_msgs.msg import *
 from tf_conversions import posemath
-
-import rosbag
 
 
 def get_target_pose(cam):
@@ -27,13 +22,13 @@ def get_target_pose(cam):
     # print "Trans: %f, %f, %f" % ( trans[0,0], trans[1,0], trans[2,0] )
     rot3x3 = cv.CreateMat(3, 3, cv.CV_32FC1)
     cv.Rodrigues2(rot, rot3x3)
-    f = PyKDL.Frame()
+    frame = PyKDL.Frame()
     for i in range(3):
-        f.p[i] = trans[i,0]
+        frame.p[i] = trans[i,0]
     for i in range(3):
         for j in range(3):
-            f.M[i,j] = rot3x3[i,j]
-    return f
+            frame.M[i,j] = rot3x3[i,j]
+    return frame
 
 def read_observations(meas):
     # Stores the checkerboards observed by two cameras

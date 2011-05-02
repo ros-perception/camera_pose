@@ -7,11 +7,10 @@
   <license>BSD</license>  
   <review status="Unreviewed" notes=""/>
   <url>http://ros.org/wiki/camera_pose</url>
-  <depend stack="common" /> <!-- yaml_cpp -->
   <depend stack="common_msgs" /> <!-- sensor_msgs, geometry_msgs -->
   <depend stack="geometry" /> <!-- kdl, tf_conversions -->
   <depend stack="geometry_experimental" /> <!-- tf2_kdl, tf2_ros -->
-  <depend stack="pr2_calibration" /> <!-- monocam_settler, pr2_calibration_executive, interval_intersection, calibration_msgs, image_cb_detector, joint_states_settler -->
+  <depend stack="pr2_calibration" /> <!-- interval_intersection, monocam_settler, image_cb_detector, calibration_msgs, joint_states_settler -->
   <depend stack="ros" />
   <depend stack="ros_comm" /> <!-- roscpp, message_filters -->
   <depend stack="vision_opencv" /> <!-- opencv2 -->
