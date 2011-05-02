@@ -9,6 +9,7 @@ import numpy
 from calibration_msgs.msg import Interval
 from calibration_msgs.msg import CalibrationPattern
 from sensor_msgs.msg import Image
+from sensor_msgs.msg import CameraInfo
 from camera_pose_calibration.msg import RobotMeasurement
 from camera_pose_calibration.msg import CameraCalibration
 
@@ -31,6 +32,7 @@ class ImageRenderer:
     def __init__(self, ns):
         self.lock = threading.Lock()
         self.image_time = rospy.Time(0)
+        self.info_time = rospy.Time(0)
         self.image = None
         self.interval = 0
         self.features = None
@@ -39,9 +41,14 @@ class ImageRenderer:
         self.max_interval = 1.0
 
         self.font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, 1.5, thickness = 2)
+        self.info_sub = rospy.Subscriber(ns+'/camera_info', CameraInfo, self.info_cb)
         self.image_sub = rospy.Subscriber(ns+'/image_throttle', Image, self.image_cb)
         self.interval_sub = rospy.Subscriber(ns+'/settled_interval', Interval, self.interval_cb)
         self.features_sub = rospy.Subscriber(ns+'/features', CalibrationPattern, self.features_cb)
+
+    def info_cb(self, msg):
+        with self.lock:
+            self.info_time = rospy.Time.now()
 
     def image_cb(self, msg):
         with self.lock:
@@ -59,7 +66,7 @@ class ImageRenderer:
 
     def render(self, window):
         with self.lock:
-            if self.image and self.image_time + rospy.Duration(2.0) > rospy.Time.now():
+            if self.image and self.image_time + rospy.Duration(2.0) > rospy.Time.now() and self.info_time + rospy.Duration(2.0) > rospy.Time.now():
                 cv.Resize(self.bridge.imgmsg_to_cv(self.image, 'rgb8'), window)
                 interval = min(1,(self.interval / self.max_interval))
                 cv.Rectangle(window,
