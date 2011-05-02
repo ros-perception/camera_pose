@@ -27,6 +27,9 @@ rosbuild_add_gtest_build_flags(test_remapping)
 rosbuild_add_executable(test_ns_node_remapping src/test_ns_node_remapping.cpp)
 rosbuild_add_gtest_build_flags(test_ns_node_remapping)
 
+rosbuild_add_executable(test_search_param src/test_search_param.cpp)
+rosbuild_add_gtest_build_flags(test_search_param)
+
 #rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/no_remappings.launch)
 #rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/global_remappings.launch)
 #rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/local_remappings.launch)
