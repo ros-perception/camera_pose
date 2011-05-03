@@ -63,7 +63,6 @@ class ImageRenderer:
         with self.lock:
             self.features = msg
 
-
     def render(self, window):
         with self.lock:
             if self.image and self.image_time + rospy.Duration(2.0) > rospy.Time.now() and self.info_time + rospy.Duration(2.0) > rospy.Time.now():
@@ -77,7 +76,7 @@ class ImageRenderer:
                              (int(0.05*window.width), int(window.height*0.9)),
                              (int(window.width*0.9+0.05*window.width), int(window.height*0.95)),
                              (0, interval*255, (1-interval)*255))
-                if self.features and self.features.header.stamp + rospy.Duration(4.0) > rospy.Time.now():
+                if self.features and self.features.header.stamp + rospy.Duration(4.0) > self.image.header.stamp:
                     w_scaling =  float (window.width) / self.image.width
                     h_scaling =  float (window.height) / self.image.height
                     if self.features.success:
@@ -87,8 +86,8 @@ class ImageRenderer:
                     else:
                         window = add_text(window, ["Could not detect", "checkerboard"], False)
                 else:
-                    window = add_text(window, ["Timed out waiting", "for checkerboard"], False)                    
-                        
+                    window = add_text(window, ["Timed out waiting", "for checkerboard"], False)
+
             else:
                 # Generate random white noise (for fun)
                 noise = numpy.random.rand(window.height, window.width)*256
@@ -116,7 +115,7 @@ def add_text(image, text, good = True):
 def get_image(text, good=True, h=480, w=640):
     image = cv.CreateMat(h, w, cv.CV_8UC3)
     return add_text(image, text, good)
-    
+
 
 class Aggregator:
     def __init__(self, ns_list):
@@ -131,8 +130,8 @@ class Aggregator:
         self.pub = rospy.Publisher('aggregated_image', Image)
         self.bridge = CvBridge()
 
-        self.image_captured = get_image(["Succesfully captured checkerboard"])
-        self.image_optimized = get_image(["Succesfully ran optimization"])
+        self.image_captured = get_image(["Successfully captured checkerboard"])
+        self.image_optimized = get_image(["Successfully ran optimization"])
         self.image_failed = get_image(["Failed to run optimization"], False)
 
         # create render windows
