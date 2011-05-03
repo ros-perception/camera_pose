@@ -77,15 +77,18 @@ class ImageRenderer:
                              (int(0.05*window.width), int(window.height*0.9)),
                              (int(window.width*0.9+0.05*window.width), int(window.height*0.95)),
                              (0, interval*255, (1-interval)*255))
-                if self.features:
+                if self.features and self.features.header.stamp + rospy.Duration(4.0) > rospy.Time.now():
                     w_scaling =  float (window.width) / self.image.width
                     h_scaling =  float (window.height) / self.image.height
                     if self.features.success:
                         corner_color = (0,255,0)
+                        for cur_pt in self.features.image_points:
+                            cv.Circle(window, (int(cur_pt.x*w_scaling), int(cur_pt.y*h_scaling)), int(w_scaling*5), corner_color)
                     else:
-                        corner_color = (0,0,255)
-                    for cur_pt in self.features.image_points:
-                        cv.Circle(window, (int(cur_pt.x*w_scaling), int(cur_pt.y*h_scaling)), int(w_scaling*5), corner_color)
+                        window = add_text(window, ["Could not detect", "checkerboard"], False)
+                else:
+                    window = add_text(window, ["Timed out waiting", "for checkerboard"], False)                    
+                        
             else:
                 # Generate random white noise (for fun)
                 noise = numpy.random.rand(window.height, window.width)*256
@@ -95,16 +98,24 @@ class ImageRenderer:
                 cv.PutText(window, self.ns, (int(window.width * .05), int(window.height * .95)), self.font, (0,0,255))
 
 
-def get_image(text, good=True, h=480, w=640):
+def add_text(image, text, good = True):
     if good:
         color = (0, 255, 0)
     else:
         color = (0, 0, 255)
-    image = cv.CreateMat(h, w, cv.CV_8UC3)
-    font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, 1.5, thickness = 2)
-    ((text_w, text_h), _) = cv.GetTextSize(text, font)
-    cv.PutText(image, text, (w/2-text_w/2, h/2-text_h/2), font, color)
+    w = image.cols
+    h = image.rows
+    for i in range(len(text)):
+        font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, float(w)/350, thickness = float(w)/300)
+        ((text_w, text_h), _) = cv.GetTextSize(text[i], font)
+        cv.PutText(image, text[i], (w/2-text_w/2, h/2-text_h/2 + i*text_h*2), font, color)
     return image
+
+
+
+def get_image(text, good=True, h=480, w=640):
+    image = cv.CreateMat(h, w, cv.CV_8UC3)
+    return add_text(image, text, good)
     
 
 class Aggregator:
@@ -120,9 +131,9 @@ class Aggregator:
         self.pub = rospy.Publisher('aggregated_image', Image)
         self.bridge = CvBridge()
 
-        self.image_captured = get_image("Succesfully captured checkerboard")
-        self.image_optimized = get_image("Succesfully ran optimization")
-        self.image_failed = get_image("Failed to run optimization", False)
+        self.image_captured = get_image(["Succesfully captured checkerboard"])
+        self.image_optimized = get_image(["Succesfully ran optimization"])
+        self.image_failed = get_image(["Failed to run optimization"], False)
 
         # create render windows
         layouts = [ (1,1), (2,2), (2,2), (2,2), (3,3), (3,3), (3,3), (3,3), (3,3) ]
