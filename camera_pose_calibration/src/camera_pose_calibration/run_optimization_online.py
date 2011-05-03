@@ -15,7 +15,7 @@ from camera_pose_calibration.msg import CameraPose
 from camera_pose_calibration.msg import RobotMeasurement, CameraCalibration
 from camera_pose_calibration import init_optimization_prior
 from camera_pose_calibration import estimate
-
+from camera_pose_calibration import camera_info_converter
 
 class Estimator:
     def __init__(self):
@@ -48,6 +48,11 @@ class Estimator:
                     rospy.logfatal("Camera info of %s is all zero. You should calibrate your camera intrinsics first "%camera.camera_id)
                     exit(-1)
 
+            # Modify all the camera info messages to make sure that ROI and binning are removed, and P is updated accordingly
+            # Update is done in place
+            for camera in msg.M_cam:
+                camera.cam_info = camera_info_converter.unbin(camera.cam_info)
+
             # add measurements to list
             self.meas.append(msg)
             print "MEAS", len(self.meas)
@@ -73,7 +78,7 @@ class Estimator:
 def main():
     rospy.init_node('online_calibration')
     e = Estimator()
-    
+
     rospy.spin()
 
 if __name__ == '__main__':
