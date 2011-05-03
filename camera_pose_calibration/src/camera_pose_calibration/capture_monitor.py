@@ -106,7 +106,7 @@ def add_text(image, text, good = True):
     w = image.cols
     h = image.rows
     for i in range(len(text)):
-        font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, float(w)/350, thickness = float(w)/300)
+        font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, float(w)/350, thickness = 1)
         ((text_w, text_h), _) = cv.GetTextSize(text[i], font)
         cv.PutText(image, text[i], (w/2-text_w/2, h/2-text_h/2 + i*text_h*2), font, color)
     return image
