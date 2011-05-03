@@ -40,7 +40,6 @@ import time
 import threading
 import message_filters
 
-import pr2_calibration_executive
 from camera_pose_calibration.robot_measurement_cache import RobotMeasurementCache
 
 from calibration_msgs.msg import Interval, CalibrationPattern
