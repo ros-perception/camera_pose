@@ -91,6 +91,7 @@ class CameraCaptureExecutive:
                 # Change camera ids to be the tf frame IDs
                 for cam in m_robot.M_cam:
                     cam.camera_id = cam.cam_info.header.frame_id
+                    m_robot.header.stamp = cam.cam_info.header.stamp
                 self.measurement_pub.publish(m_robot)
             else:
                 print "Couldn't get measurement in interval"
