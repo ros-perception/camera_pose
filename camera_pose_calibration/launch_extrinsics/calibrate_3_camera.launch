@@ -4,7 +4,7 @@
   <arg name="camera3_ns" default="camera_c/rgb" />
   <arg name="checker_rows" default="4"/>
   <arg name="checker_cols" default="5"/>
-  <arg name="checker_size" default="0.02492"/>
+  <arg name="checker_size" default="0.0245"/>
   <arg name="headless" default="false" />
 
   <!-- checkerboard detector for each camera -->
