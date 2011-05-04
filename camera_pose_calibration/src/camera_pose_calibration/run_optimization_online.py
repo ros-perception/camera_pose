@@ -50,17 +50,18 @@ class Estimator:
 
             # Modify all the camera info messages to make sure that ROI and binning are removed, and P is updated accordingly
             # Update is done in place
-            for camera in msg.M_cam:
-                camera.cam_info = camera_info_converter.unbin(camera.cam_info)
+            #for camera in msg.M_cam:
+            #    camera.cam_info = camera_info_converter.unbin(camera.cam_info)
 
             # add measurements to list
             self.meas.append(msg)
             print "MEAS", len(self.meas)
+            for m in self.meas:
+                print " - stamp: %f"%m.header.stamp.to_sec()
 
             # initialize state if needed
-            if not self.state:
+            if True: #not self.state:
                 self.state = CalibrationEstimate()
-                print "STATE",self.state
                 camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(self.meas)
                 self.state.targets = [ posemath.toMsg(checkerboard_poses[i]) for i in range(len(checkerboard_poses)) ]
                 self.state.cameras = [ CameraPose(camera_id, posemath.toMsg(camera_pose)) for camera_id, camera_pose in camera_poses.iteritems()]
