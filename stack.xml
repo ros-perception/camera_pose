@@ -5,7 +5,7 @@
   </description>
   <author>Vijay Pradeep, Wim Meeussen</author>
   <license>BSD</license>  
-  <review status="Unreviewed" notes=""/>
+  <review status="Doc reviewed" notes=""/>
   <url>http://ros.org/wiki/camera_pose</url>
   <depend stack="common_msgs" /> <!-- sensor_msgs, geometry_msgs -->
   <depend stack="geometry" /> <!-- kdl, tf_conversions -->

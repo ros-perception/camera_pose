@@ -6,7 +6,7 @@
   </description>
   <author>Vijay Pradeep, Wim Meeussen</author>
   <license>BSD</license>
-  <review status="unreviewed" notes=""/>
+  <review status="Doc reviewed" notes=""/>
   <url>http://ros.org/wiki/camera_pose_calibration</url>
 
   <depend package="geometry_msgs" />
