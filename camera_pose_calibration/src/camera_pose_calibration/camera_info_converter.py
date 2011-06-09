@@ -45,7 +45,8 @@ def unbin(msg_in):
     msg_out.roi.height = msg_out.height
     msg_out.roi.width = msg_out.width
 
-    msg_out.D = []
+    msg_out.D = msg_in.D
+    msg.out.R = msg_in.R
     msg_out.K = (P[0], P[1], P[2],
                  P[4], P[5], P[6],
                  P[8], P[9], P[10])
