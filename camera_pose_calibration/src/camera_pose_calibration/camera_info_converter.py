@@ -66,7 +66,6 @@ class CameraInfoConverter:
         with self.lock:
             time_now = rospy.Time.now()
             if self.last_pub + self.pub_interval < time_now:
-                rospy.logerr("pub interval %f"%self.pub_interval.to_sec())
                 self.pub.publish(unbin(msg))
                 self.last_pub = time_now
 
