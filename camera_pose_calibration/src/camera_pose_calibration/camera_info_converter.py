@@ -3,6 +3,7 @@
 import copy
 import roslib; roslib.load_manifest('camera_pose_calibration')
 import rospy
+import threading
 from sensor_msgs.msg import CameraInfo
 
 
@@ -55,11 +56,19 @@ def unbin(msg_in):
 
 class CameraInfoConverter:
     def __init__(self):
+        self.lock = threading.Lock()
+        self.pub_interval = rospy.Duration(rospy.get_param('~publish_interval', 0.0))
+        self.last_pub = rospy.Time()
         self.pub = rospy.Publisher('camera_info_out', CameraInfo)
         self.sub = rospy.Subscriber('camera_info_in', CameraInfo, self.cam_info_cb)
 
     def cam_info_cb(self, msg):
-        self.pub.publish(unbin(msg))
+        with self.lock:
+            time_now = rospy.Time.now()
+            if self.last_pub + self.pub_interval < time_now:
+                rospy.logerr("pub interval %f"%self.pub_interval.to_sec())
+                self.pub.publish(unbin(msg))
+                self.last_pub = time_now
 
 def main():
     rospy.init_node('camera_info_converter')
