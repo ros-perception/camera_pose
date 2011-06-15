@@ -41,6 +41,7 @@ import roslib; roslib.load_manifest(PKG)
 
 import rospy
 from geometry_msgs.msg import PoseStamped
+from kinect_depth_calibration.srv import GetCheckerboardPose, GetCheckerboardPoseResponse, GetCheckerboardPoseRequest
 
 def depth_calibrator_main(argv=None):
     rospy.init_node(NAME, anonymous=False)
@@ -53,10 +54,16 @@ def depth_calibrator_main(argv=None):
     print "OK, thanks! Checking for the 'get_checkerboard_pose' service."
     rospy.wait_for_service('get_checkerboard_pose')
     print "Found the checkerboard service."
-    x_corners = raw_input("How many x corners? :")
-    y_corners = raw_input("How many y corners? :")
-    spacing = raw_input("What is the spacing of the checkerboard? :")
-    print "Looking for a %d x %d checkerboard, with %.4f spacing." % (x_corners, y_corners, spacing)
+    x_corners = int(raw_input("How many x corners? : "))
+    y_corners = int(raw_input("How many y corners? : "))
+    spacing = float(raw_input("What is the spacing of the checkerboard? : "))
+    print "Looking for a %d x %d checkerboard, with %.4f spacing...." % (x_corners, y_corners, spacing)
+    cb_detector = rospy.ServiceProxy('get_checkerboard_pose', GetCheckerboardPose)
+    cb = cb_detector.call(GetCheckerboardPoseRequest(x_corners, y_corners, spacing, spacing))
+    print "Successfully found a checkerboard."
+    print cb
+
+
 
 if __name__ == '__main__':
     depth_calibrator_main()
