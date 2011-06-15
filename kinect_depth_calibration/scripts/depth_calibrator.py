@@ -94,48 +94,52 @@ def depth_calibrator_main(argv=None):
     corners_y = rospy.get_param('corners_y', 4)
     spacing = rospy.get_param('spacing', 0.0245)
 
-    while(raw_input("Have you covered the projector on the Kinect? (y/n): ") != 'y'):
-        print "You should cover the projector on the Kinect"
+    run = True
+    while run:
 
-    while(raw_input("Have you placed a checkerboard in front of the Kinect and provided a source of IR illumination? (y/n): ") != 'y'):
-        print "Go find a checkerboard and an IR light source."
+        while(raw_input("Have you covered the projector on the Kinect? (y/n): ") != 'y'):
+            print "You should cover the projector on the Kinect"
 
-    print "OK, thanks! Checking for the 'get_checkerboard_pose' service."
+        while(raw_input("Have you placed a checkerboard in front of the Kinect and provided a source of IR illumination? (y/n): ") != 'y'):
+            print "Go find a checkerboard and an IR light source."
 
-    rospy.wait_for_service('get_checkerboard_pose')
+        print "OK, thanks! Checking for the 'get_checkerboard_pose' service."
 
-    print "Found the checkerboard service."
+        rospy.wait_for_service('get_checkerboard_pose')
 
-    print "Looking for a %d x %d checkerboard, with %.4f spacing...." % (corners_x, corners_y, spacing)
+        print "Found the checkerboard service."
 
-    cb_detector = rospy.ServiceProxy('get_checkerboard_pose', GetCheckerboardPose)
-    cb = cb_detector.call(GetCheckerboardPoseRequest(corners_x, corners_y, spacing, spacing))
-    ir_center = find_board_center(cb.board_pose, corners_x, corners_y, spacing)
-    ir_msg = PoseStamped()
-    ir_msg.header = cb.board_pose.header
-    ir_msg.pose = ir_center
-    pose_pub.publish(ir_msg)
+        print "Looking for a %d x %d checkerboard, with %.4f spacing...." % (corners_x, corners_y, spacing)
 
-    print "Successfully found a checkerboard, with original depth %.4f." % (cb.board_pose.pose.position.z)
-    print "Successfully found a checkerboard, with depth %.4f." % (ir_center.position.z)
+        cb_detector = rospy.ServiceProxy('get_checkerboard_pose', GetCheckerboardPose)
+        cb = cb_detector.call(GetCheckerboardPoseRequest(corners_x, corners_y, spacing, spacing))
+        ir_center = find_board_center(cb.board_pose, corners_x, corners_y, spacing)
+        ir_msg = PoseStamped()
+        ir_msg.header = cb.board_pose.header
+        ir_msg.pose = ir_center
+        pose_pub.publish(ir_msg)
 
-    print "Now we want to look for the center of the checkerboard in the depth image."
-    while(raw_input("Have you uncovered the IR projector and turned off any other IR light source? (y/n): ") != 'y'):
-        print "Don't be difficult, just do it."
+        print "Successfully found a checkerboard, with depth %.4f" % (ir_center.position.z)
 
-    print "OK, thanks! Waiting for the 'get_checkerboard_center' service."
+        print "Now we want to look for the center of the checkerboard in the depth image."
+        while(raw_input("Have you uncovered the IR projector and turned off any other IR light source? (y/n): ") != 'y'):
+            print "Don't be difficult, just do it."
 
-    rospy.wait_for_service('get_checkerboard_center')
+        print "OK, thanks! Waiting for the 'get_checkerboard_center' service."
 
-    print "Found the service, looking for the center of the checkerboard bounded by the rectangle (%.2f, %.2f), (%.2f, %.2f)." % (
-        cb.min_x, cb.min_y, cb.max_x, cb.max_y)
+        rospy.wait_for_service('get_checkerboard_center')
 
-    center_detector = rospy.ServiceProxy('get_checkerboard_center', GetCheckerboardCenter)
-    center_depth = center_detector.call(GetCheckerboardCenterRequest(cb.min_x, cb.max_x, cb.min_y, cb.max_y, ir_center.position.z))
+        print "Found the service, looking for the center of the checkerboard bounded by the rectangle (%.2f, %.2f), (%.2f, %.2f)." % (
+            cb.min_x, cb.min_y, cb.max_x, cb.max_y)
 
-    print "Found the center of the board at depth %.4f in the pointcloud" % (center_depth.depth)
+        center_detector = rospy.ServiceProxy('get_checkerboard_center', GetCheckerboardCenter)
+        center_depth = center_detector.call(GetCheckerboardCenterRequest(cb.min_x, cb.max_x, cb.min_y, cb.max_y, ir_center.position.z))
 
-    print "The offset between the ir and the point cloud is: %.4f" % (ir_center.position.z - center_depth.depth)
+        print "Found the center of the board at depth %.4f in the pointcloud" % (center_depth.depth)
+
+        print "The offset between the ir and the point cloud is: %.4f" % (ir_center.position.z - center_depth.depth)
+
+        run = raw_input("Would you like to run again? (y/n): ") == 'y'
 
 if __name__ == '__main__':
     depth_calibrator_main()
