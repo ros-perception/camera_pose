@@ -5,16 +5,18 @@ import rospy
 from kinect_depth_calibration.srv import GetCheckerboardCenter, GetCheckerboardCenterResponse
 from stereo_msgs.msg import DisparityImage
 import cv
+from cv_bridge import CvBridge, CvBridgeError
 import threading
 
 
 class DepthCenterExtractor:
     def __init__(self):
+        self.bridge = CvBridge()
         self.lock = threading.Lock()
         self.depth = None
         
         self.sub = rospy.Subscriber('disparity', DisparityImage, self.depth_cb)
-        self.srv = rospy.Service('get_checkerbaord_center', GetCheckerboardCenter, self.get_center_cb)
+        self.srv = rospy.Service('get_checkerboard_center', GetCheckerboardCenter, self.get_center_cb)
 
 
     def get_depth(self, disp, disp_msg):
@@ -34,6 +36,7 @@ class DepthCenterExtractor:
             with self.lock:
                 if self.depth and self.depth.header.stamp > now:
                     msg = self.depth
+                    img = self.bridge.imgmsg_to_cv(self.depth.image, "passthrough")
                     break
 
 
@@ -42,15 +45,14 @@ class DepthCenterExtractor:
         depth_nr = 0.0
         if req.min_x >= 0 and req.min_x < req.max_x and req.max_x < msg.image.width and req.min_y >= 0 and req.min_y < req.max_y and req.max_y < msg.image.height:
             for i in range(req.min_x, req.max_x+1):
-                for j in range(req.min_y, req.may_y+1):
-                    depth = self.get_depth(msg.image[j, i], msg)
+                for j in range(req.min_y, req.max_y+1):
+                    depth = self.get_depth(img[j, i], msg)
                     if depth > req.depth*0.8 and depth < req.depth*1.2:
                         depth_sum += depth
                         depth_nr += 1
 
-        res = GetCheckerboardCenterResponse()
-
         # check if we got at least 75% of points
+        res = GetCheckerboardCenterResponse()
         if (req.max_x - req.min_x)*(req.max_y - req.min_y)*0.75 < depth_nr:
             res.depth = depth_sum / depth_nr
         else:
