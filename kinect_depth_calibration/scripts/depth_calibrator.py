@@ -87,9 +87,12 @@ def find_board_center(board_pose, corners_x, corners_y, spacing):
     return pose_to_msg(pose_mat)
 
 def depth_calibrator_main(argv=None):
+    rospy.init_node(NAME, anonymous=False)
     pose_pub = rospy.Publisher("new_pose", PoseStamped, latch=True)
 
-    rospy.init_node(NAME, anonymous=False)
+    corners_x = rospy.get_param('corners_x', 5)
+    corners_y = rospy.get_param('corners_y', 4)
+    spacing = rospy.get_param('spacing', 0.0245)
 
     while(raw_input("Have you covered the projector on the Kinect? (y/n): ") != 'y'):
         print "You should cover the projector on the Kinect"
@@ -103,15 +106,11 @@ def depth_calibrator_main(argv=None):
 
     print "Found the checkerboard service."
 
-    x_corners = int(raw_input("How many x corners? : "))
-    y_corners = int(raw_input("How many y corners? : "))
-    spacing = float(raw_input("What is the spacing of the checkerboard? : "))
-
-    print "Looking for a %d x %d checkerboard, with %.4f spacing...." % (x_corners, y_corners, spacing)
+    print "Looking for a %d x %d checkerboard, with %.4f spacing...." % (corners_x, corners_y, spacing)
 
     cb_detector = rospy.ServiceProxy('get_checkerboard_pose', GetCheckerboardPose)
-    cb = cb_detector.call(GetCheckerboardPoseRequest(x_corners, y_corners, spacing, spacing))
-    ir_center = find_board_center(cb.board_pose, x_corners, y_corners, spacing)
+    cb = cb_detector.call(GetCheckerboardPoseRequest(corners_x, corners_y, spacing, spacing))
+    ir_center = find_board_center(cb.board_pose, corners_x, corners_y, spacing)
     ir_msg = PoseStamped()
     ir_msg.header = cb.board_pose.header
     ir_msg.pose = ir_center
@@ -132,9 +131,11 @@ def depth_calibrator_main(argv=None):
         cb.min_x, cb.min_y, cb.max_x, cb.max_y)
 
     center_detector = rospy.ServiceProxy('get_checkerboard_center', GetCheckerboardCenter)
-    center = center_detector.call(GetCheckerboardCenterRequest(cb.min_x, cb.max_x, cb.min_y, cb.max_y))
+    center_depth = center_detector.call(GetCheckerboardCenterRequest(cb.min_x, cb.max_x, cb.min_y, cb.max_y, ir_center.position.z))
 
-    print "Found the center of the board at (%.4f, %.4f, %.4f) in the pointcloud" % (center.point.x, center.point.y, center.point.z)
+    print "Found the center of the board at depth %.4f in the pointcloud" % (center_depth.depth)
+
+    print "The offset between the ir and the point cloud is: %.4f" % (ir_center.position.z - center_depth.depth)
 
 if __name__ == '__main__':
     depth_calibrator_main()
