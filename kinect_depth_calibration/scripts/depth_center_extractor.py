@@ -20,7 +20,7 @@ class DepthCenterExtractor:
 
 
     def get_depth(self, disp, disp_msg):
-        return disp_msg.f/(disp_msg.T*disp)
+        return disp_msg.f * disp_msg.T / disp
 
 
     def depth_cb(self, msg):
@@ -44,10 +44,10 @@ class DepthCenterExtractor:
         depth_sum = 0.0
         depth_nr = 0.0
         if req.min_x >= 0 and req.min_x < req.max_x and req.max_x < msg.image.width and req.min_y >= 0 and req.min_y < req.max_y and req.max_y < msg.image.height:
-            for i in range(req.min_x, req.max_x+1):
-                for j in range(req.min_y, req.max_y+1):
+            for i in range(int(req.min_x), int(req.max_x)+1):
+                for j in range(int(req.min_y), int(req.max_y)+1):
                     depth = self.get_depth(img[j, i], msg)
-                    if depth > req.depth*0.8 and depth < req.depth*1.2:
+                    if depth > req.depth_prior*0.8 and depth < req.depth_prior*1.2:
                         depth_sum += depth
                         depth_nr += 1
 
@@ -57,7 +57,7 @@ class DepthCenterExtractor:
             res.depth = depth_sum / depth_nr
         else:
             res.depth = 0.0
-            print "Could not find enough depth points"
+            print "Could not find enough depth points: expected %f points but only found %f"%((req.max_x - req.min_x)*(req.max_y - req.min_y)*0.75, depth_nr)
             
         return res
     
