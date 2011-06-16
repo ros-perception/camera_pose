@@ -49,6 +49,8 @@ from kinect_depth_calibration.srv import GetCheckerboardCenter, GetCheckerboardC
 
 from geometry_msgs.msg import Quaternion, Pose
 
+from sensor_msgs.msg import CameraInfo
+
 def msg_to_quaternion(msg):
   return [msg.x, msg.y, msg.z, msg.w]
 
@@ -80,28 +82,50 @@ def pose_to_msg(pose):
   msg.orientation.w = q[3]
   return msg
 
+def find_board_min(board_pose, corners_x, corners_y, spacing):
+    trans = msg_to_pose(board_pose.pose)
+    origin = tf.transformations.translation_matrix([-spacing, -spacing, 0.0])
+    pose_mat = numpy.dot(trans, origin)
+    return pose_to_msg(pose_mat)
+
+def find_board_max(board_pose, corners_x, corners_y, spacing):
+    trans = msg_to_pose(board_pose.pose)
+    origin = tf.transformations.translation_matrix([((corners_x) * spacing), ((corners_y) * spacing), 0.0])
+    pose_mat = numpy.dot(trans, origin)
+    return pose_to_msg(pose_mat)
+
 def find_board_center(board_pose, corners_x, corners_y, spacing):
     trans = msg_to_pose(board_pose.pose)
     origin = tf.transformations.translation_matrix([((corners_x - 1) * spacing) / 2.0, ((corners_y - 1) * spacing) / 2.0, 0.0])
     pose_mat = numpy.dot(trans, origin)
     return pose_to_msg(pose_mat)
 
+def project_pose(proj, pose):
+    position = pose.pose.position
+    point = numpy.array([[position.x], [position.y], [position.z]])
+    mult = numpy.dot(proj, point)
+    return mult / mult[2]
+
 def depth_calibrator_main(argv=None):
     rospy.init_node(NAME, anonymous=False)
     pose_pub = rospy.Publisher("new_pose", PoseStamped, latch=True)
 
-    corners_x = rospy.get_param('corners_x', 5)
-    corners_y = rospy.get_param('corners_y', 4)
-    spacing = rospy.get_param('spacing', 0.0245)
+    corners_x = rospy.get_param('~corners_x', 5)
+    corners_y = rospy.get_param('~corners_y', 4)
+    spacing = rospy.get_param('~spacing', 0.0245)
+    depth_frame_id = rospy.get_param('~depth_frame_id', None)
+
+    listener = tf.TransformListener()
+
+    print "Waiting to receive camera info for the depth camera..."
+    depth_proj = numpy.reshape(numpy.array(rospy.wait_for_message('depth_camera_info', CameraInfo).P), (3,4))[:3, :3]
+    print "Got camera info."
 
     run = True
     while run:
 
-        while(raw_input("Have you covered the projector on the Kinect? (y/n): ") != 'y'):
-            print "You should cover the projector on the Kinect"
-
-        while(raw_input("Have you placed a checkerboard in front of the Kinect and provided a source of IR illumination? (y/n): ") != 'y'):
-            print "Go find a checkerboard and an IR light source."
+        while(raw_input("Is a checkerboard visible for your image producing camera? (y/n): ") != 'y'):
+            print "For the Kinect, you may need to cover the IR projector for the CB to be detected."
 
         print "OK, thanks! Checking for the 'get_checkerboard_pose' service."
 
@@ -113,13 +137,38 @@ def depth_calibrator_main(argv=None):
 
         cb_detector = rospy.ServiceProxy('get_checkerboard_pose', GetCheckerboardPose)
         cb = cb_detector.call(GetCheckerboardPoseRequest(corners_x, corners_y, spacing, spacing))
-        ir_center = find_board_center(cb.board_pose, corners_x, corners_y, spacing)
-        ir_msg = PoseStamped()
-        ir_msg.header = cb.board_pose.header
-        ir_msg.pose = ir_center
-        pose_pub.publish(ir_msg)
+        img_center = find_board_center(cb.board_pose, corners_x, corners_y, spacing)
+        img_msg = PoseStamped()
+        img_msg.header = cb.board_pose.header
+        img_msg.pose = img_center
+        pose_pub.publish(img_msg)
 
-        print "Successfully found a checkerboard, with depth %.4f" % (ir_center.position.z)
+        depth_center = None
+        #now we want to transform the pose into the depth frame if the image frame is different
+        if depth_frame_id is not None and img_msg.header.frame_id != depth_frame_id:
+            img_min = PoseStamped(cb.board_pose.header, find_board_min(cb.board_pose, corners_x, corners_y, spacing))
+            img_max = PoseStamped(cb.board_pose.header, find_board_max(cb.board_pose, corners_x, corners_y, spacing))
+
+            print "Waiting for the transform between %s and %s" % (img_msg.header.frame_id, depth_frame_id)
+            listener.waitForTransform(depth_frame_id, img_msg.header.frame_id, img_msg.header.stamp, rospy.Duration(2.0))
+            depth_pose = listener.transformPose(depth_frame_id, img_msg)
+            depth_min = listener.transformPose(depth_frame_id, img_min)
+            depth_max = listener.transformPose(depth_frame_id, img_max)
+
+            depth_min_pt = project_pose(depth_proj, depth_min)
+            depth_max_pt = project_pose(depth_proj, depth_max)
+
+            cb.min_x = depth_min_pt[0]
+            cb.min_y = depth_min_pt[1]
+            cb.max_x = depth_max_pt[0]
+            cb.max_y = depth_max_pt[1]
+
+            depth_center = depth_pose.pose
+        else:
+            depth_center = img_center
+
+        print "Successfully found a checkerboard, with depth %.4f in frame %s" % (depth_center.position.z, depth_frame_id)
+
 
         print "Now we want to look for the center of the checkerboard in the depth image."
         while(raw_input("Have you uncovered the IR projector and turned off any other IR light source? (y/n): ") != 'y'):
@@ -133,11 +182,11 @@ def depth_calibrator_main(argv=None):
             cb.min_x, cb.min_y, cb.max_x, cb.max_y)
 
         center_detector = rospy.ServiceProxy('get_checkerboard_center', GetCheckerboardCenter)
-        center_depth = center_detector.call(GetCheckerboardCenterRequest(cb.min_x, cb.max_x, cb.min_y, cb.max_y, ir_center.position.z))
+        center_depth = center_detector.call(GetCheckerboardCenterRequest(cb.min_x, cb.max_x, cb.min_y, cb.max_y, depth_center.position.z))
 
         print "Found the center of the board at depth %.4f in the pointcloud" % (center_depth.depth)
 
-        print "The offset between the ir and the point cloud is: %.4f" % (ir_center.position.z - center_depth.depth)
+        print "The offset between the img and the point cloud is: %.4f" % (depth_center.position.z - center_depth.depth)
 
         run = raw_input("Would you like to run again? (y/n): ") == 'y'
 
