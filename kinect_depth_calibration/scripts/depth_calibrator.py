@@ -113,13 +113,14 @@ def depth_calibrator_main(argv=None):
     corners_x = rospy.get_param('~corners_x', 5)
     corners_y = rospy.get_param('~corners_y', 4)
     spacing = rospy.get_param('~spacing', 0.0245)
-    depth_frame_id = rospy.get_param('~depth_frame_id', None)
 
     listener = tf.TransformListener()
 
     print "Waiting to receive camera info for the depth camera..."
-    depth_proj = numpy.reshape(numpy.array(rospy.wait_for_message('depth_camera_info', CameraInfo).P), (3,4))[:3, :3]
-    print "Got camera info."
+    depth_info = rospy.wait_for_message('depth_camera_info', CameraInfo)
+    depth_proj = numpy.reshape(numpy.array(depth_info.P), (3,4))[:3, :3]
+    depth_frame_id = depth_info.header.frame_id
+    print "Got camera info, the depth camera operates in frame %s" % depth_frame_id
 
     run = True
     while run:

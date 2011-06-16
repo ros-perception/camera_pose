@@ -1,7 +1,6 @@
 <launch>
   <arg name="image_ns" default="camera/ir" />
   <arg name="depth_ns" default="camera/depth" />
-  <arg name="depth_frame" default="camera/openni_depth_optical_frame" />
 
   <!-- Narrow Checkerboard Detector -->
   <node pkg="kinect_depth_calibration" type="cb_detector.py" name="cb_detector" output="screen">
@@ -16,7 +15,6 @@
   </node>
 
   <node pkg="kinect_depth_calibration" type="depth_calibrator.py" name="depth_calibrator_executive" output="screen">
-    <param name="depth_frame_id" value="$(arg depth_frame)" />
     <remap from="depth_camera_info" to="$(arg depth_ns)/camera_info" />
   </node>
 </launch>
