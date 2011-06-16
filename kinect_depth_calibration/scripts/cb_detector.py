@@ -200,18 +200,37 @@ class ImageCbDetectorNode:
             min_y = min(min_y, y)
             max_y = max(max_y, y)
 
+    # convert all poses to twists
+    twists = []
+    for p in poses:
+      twists.append(PyKDL.diff(PyKDL.Frame.Identity(), posemath.fromMsg(p.pose)))
+
+    # get average twist 
     twist_res = PyKDL.Twist()
     PyKDL.SetToZero(twist_res)
-    for p in poses:
-      t = PyKDL.diff(PyKDL.Frame.Identity(), posemath.fromMsg(p.pose))
+    for t in twists:
       for i in range(3):
         twist_res.vel[i] += t.vel[i]/len(poses)
         twist_res.rot[i] += t.rot[i]/len(poses)
+
+    # get noise
+    noise_rot = 0
+    noise_vel = 0
+    for t in twists:
+      n_vel = (t.vel - twist_res.vel).Norm()
+      n_rot = (t.rot - twist_res.rot).Norm()
+      if n_vel > noise_vel:
+        noise_vel = n_vel
+      if n_rot > noise_rot:
+        noise_rot = n_rot
+
+    # set service resul
     pose_res = PyKDL.addDelta(PyKDL.Frame.Identity(), twist_res, 1.0)
     pose_msg = PoseStamped()
     pose_msg.header = poses[0].header
     pose_msg.pose = posemath.toMsg(pose_res)
-    return GetCheckerboardPoseResponse(pose_msg, min_x, max_x, min_y, max_y)
+    return GetCheckerboardPoseResponse(pose_msg, min_x, max_x, min_y, max_y, noise_vel, noise_rot)
+
 
   def find_checkerboard_pose(self, ros_image, corners_x, corners_y, spacing_x, spacing_y, width_scaling, height_scaling):
     #we need to convert the ros image to an opencv image

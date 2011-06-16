@@ -168,7 +168,9 @@ def depth_calibrator_main(argv=None):
         else:
             depth_center = img_center
 
-        print "Successfully found a checkerboard, with depth %.4f in frame %s" % (depth_center.position.z, depth_frame_id)
+        print "Successfully found a checkerboard, with depth %.4f, noise_vel: %f, noise_rot: %f in frame %s" % (depth_center.position.z, 
+                                                                                                                    cb.noise_vel, cb.noise_rot, 
+                                                                                                                    depth_frame_id)
 
 
         print "Now we want to look for the center of the checkerboard in the depth image."
