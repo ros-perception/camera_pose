@@ -46,10 +46,11 @@ class DepthCenterExtractor:
         if req.min_x >= 0 and req.min_x < req.max_x and req.max_x < msg.image.width and req.min_y >= 0 and req.min_y < req.max_y and req.max_y < msg.image.height:
             for i in range(int(req.min_x), int(req.max_x)+1):
                 for j in range(int(req.min_y), int(req.max_y)+1):
-                    depth = self.get_depth(img[j, i], msg)
-                    if depth > req.depth_prior*0.8 and depth < req.depth_prior*1.2:
-                        depth_sum += depth
-                        depth_nr += 1
+                    if img[j, i] > 0:
+                        depth = self.get_depth(img[j, i], msg)
+                        if depth > req.depth_prior*0.8 and depth < req.depth_prior*1.2:
+                            depth_sum += depth
+                            depth_nr += 1
 
         # check if we got at least 75% of points
         res = GetCheckerboardCenterResponse()
