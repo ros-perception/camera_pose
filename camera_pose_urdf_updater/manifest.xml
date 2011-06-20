@@ -1,7 +1,7 @@
 <package>
   <description brief="camera_pose_urdf_updater">
 
-     extend_urdf_tree
+     camera_pose_urdf_updater
 
   </description>
   <author> Yiping Liu</author>
