@@ -1,9 +1,0 @@
-<launch>
-  <!-- Narrow Checkerboard Detector -->
-  <node pkg="kinect_depth_calibration" type="cb_detector.py" name="cb_detector" output="screen">
-    <remap from="image_stream" to="/camera/ir/image_rect" /> 
-    <remap from="camera_info" to="/camera/ir/camera_info" /> 
-    <remap from="get_checkerboard_pose" to="get_checkerboard_pose" /> 
-    <remap from="board_pose" to="board_pose" /> 
-  </node>
-</launch>

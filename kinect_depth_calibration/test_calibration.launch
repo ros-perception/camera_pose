@@ -1,0 +1,20 @@
+<launch>
+  <arg name="image_ns" default="camera/ir" />
+  <arg name="depth_ns" default="camera/depth" />
+
+  <!-- Narrow Checkerboard Detector -->
+  <node pkg="kinect_depth_calibration" type="cb_detector.py" name="cb_detector" output="screen">
+    <remap from="image_stream" to="$(arg image_ns)/image_rect" /> 
+    <remap from="camera_info" to="$(arg image_ns)/camera_info" /> 
+    <remap from="get_checkerboard_pose" to="get_checkerboard_pose" /> 
+    <remap from="board_pose" to="board_pose" /> 
+  </node>
+
+  <node pkg="kinect_depth_calibration" type="depth_center_extractor.py" name="center_extractor" output="screen">
+    <remap from="disparity" to="$(arg depth_ns)/disparity" /> 
+  </node>
+
+  <node pkg="kinect_depth_calibration" type="depth_calibrator.py" name="depth_calibrator_executive" output="screen">
+    <remap from="depth_camera_info" to="$(arg depth_ns)/camera_info" />
+  </node>
+</launch>
