@@ -2,10 +2,11 @@
 	<arg name="new_cam_id" />
 	<arg name="urdf_cam_id" />
 
-	<arg name="urdf_file" default="pr2.urdf" />
+	<arg name="urdf_input_file" />
+	<arg name="urdf_output_file" />
 
-	<param name="camera_pose_urdf_updater/filename" value="$(find camera_pose_urdf_updater)/new_$(arg urdf_file)" />
-	<param name="robot_description" textfile="$(find camera_pose_urdf_updater)/$(arg urdf_file)" />
+	<param name="camera_pose_urdf_updater/filename" value="$(arg urdf_output_file)" />
+	<param name="robot_description" textfile="$(find camera_pose_urdf_updater)/$(arg urdf_intput_file)" />
 	<param name="new_cam_id" value="$(arg new_cam_id)" />
     	<node pkg="camera_pose_urdf_updater" type="camera_pose_urdf_updater_node" name="camera_pose_urdf_updater" output="screen" >
      	<!-- lyp -->
