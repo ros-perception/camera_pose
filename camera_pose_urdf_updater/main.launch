@@ -1,10 +1,19 @@
   <launch>
 	<arg name="new_cam_id" />
+	<arg name="urdf_cam_id" />
+
 	<arg name="urdf_file" default="pr2.urdf" />
+
 	<param name="camera_pose_urdf_updater/filename" value="$(find camera_pose_urdf_updater)/new_$(arg urdf_file)" />
 	<param name="robot_description" textfile="$(find camera_pose_urdf_updater)/$(arg urdf_file)" />
 	<param name="new_cam_id" value="$(arg new_cam_id)" />
     	<node pkg="camera_pose_urdf_updater" type="camera_pose_urdf_updater_node" name="camera_pose_urdf_updater" output="screen" >
      	<!-- lyp -->
     	</node>
+
+	<!-- camera pose calibration -->
+        <include file="$(find camera_pose_calibration)/launch_extrinsics/calibrate_2_camera.launch" >
+          <arg name="camera1_ns" value="$(arg new_cam_id)" />
+          <arg name="camera2_ns" value="$(arg urdf_cam_id)" />
+        </include>
   </launch>
