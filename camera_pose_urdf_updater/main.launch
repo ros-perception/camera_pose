@@ -4,17 +4,24 @@
 
 	<arg name="urdf_input_file" />
 	<arg name="urdf_output_file" />
+	<arg name="checker_rows" />
+	<arg name="checker_cols" />
+	<arg name="checker_size" />
 
+     	<!-- yliu -->
 	<param name="camera_pose_urdf_updater/filename" value="$(arg urdf_output_file)" />
-	<param name="robot_description" textfile="$(find camera_pose_urdf_updater)/$(arg urdf_intput_file)" />
+	<param name="robot_description" textfile="$(find camera_pose_urdf_updater)/$(arg urdf_input_file)" />
 	<param name="new_cam_id" value="$(arg new_cam_id)" />
+	<param name="urdf_cam_id" value ="$(arg urdf_cam_id)" />
     	<node pkg="camera_pose_urdf_updater" type="camera_pose_urdf_updater_node" name="camera_pose_urdf_updater" output="screen" >
-     	<!-- lyp -->
     	</node>
 
-	<!-- camera pose calibration -->
+	<!-- start camera pose calibration -->
         <include file="$(find camera_pose_calibration)/launch_extrinsics/calibrate_2_camera.launch" >
           <arg name="camera1_ns" value="$(arg new_cam_id)" />
           <arg name="camera2_ns" value="$(arg urdf_cam_id)" />
+	  <arg name="checker_rows" value="$(arg checker_rows)" />
+	  <arg name="checker_cols" value="$(arg checker_cols)" />
+	  <arg name="checker_size" value="$(arg checker_size)" />
         </include>
   </launch>
