@@ -193,6 +193,9 @@ int main(int argc, char **argv)
 	n.getParam("/camera_pose_urdf_updater/output_filename", output_filename);
 
 	printf("\ncamera_pose_urdf_updater ready...\n\n");
+	printf("%s\n\n",new_cam_id.c_str());
+        printf("%s\n\n",urdf_cam_id.c_str());
+
 	
 	//printf("%d\n", int(urdf_tree.length()));
 	 	

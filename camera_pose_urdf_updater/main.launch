@@ -8,6 +8,8 @@
 	<arg name="checker_rows" />
 	<arg name="checker_cols" />
 	<arg name="checker_size" />
+	
+	<arg name="headless" default="false" />
 
      	<!-- yliu -->
 	<param name="camera_pose_urdf_updater/output_filename" value="$(arg urdf_output_file)" />
@@ -24,5 +26,6 @@
 	  <arg name="checker_rows" value="$(arg checker_rows)" />
 	  <arg name="checker_cols" value="$(arg checker_cols)" />
 	  <arg name="checker_size" value="$(arg checker_size)" />
+	  <arg name="headless" value="$(arg headless)" />
         </include>
   </launch>
