@@ -1,7 +1,10 @@
 
 // yliu 06/17/2011
 
+// yliu 06/21/2011 application limited to two cameras.
+
 #include "ros/ros.h"
+#include "ros/topic.h"
 #include <iostream>
 #include "std_msgs/String.h"
 #include <string>
@@ -9,13 +12,17 @@
 #include <tf/transform_datatypes.h>
 #include <sstream>
 #include <camera_pose_calibration/CameraCalibration.h>
+#include <sensor_msgs/CameraInfo.h>
 
 #include <kdl/frames.hpp>
 #include <boost/regex.hpp>
 
-std::string new_cam_id;
+std::string new_cam_ns; //camera name space
+std::string urdf_cam_ns;
+std::string new_cam_id; //camera frame id
+std::string urdf_cam_id;
 std::string urdf_tree;
-std::string filename;
+std::string output_filename;
 //ros::Publisher pub; 
 
 
@@ -26,6 +33,7 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 	printf("Number of cameras received: %d\n", cnt);
 	KDL::Rotation CamR[cnt];
 	int new_cam_index = -1;
+	int urdf_cam_index = -1;
 	KDL::Rotation R; // the rotation of the new cam w.r.t. the calibrated cam
 	KDL::Vector p;  // the origin displacement of the new cam w.r.t to the calibrated cam
 	double kRoll, kPitch, kYaw;
@@ -37,9 +45,16 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 
 		if (msg->camera_id[i].compare(new_cam_id) == 0)
 		{
-			printf("  --->  new camera identified!");
+			printf("  --->  new camera ");
 			new_cam_index = i;
 		}
+		//
+		if (msg->camera_id[i].compare(urdf_cam_id) == 0)
+		{
+			printf("  --->  urdf camera ");
+			urdf_cam_index = i;
+		}
+		//
 		printf("\n");
 
 		CamR[i]=KDL::Rotation::Quaternion(msg->camera_pose[i].orientation.x, msg->camera_pose[i].orientation.y, msg->camera_pose[i].orientation.z, msg->camera_pose[i].orientation.w); // KDL::Rotation objects
@@ -48,29 +63,29 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 	
 	printf("\n");
 	
-	int prev_calibrated_cam_index= -1;
+	//int prev_calibrated_cam_index= -1;
 
-	if( new_cam_index == -1)
-	{
-		ROS_ERROR("Couldn't identify the camera to be added :( Check the camera_id you provided...");
-	}
-	else
-	{	
+	//if( new_cam_index == -1 || urdf_cam_index == -1)
+	//{
+	//	ROS_ERROR("Couldn't identify the camera to be added :( Check the camera_id you provided...");
+	//}
+	//else
+	//{	
 		
-		if ( new_cam_index !=1)  //just randomly pick one that is not new.
-		{
-			prev_calibrated_cam_index = 1;
-		}
-		else
-		{	
-			prev_calibrated_cam_index =	2;
-		}
+		//if ( new_cam_index !=1)  //just randomly pick one that is not new.
+		//{
+		//	prev_calibrated_cam_index = 1;
+		//}
+		//else
+		//{	
+		//	prev_calibrated_cam_index =	2;
+		//}
 		
-		R = CamR[new_cam_index]*CamR[prev_calibrated_cam_index].Inverse();
-		p.x(msg->camera_pose[new_cam_index].position.x - msg->camera_pose[prev_calibrated_cam_index].position.x);
-		p.y(msg->camera_pose[new_cam_index].position.y - msg->camera_pose[prev_calibrated_cam_index].position.y);
-		p.z(msg->camera_pose[new_cam_index].position.z - msg->camera_pose[prev_calibrated_cam_index].position.z);
-	}
+		R = CamR[new_cam_index]*CamR[urdf_cam_index].Inverse();
+		p.x(msg->camera_pose[new_cam_index].position.x - msg->camera_pose[urdf_cam_index].position.x);
+		p.y(msg->camera_pose[new_cam_index].position.y - msg->camera_pose[urdf_cam_index].position.y);
+		p.z(msg->camera_pose[new_cam_index].position.z - msg->camera_pose[urdf_cam_index].position.z);
+	//}
 	
 	R.GetRPY(kRoll, kPitch, kYaw);
 	
@@ -107,7 +122,7 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 	 "  <!-- added after running camera_pose_calibration -->\n"
        	 "  <joint name=\""+ msg->camera_id[new_cam_index] +  "_joint\" type=\"fixed\">" + "\n" +
 	 "     <origin rpy=\"" + buffer1.str() +  "\" xyz=\"" + buffer2.str() + "\"/>" + "\n" +
-	 "     <parent link=\"" + msg->camera_id[prev_calibrated_cam_index] + "\"/>" + "\n" +
+	 "     <parent link=\"" + msg->camera_id[urdf_cam_index] + "\"/>" + "\n" +
 	 "     <child link=\"" + msg->camera_id[new_cam_index] + "\"/>" + "\n" +
 	 "  </joint>" + "\n" +
 	 "  <link name=\""+ msg->camera_id[new_cam_index] + "\" type=\"camera\"/>" + "\n";
@@ -116,13 +131,13 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 	urdf_tree.insert(location, urdf_snippet);
 	//printf("\n The updated urdf tree is \n\n %s \n\n", urdf_tree.c_str());
 	
-	std::ofstream writer(filename.c_str(), std::ios::trunc); // in ~/.ros
+	std::ofstream writer(output_filename.c_str(), std::ios::trunc); // in ~/.ros
 	
 	if (writer.is_open())
   	{
 		writer<<urdf_tree;
 		printf("New urdf file generated.\n");
-		printf("File path:  %s\n\n", filename.c_str());
+		printf("File path:  %s\n\n", output_filename.c_str());
   	}
 	else
   	{
@@ -132,7 +147,7 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 	writer.close();
 	
 	//checking if the tree is still OK. 
-	std::string ss="\"" + msg->camera_id[prev_calibrated_cam_index] +"\""; 
+	std::string ss="\"" + msg->camera_id[urdf_cam_index] +"\""; 
 	std::string::const_iterator s1,e1;
 	s1 = urdf_tree.begin();
         e1 = urdf_tree.end();
@@ -158,12 +173,24 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 	
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "camer_pose_urdf_updater");
+	ros::init(argc, argv, "camera_pose_urdf_updater");
 	ros::NodeHandle n;
+	
+	n.getParam("new_cam_ns", new_cam_ns);
+	n.getParam("urdf_cam_ns", urdf_cam_ns);
 
-	n.getParam("new_cam_id", new_cam_id);
+	std::string tp1;
+	tp1 = new_cam_ns + "/camera_info";
+	sensor_msgs::CameraInfo::ConstPtr msg1 = ros::topic::waitForMessage<sensor_msgs::CameraInfo>(tp1, n);
+	new_cam_id = msg1->header.frame_id;
+
+	std::string tp2;
+	tp2 = urdf_cam_ns + "/camera_info";
+	sensor_msgs::CameraInfo::ConstPtr msg2 = ros::topic::waitForMessage<sensor_msgs::CameraInfo>(tp2, n);
+	urdf_cam_id = msg2->header.frame_id;
+
 	n.getParam("robot_description", urdf_tree);
-	n.getParam("/camera_pose_urdf_updater/filename", filename);
+	n.getParam("/camera_pose_urdf_updater/output_filename", output_filename);
 
 	printf("\ncamera_pose_urdf_updater ready...\n\n");
 	

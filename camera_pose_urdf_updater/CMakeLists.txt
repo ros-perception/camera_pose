@@ -31,3 +31,4 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 
 rosbuild_add_executable(camera_pose_urdf_updater_node src/camera_pose_urdf_updater.cpp)
+
