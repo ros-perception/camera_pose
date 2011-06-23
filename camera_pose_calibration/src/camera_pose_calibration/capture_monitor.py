@@ -38,7 +38,7 @@ class ImageRenderer:
         self.features = None
         self.bridge = CvBridge()
         self.ns = ns
-        self.max_interval = 1.0
+        self.max_interval = rospy.get_param('filter_intervals/min_duration')
 
         self.font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, 1.5, thickness = 2)
         self.info_sub = rospy.Subscriber(ns+'/camera_info', CameraInfo, self.info_cb)
@@ -67,6 +67,7 @@ class ImageRenderer:
         with self.lock:
             if self.image and self.image_time + rospy.Duration(5.0) > rospy.Time.now() and self.info_time + rospy.Duration(5.0) > rospy.Time.now():
                 cv.Resize(self.bridge.imgmsg_to_cv(self.image, 'rgb8'), window)
+                # render progress bar
                 interval = min(1,(self.interval / self.max_interval))
                 cv.Rectangle(window,
                              (int(0.05*window.width), int(window.height*0.9)),
