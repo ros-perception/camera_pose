@@ -137,13 +137,19 @@ class RobotMeasurementCache:
             # Make sure the index makes sense, and is in the interval
             #   Note: This is not a 'complete' or 'exact' algorithm. It can definitely be improved... if we care
             if right_center_index >= len(cur_cache):
+                #print "Failed because off the list"
                 cam_measurements[cam_id] = None
             elif cur_cache[right_center_index].header.stamp > interval_end or cur_cache[right_center_index].header.stamp < interval_start:
-                cam_measurements[cam_id] = None
+                if right_center_index > 0 and cur_cache[right_center_index-1].header.stamp <= interval_end and cur_cache[right_center_index-1].header.stamp >= interval_start:
+                    cam_measurements[cam_id] = cur_cache[right_center_index-1]
+                else:
+                    #print "Failed because outside of the interval stamp:%f, interval s: %f, interval e: %s" % (cur_cache[right_center_index].header.stamp.to_sec(), interval_end.to_sec(), intervatl_start.to_sec())
+                    cam_measurements[cam_id] = None
             else:
                 cam_measurements[cam_id] = cur_cache[right_center_index]
 
         # Extract the chain measurements closest to the center of the interval
+        #print "Extracting chain measurements"
         chain_measurements = dict( [ (x, None) for x in self._chain_caches.keys() ] )
         for chain_id in self._chain_caches.keys():
             #print "On %s" % chain_id
@@ -160,8 +166,10 @@ class RobotMeasurementCache:
             # Make sure the index makes sense, and is in the interval
             #   Note: This is not a 'complete' or 'exact' algorithm. It can definitely be improved... if we care
             if right_center_index >= len(cur_cache):
+                #print "Failed because off the list"
                 chain_measurements[chain_id] = None
             elif cur_cache[right_center_index].header.stamp > interval_end or cur_cache[right_center_index].header.stamp < interval_start:
+                #print "Failed because outside of the interval"
                 chain_measurements[chain_id] = None
             else:
                 chain_measurements[chain_id] = cur_cache[right_center_index]
@@ -176,6 +184,8 @@ class RobotMeasurementCache:
             else:
                 laser_measurements[laser_id] = None
 
+        #print "Got laser and cam measurements"
+
         # See if we got everything that we needed
         for cam_id, m in cam_measurements.items():
             if m is None:
@@ -184,12 +194,12 @@ class RobotMeasurementCache:
 
         for chain_id, m in chain_measurements.items():
             if m is None:
-                #print "Didn't get a [%s]" % chain_id
+                #print "Didn't get a chain [%s]" % chain_id
                 return None
 
         for laser_id, m in laser_measurements.items():
             if m is None:
-                #print "Didn't get a [%s]" % laser_id
+                #print "Didn't get a laser [%s]" % laser_id
                 return None
 
         print "Received everything!"
