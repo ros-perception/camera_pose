@@ -65,7 +65,7 @@ class ImageRenderer:
 
     def render(self, window):
         with self.lock:
-            if self.image and self.image_time + rospy.Duration(2.0) > rospy.Time.now() and self.info_time + rospy.Duration(2.0) > rospy.Time.now():
+            if self.image and self.image_time + rospy.Duration(5.0) > rospy.Time.now() and self.info_time + rospy.Duration(5.0) > rospy.Time.now():
                 cv.Resize(self.bridge.imgmsg_to_cv(self.image, 'rgb8'), window)
                 interval = min(1,(self.interval / self.max_interval))
                 cv.Rectangle(window,
@@ -179,7 +179,7 @@ class Aggregator:
                 if self.capture_time+rospy.Duration(4.0) > rospy.Time.now():
                     if self.capture_time+rospy.Duration(2.0) > rospy.Time.now():
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_captured, encoding="passthrough"))
-                    elif self.calibrate_time+rospy.Duration(5.0) > rospy.Time.now():
+                    elif self.calibrate_time+rospy.Duration(8.0) > rospy.Time.now():
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_optimized, encoding="passthrough"))
                         if beep_time+rospy.Duration(4.0) < rospy.Time.now():
                             beep_time = rospy.Time.now()
