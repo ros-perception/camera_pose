@@ -16,6 +16,8 @@ from camera_pose_calibration.msg import RobotMeasurement, CameraCalibration
 from camera_pose_calibration import init_optimization_prior
 from camera_pose_calibration import estimate
 from camera_pose_calibration import camera_info_converter
+from std_msgs.msg import Time
+from camera_pose_calibration.srv import Reset  ##
 
 class Estimator:
     def __init__(self):
@@ -24,6 +26,17 @@ class Estimator:
         self.pub = rospy.Publisher('camera_calibration', CameraCalibration)
         self.sub_reset = rospy.Subscriber('reset', Empty, self.reset_cb)
         self.sub_meas  = rospy.Subscriber('robot_measurement', RobotMeasurement, self.meas_cb)
+	self.s = rospy.Service('reset_measurement_history', Reset,self.reset_with_return)
+	## self.last_stamp_pub = rospy.Publisher("last_measurement_timestamp", Time)
+
+    def reset_with_return(self, req):
+	count = 0;
+	with self.lock:
+            self.state = None
+	    count = len(self.meas)
+            self.meas = []
+            rospy.loginfo('Reset calibration state')
+	return count
 
     def reset_cb(self, msg):
         self.reset()
@@ -58,6 +71,8 @@ class Estimator:
             print "MEAS", len(self.meas)
             for m in self.meas:
                 print " - stamp: %f"%m.header.stamp.to_sec()
+            
+            ## self.last_stamp_pub.publish(self.meas[-1].header.stamp)
 
             # initialize state if needed
             if True: #not self.state:
@@ -70,9 +85,10 @@ class Estimator:
             self.state = estimate.enhance(self.meas, self.state)
 
             # publish calibration state
-            res = CameraCalibration()
+            res = CameraCalibration()  ## initialize a new Message instance
             res.camera_pose = [camera.pose for camera in self.state.cameras]
             res.camera_id = [camera.camera_id for camera in self.state.cameras]
+	    res.last_measurement_timestamp = self.meas[-1].header.stamp ## yliu
             self.pub.publish(res)
 
 

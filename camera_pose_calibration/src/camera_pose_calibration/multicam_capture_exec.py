@@ -53,11 +53,13 @@ class CameraCaptureExecutive:
         self.cache = RobotMeasurementCache()
         self.lock = threading.Lock()
 
+
         # Specifies if we're currently waiting for a sample
         self.active = False
 
         # Construct a manager for each sensor stream (Don't enable any of them)
         cam_info_topic = rospy.get_param('~cam_info_topic', 'camera_info')
+	#print "cam_ids"
         self.cam_managers   = [ (cam_id,   CamManager(  cam_id,  cam_info_topic, 
                                                         self.add_cam_measurement) )   for cam_id   in cam_ids ]
 
@@ -98,7 +100,7 @@ class CameraCaptureExecutive:
 
 
     def add_cam_measurement(self, cam_id, msg):
-        #print "Adding [%s]" % cam_id
+        #print "Adding [%s]" 
         if len(msg.features.image_points) > 0:
             with self.lock:
                 self.cache.add_cam_measurement(cam_id, msg)

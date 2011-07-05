@@ -82,7 +82,7 @@ class RobotMeasurementCache:
         self._chain_sizes = chain_sizes
 
     def add_cam_measurement(self, cam_id, m):
-        cur_cache = self._cam_caches[cam_id]
+        cur_cache = self._cam_caches[cam_id]  # list
         cur_cache.append( m )
         cur_cache.sort(stamped_cmp)
         while len(cur_cache) > self._cam_sizes[cam_id]:
