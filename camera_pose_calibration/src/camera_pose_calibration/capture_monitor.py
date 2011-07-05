@@ -65,7 +65,7 @@ class ImageRenderer:
 
     def render(self, window):
         with self.lock:
-            if self.image and self.image_time + rospy.Duration(5.0) > rospy.Time.now() and self.info_time + rospy.Duration(5.0) > rospy.Time.now():
+            if self.image and self.image_time + rospy.Duration(8.0) > rospy.Time.now() and self.info_time + rospy.Duration(8.0) > rospy.Time.now():
                 cv.Resize(self.bridge.imgmsg_to_cv(self.image, 'rgb8'), window)
                 # render progress bar
                 interval = min(1,(self.interval / self.max_interval))
@@ -179,13 +179,16 @@ class Aggregator:
 
                 if self.capture_time+rospy.Duration(4.0) > rospy.Time.now():
                     if self.capture_time+rospy.Duration(2.0) > rospy.Time.now():
+                        # Captured checkerboards
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_captured, encoding="passthrough"))
                     elif self.calibrate_time+rospy.Duration(8.0) > rospy.Time.now():
+                        # Succeeded optimization
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_optimized, encoding="passthrough"))
-                        if beep_time+rospy.Duration(4.0) < rospy.Time.now():
+                        if beep_time+rospy.Duration(8.0) < rospy.Time.now():
                             beep_time = rospy.Time.now()
                             beep([(600, 63, 0.1), (800, 63, 0.1), (1000, 63, 0.3)])
                     else:
+                        # Failed optimization
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_failed, encoding="passthrough"))
                         if beep_time+rospy.Duration(4.0) < rospy.Time.now():
                             beep_time = rospy.Time.now()
