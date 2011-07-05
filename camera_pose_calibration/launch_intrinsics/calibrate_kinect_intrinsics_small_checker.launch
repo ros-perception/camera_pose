@@ -2,7 +2,7 @@
   <arg name="ns" />
 
   <node type="cameracalibrator.py" pkg="camera_calibration"
-        args="--size=5x4 --square=0.0249"
+        args="--size=5x4 --square=0.0245"
         name="calibration_gui" output="screen">
     <remap from="image" to="$(arg ns)/image_raw" />
     <remap from="camera" to="$(arg ns)" />
