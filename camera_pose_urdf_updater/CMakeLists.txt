@@ -30,5 +30,6 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #target_link_libraries(example ${PROJECT_NAME})
 
 
-rosbuild_add_executable(camera_pose_urdf_updater_node src/camera_pose_urdf_updater.cpp)
-
+#rosbuild_add_executable(camera_pose_urdf_updater_node src/camera_pose_urdf_updater.cpp)
+rosbuild_add_executable(camera_pose_urdf_updater2_node src/camera_pose_urdf_updater2.cpp)
+rosbuild_add_executable(camera_pose_static_transform_tf_broadcaster_node src/camera_pose_static_transform_tf_broadcaster.cpp)

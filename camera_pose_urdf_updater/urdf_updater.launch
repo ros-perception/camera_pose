@@ -1,0 +1,36 @@
+  <launch>
+	<arg name="new_cam_ns" />
+	<arg name="urdf_cam_ns" />
+
+	<arg name="mounting_frame" />
+
+	<arg name="urdf_input_file" />
+	<arg name="urdf_output_file" />
+
+	<arg name="checker_rows" />
+	<arg name="checker_cols" />
+	<arg name="checker_size" />
+	
+	<arg name="headless" default="false" />
+
+     	<!-- yliu -->
+	<param name="camera_pose_urdf_updater/output_filename" value="$(arg urdf_output_file)" />
+	<param name="robot_description" textfile="$(arg urdf_input_file)" />
+	<param name="new_cam_ns" value="$(arg new_cam_ns)" />
+	<param name="urdf_cam_ns" value ="$(arg urdf_cam_ns)" />
+	<param name="mounting_frame" value ="$(arg mounting_frame)" />
+
+    	<node pkg="camera_pose_urdf_updater" type="camera_pose_urdf_updater2_node" name="camera_pose_urdf_updater2" output="screen" >
+	</node>
+	<node pkg="camera_pose_urdf_updater" type="camera_pose_static_transform_tf_broadcaster_node" name="camera_pose_static_transform_tf_broadcaster" output="screen"/>
+
+	<!-- start camera pose calibration -->
+        <include file="$(find camera_pose_calibration)/launch_extrinsics/calibrate_2_camera.launch" >
+          <arg name="camera1_ns" value="$(arg new_cam_ns)" />
+          <arg name="camera2_ns" value="$(arg urdf_cam_ns)" />
+	  <arg name="checker_rows" value="$(arg checker_rows)" />
+	  <arg name="checker_cols" value="$(arg checker_cols)" />
+	  <arg name="checker_size" value="$(arg checker_size)" />
+	  <arg name="headless" value="$(arg headless)" />
+        </include>
+  </launch>

@@ -16,6 +16,8 @@
   <depend package="sensor_msgs"/>
   <depend package="camera_pose_calibration"/>
   <depend package="kdl"/>
+  <depend package="kdl_parser" />
+  <depend package="robot_state_publisher" />
 </package>
 
 
