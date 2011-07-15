@@ -78,7 +78,7 @@ class CameraCaptureExecutive:
 
     def request_callback(self, msg):
 
-        print "Got a request callback"
+        print "\n\n\n\n\033[34;1m------\n\033[0mGot a request callback"
 
         # See if the interval is big enough to care
         #if (msg.end - msg.start) < rospy.Duration(1,0):

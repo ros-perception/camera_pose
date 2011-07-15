@@ -14,11 +14,11 @@
 tf::Transform transform;
 std::string parent_frame_id;
 std::string child_frame_id; 
-std::string pdata_file;
-std::string qdata_file;
+
 
 void MyCallback(const geometry_msgs::TransformStamped::ConstPtr& msg)
 {	
+	printf("Current best available calibration result:\n");
 	printf("From: %s\n", msg->header.frame_id.c_str());
 	printf("To  : %s\n", msg->child_frame_id.c_str());
 	printf("Q = [%f, %f , %f, %f]\n",msg->transform.rotation.x, msg->transform.rotation.y, msg->transform.rotation.z, msg->transform.rotation.w);
@@ -30,44 +30,6 @@ void MyCallback(const geometry_msgs::TransformStamped::ConstPtr& msg)
 	child_frame_id = msg->child_frame_id;
 	
 
-	time_t rawtime;
-  	struct tm * timeinfo;
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-	 
-
-	std::ofstream qwriter(qdata_file.c_str(), std::ios::app); 
-	std::ofstream pwriter(pdata_file.c_str(), std::ios::app); 
-	
-	if (qwriter.is_open())
-  	{	
-		qwriter<<std::setw(2)<<timeinfo->tm_hour<<":"<<std::setw(2)<<timeinfo->tm_min<<":"<<std::setw(2)<<timeinfo->tm_sec;
-		
-		qwriter<<std::setw(15)<< msg->transform.rotation.x
-		       <<std::setw(15)<< msg->transform.rotation.y 
-		       <<std::setw(15)<< msg->transform.rotation.z
-		       <<std::setw(15)<< msg->transform.rotation.w<<std::endl;
-  	}
-	else
-  	{
-    		printf("Error opening file.\n\n");
- 	}
-	
-	if (pwriter.is_open())
-  	{	
-		pwriter<<std::setw(2)<<timeinfo->tm_hour<<":"<<std::setw(2)<<timeinfo->tm_min<<":"<<std::setw(2)<<timeinfo->tm_sec;
-		
-		pwriter<<std::setw(15)<<msg->transform.translation.x
-		       <<std::setw(15)<<msg->transform.translation.y
-		       <<std::setw(15)<<msg->transform.translation.z<<std::endl;
-  	}
-	else
-  	{
-    		printf("Error opening file. \n\n");
- 	}
-
-	qwriter.close();
-	pwriter.close();
 
 }
 
@@ -78,43 +40,6 @@ int main(int argc, char **argv)
 	
 	ros::Subscriber sub = n.subscribe("camera_pose_static_transform_update", 10,  MyCallback);
 	
-	
-	std::stringstream ss1;
-	std::stringstream ss2;
-	
-	time_t raw_time;
-  	struct tm * time_info;
-	time(&raw_time);
-	time_info = localtime(&raw_time);
-
-	ss1<<"pdata_"<< time_info->tm_year+1900
-	    << time_info->tm_mon+1
-	    << time_info->tm_mday <<"_"
-	    << time_info->tm_hour
-	    << time_info->tm_min <<time_info->tm_sec;
-	pdata_file = ss1.str();
-
-	ss2<<"qdata_"<< time_info->tm_year+1900
-	    << time_info->tm_mon+1
-	    << time_info->tm_mday <<"_"
-	    << time_info->tm_hour
-	    << time_info->tm_min <<time_info->tm_sec;
-	qdata_file = ss2.str();                      
-	
-	std::ofstream q_writer(qdata_file.c_str(), std::ios::trunc); 
-	std::ofstream p_writer(pdata_file.c_str(), std::ios::trunc); 
-	if (q_writer.is_open())  
-	{ q_writer<<"";}
-	else
-	{ printf("Error opening file.\n\n");}
-
-	if (p_writer.is_open())  
-	{ p_writer<<"";}
-	else
-	{ printf("Error opening file.\n\n");}
-
-	q_writer.close();
-	p_writer.close();
 
  	tf::TransformBroadcaster br;
 
