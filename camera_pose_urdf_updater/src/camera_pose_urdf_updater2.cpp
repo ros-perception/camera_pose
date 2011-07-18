@@ -315,15 +315,17 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 	
 
 	//--------------------------------------------------------
-	// Averaging between previous best twists and current twists
+	// Averaging 
 
 	if ( reset_flag == true)
 	{
 		best_prev_twists.push_back(prev_twist);
 		best_prev_frames.push_back(prev_frame);
 		
+		// 'rel1' means relative to the 1st calibration result
+
 		KDL::Twist prev_twist_rel1 = KDL::diff(     best_prev_frames[0], prev_frame);
-		// You shall not use twist diff(twist&, twist&) here!!
+		//// You shall not use twist diff(twist&, twist&) here!!
  		//KDL::Twist prev_twist_rel1 = KDL::diff(     best_prev_twists[0],
 		//		                            prev_twist  );
 		
@@ -338,19 +340,6 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 	        std::ofstream iwriter("debug_info", std::ios::app); 
 		if (iwriter.is_open())
   		{
-			//best_writer<<"p: " << std::setw(15)<< prev_p[0] 
-			//	   <<std::setw(15)<< prev_p[1]
-			//	   <<std::setw(15)<< prev_p[2]<<"  "<<"rpy: "	
-                        //         <<std::setw(15)<< prev_rpy[0] 
-                        //         <<std::setw(15)<< prev_rpy[1]
-			//	   <<std::setw(15)<< prev_rpy[2]<<std::endl;
-
-                        //best_writer<<"T"<< best_prev_twists.size() <<":     "<<"v: "<< std::setw(15)<<prev_twist.vel.data[0]
-			//		  << std::setw(15)<<prev_twist.vel.data[1]
-			//		  << std::setw(15)<<prev_twist.vel.data[2]<<"      w: "
-			//		  << std::setw(15)<<prev_twist.rot.data[0]
-			//		  << std::setw(15)<<prev_twist.rot.data[1]
-			//		  << std::setw(15)<<prev_twist.rot.data[2]<<"       weight:"<<prev_weight<<std::endl;
 
                         iwriter<<"F"<< best_prev_frames.size() <<":     "<<" p:"<< std::setw(15)<<px
 					  << std::setw(15)<<py
@@ -359,7 +348,7 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 					  << std::setw(15)<<qy
 					  << std::setw(15)<<qz
 					  << std::setw(15)<<qw <<"    |    weight:"<<prev_weight<<std::endl;
-			//best_writer<<"--------------"<<std::endl;
+			
 	  	}
 		else
 	  	{
@@ -392,37 +381,13 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 			rsum[5] += best_prev_twists_rel1[i].rot.data[2]*w;			
 		}	
 
-                //for ( int i = 0; i < c; i++)
-		//{
-		//	double w = prev_weights[i];
-		//	// w = 1;
-		//	sum[0] += best_prev_twists[i].vel.data[0]*w;
-		//	sum[1] += best_prev_twists[i].vel.data[1]*w;
-		//	sum[2] += best_prev_twists[i].vel.data[2]*w;
-		//	sum[3] += best_prev_twists[i].rot.data[0]*w;
-		//	sum[4] += best_prev_twists[i].rot.data[1]*w;
-		//	sum[5] += best_prev_twists[i].rot.data[2]*w;			
-		//}
-				
-		//for ( it = best_prev_twists.begin(); it < best_prev_twists.end(); it++ )
-		//{
-		//	sum[0] += (*it).vel.data[0];
-		//	sum[1] += (*it).vel.data[1];
-	 	//	sum[2] += (*it).vel.data[2];
-		//	sum[3] += (*it).rot.data[0];
-		//	sum[4] += (*it).rot.data[1];
-		//	sum[5] += (*it).rot.data[2];
-		//}
 
-		//KDL::Twist tw_av_prev = KDL::Twist(KDL::Vector(sum[0]/c, sum[1]/c, sum[2]/c), KDL::Vector(sum[3]/c, sum[4]/c, sum[5]/c));
 		
 		double c_w = (double)msg->m_count;
 		double total_w = prev_total_w + c_w;
 
 		KDL::Twist tw_rel1 = KDL::diff(best_prev_frames[0], fm);  // !!		
  
-		//KDL::Twist tw_av = KDL::Twist(KDL::Vector( (sum[0] + tw.vel.data[0]*c_w)/total_w,  (sum[1] + tw.vel.data[1]*c_w)/total_w,  (sum[2] + tw.vel.data[2]*c_w)/total_w), 
-                //                              KDL::Vector( (sum[3] + tw.rot.data[0]*c_w)/total_w,  (sum[4] + tw.rot.data[1]*c_w)/total_w,  (sum[5] + tw.rot.data[2]*c_w)/total_w ) ); //?
 
 		KDL::Twist tw_av_rel1 = KDL::Twist(KDL::Vector( (rsum[0] + tw_rel1.vel.data[0]*c_w)/total_w,  (rsum[1] + tw_rel1.vel.data[1]*c_w)/total_w,  (rsum[2] + tw_rel1.vel.data[2]*c_w)/total_w), 
                                                    KDL::Vector( (rsum[3] + tw_rel1.rot.data[0]*c_w)/total_w,  (rsum[4] + tw_rel1.rot.data[1]*c_w)/total_w,  (rsum[5] + tw_rel1.rot.data[2]*c_w)/total_w ) ); //?
@@ -540,7 +505,7 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
    	{
 		location =  match2.position();
 		//printf("location at: %d\n", location);
-		//urdf_tree.insert(match2[0].second-urdf_tree.begin()),"ddyy");
+		//urdf_tree.insert(match2[0].second-urdf_tree.begin()),"ddyy"); // y. d. :)
 	}
 
 

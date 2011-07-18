@@ -1,7 +1,7 @@
 <package>
   <description brief="camera_pose_urdf_updater">
 
-     camera_pose_urdf_updater
+     The camera_pose_urdf_updater is a tool that lets the user easily add a new camera frame to an existed urdf tree. Such a urdf tree must already include at least one camera frame. The new camera has to be rigidly mounted on a known link frame in the tree.
 
   </description>
   <author> Yiping Liu</author>
