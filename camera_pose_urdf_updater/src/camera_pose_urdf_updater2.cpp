@@ -720,13 +720,16 @@ int main(int argc, char **argv)
 	camera_pose_calibration::FramePair srv1;
 	srv1.request.frame1 = my_updater.mounting_frame;
 	srv1.request.frame2 = my_updater.urdf_cam_id;
+	
+	ros::service::waitForService("need_to_monitor_tf"); //wait until the service is available.
+
 	if (my_updater.monitor_client.call(srv1))
 	{
 		printf("The program will monitor tf change from the mounting frame to the urdf cam frame before doing optimization!\n\n");
 	}	
 	else
 	{
-		printf("Request to monitor tf returns ERROR!\n\n");
+		printf("\n\033[31;1m Request to monitor tf returns ERROR!\033[0m\n\n");
 	} 
 
 
