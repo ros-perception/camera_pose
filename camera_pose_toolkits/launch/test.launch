@@ -1,0 +1,6 @@
+  <launch>
+        <arg name = "cam_2" default = "new_cam"/>
+        <node pkg="camera_pose_toolkits" type="camera_dispatcher_node" name="camera_dispatcher" args="$(arg cam_2)" output="screen">
+        <remap from="camera_dispatcher" to="camera_dispatcher_for_$(arg cam_2)"/>
+	</node>
+  </launch>

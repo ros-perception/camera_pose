@@ -14,15 +14,17 @@
 	<arg name="headless" default="false" />
 
      	<!-- yliu -->
-	<param name="camera_pose_urdf_updater/output_filename" value="$(arg urdf_output_file)" />
+	<param name="urdf_output_filename" value="$(arg urdf_output_file)" />
 	<param name="robot_description" textfile="$(arg urdf_input_file)" />
 	<param name="new_cam_ns" value="$(arg new_cam_ns)" />
 	<param name="urdf_cam_ns" value ="$(arg urdf_cam_ns)" />
 	<param name="mounting_frame" value ="$(arg mounting_frame)" />
+        <param name="optimizer_conditional_resetter_enable" value ="True" />
 
-    	<node pkg="camera_pose_urdf_updater" type="camera_pose_urdf_updater2_node" name="camera_pose_urdf_updater2" output="screen" >
+    	<node pkg="camera_pose_toolkits" type="transform_finder_node" name="transform_finder" output="screen" >
 	</node>
-	<node pkg="camera_pose_urdf_updater" type="camera_pose_static_transform_tf_broadcaster_node" name="camera_pose_static_transform_tf_broadcaster" output="screen"/>
+	<node pkg="camera_pose_toolkits" type="urdf_writer_node" name="urdf_writer" output="screen"/>
+	<node pkg="camera_pose_toolkits" type="camera_pose_static_transform_tf_broadcaster_node" name="camera_pose_static_transform_tf_broadcaster" output="screen"/>
 
 	<!-- start camera pose calibration -->
         <include file="$(find camera_pose_calibration)/launch_extrinsics/calibrate_2_camera.launch" >

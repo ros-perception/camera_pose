@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
 
     rospy.init_node('start_interval_intersection')
-    client = actionlib.SimpleActionClient('interval_intersection_config', ConfigAction)
+    client = actionlib.SimpleActionClient('interval_intersection_config', ConfigAction) # ConfigAction, message in pr2_calibration stack, interval_intersection pkg
     print "Waiting for Server"
     client.wait_for_server()
     print "Found Server"

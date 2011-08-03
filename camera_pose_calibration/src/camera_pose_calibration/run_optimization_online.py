@@ -20,9 +20,7 @@ from camera_pose_calibration import init_optimization_prior
 from camera_pose_calibration import estimate
 from camera_pose_calibration import camera_info_converter
 from std_msgs.msg import Time
-from camera_pose_calibration.srv import Reset  #
-from camera_pose_calibration.srv import FramePair  ## 
-from camera_pose_calibration.srv import FramePairResponse  ##
+from sensor_msgs.msg import CameraInfo
 
 class Estimator:
     def __init__(self):
@@ -40,30 +38,18 @@ class Estimator:
         self.pub = rospy.Publisher('camera_calibration', CameraCalibration)
         self.sub_reset = rospy.Subscriber('reset', Empty, self.reset_cb)
         self.sub_meas  = rospy.Subscriber('robot_measurement', RobotMeasurement, self.meas_cb)
-	self.s = rospy.Service('reset_measurement_history', Reset,self.reset_with_return)
-        self.s1 = rospy.Service('need_to_monitor_tf', FramePair, self.monitor_tf_callback)
 
-	## self.last_stamp_pub = rospy.Publisher("last_measurement_timestamp", Time)
+        self.prev_tf_pair=()
+        self.prev_3_frames=()
+        self.reset_flag = False
+        self.frames_changed = False
 
-    def reset_with_return(self, req):
-	count = 0;
-	with self.lock:
-            self.state = None
-	    count = len(self.meas)
-            self.meas = []
-            rospy.loginfo('Reset calibration state')
-	return count
 
     def reset_cb(self, msg):
         self.reset()
 
-    def monitor_tf_callback(self, req):
-        if not self.tf_listener:
-            self.tf_listener = tf.TransformListener() # upon service request, set up a new tf listener
-        self.tf_check_pairs.append((req.frame1, req.frame2))
-	print "Request noted!\n"
-	return FramePairResponse()
-	#self.prev_tf_transforms = ((0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 0.0))
+ 
+
 
 
 
@@ -110,8 +96,52 @@ class Estimator:
             #for camera in msg.M_cam:
             #    camera.cam_info = camera_info_converter.unbin(camera.cam_info)
 
-	    
+
+
+            if rospy.has_param('optimizer_conditional_resetter_enable'):
+                self.reset_flag = rospy.get_param('optimizer_conditional_resetter_enable')
+            else:
+                self.reset_flag = False
+
+
+
+
+            if self.reset_flag == True :  
+                if not self.tf_listener:
+                    self.tf_listener = tf.TransformListener() # upon service request, set up a new tf listener
+	        
+                urdf_cam_ns = rospy.get_param("urdf_cam_ns")
+                new_cam_ns = rospy.get_param("new_cam_ns")
+                u_info = rospy.wait_for_message(urdf_cam_ns+'/camera_info', CameraInfo)
+                n_info = rospy.wait_for_message(new_cam_ns+'/camera_info', CameraInfo)
+                urdf_cam_frame = u_info.header.frame_id
+                new_cam_frame = n_info.header.frame_id
+                mounting_frame = rospy.get_param("mounting_frame")
+            
+                # if any of the frames has changed...
+                if self.prev_3_frames != () :
+                    if self.prev_3_frames != (urdf_cam_frame, new_cam_frame, mounting_frame):
+                        self.frames_changed = True       
+
+                if self.frames_changed :
+                    self.state = None  
+                    self.meas = []  # clear cache
+                    self.timestamps = []
+		    self.measurement_count = 0
+                    self.prev_tf_transforms = {}
+                    rospy.loginfo('Reset calibration state')
+                    print "\033[43;1mTarget frames have changed. Clean up everything and start over! \033[0m\n\n"
+                    self.frames_changed = False
+
            
+                if len(self.tf_check_pairs) > 0 :
+                    self.prev_tf_pair = tf_check_pairs[0]    
+                self.tf_check_pairs = []
+                self.tf_check_pairs.append((mounting_frame, urdf_cam_frame)) # only keep one pair in the list at a time
+
+                self.prev_3_frames = (urdf_cam_frame, new_cam_frame, mounting_frame)
+                self.prev_tf_pair = (mounting_frame, urdf_cam_frame)
+
 	    TheMoment = msg.header.stamp
 
 	    # check for tf transform changes

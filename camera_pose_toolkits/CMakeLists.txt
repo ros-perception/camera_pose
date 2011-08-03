@@ -19,7 +19,7 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined messages
 #rosbuild_genmsg()
 #uncomment if you have defined services
-#rosbuild_gensrv()
+rosbuild_gensrv()
 
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
@@ -30,6 +30,8 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #target_link_libraries(example ${PROJECT_NAME})
 
 
-#rosbuild_add_executable(camera_pose_urdf_updater_node src/camera_pose_urdf_updater.cpp)
-rosbuild_add_executable(camera_pose_urdf_updater2_node src/camera_pose_urdf_updater2.cpp)
+rosbuild_add_executable(transform_finder_node src/transform_finder.cpp)
 rosbuild_add_executable(camera_pose_static_transform_tf_broadcaster_node src/camera_pose_static_transform_tf_broadcaster.cpp)
+rosbuild_add_executable(urdf_writer_node src/urdf_writer.cpp)
+rosbuild_add_executable(camera_dispatcher_node src/camera_dispatcher.cpp)
+rosbuild_add_executable(transform_playback_node src/transform_playback.cpp)

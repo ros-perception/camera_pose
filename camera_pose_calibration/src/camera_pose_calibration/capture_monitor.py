@@ -41,6 +41,7 @@ class ImageRenderer:
         self.max_interval = 1.0
 
         self.font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, 1.5, thickness = 2)
+        self.font1 = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.10, 1, thickness = 1)
         self.info_sub = rospy.Subscriber(ns+'/camera_info', CameraInfo, self.info_cb)
         self.image_sub = rospy.Subscriber(ns+'/image_throttle', Image, self.image_cb)
         self.interval_sub = rospy.Subscriber(ns+'/settled_interval', Interval, self.interval_cb)
@@ -76,6 +77,7 @@ class ImageRenderer:
                              (int(0.05*window.width), int(window.height*0.9)),
                              (int(window.width*0.9+0.05*window.width), int(window.height*0.95)),
                              (0, interval*255, (1-interval)*255))
+                cv.PutText(window, self.ns, (int(window.width * .05), int(window.height * 0.1)), self.font1, (0,0,255))
                 if self.features and self.features.header.stamp + rospy.Duration(4.0) > self.image.header.stamp:
                     w_scaling =  float (window.width) / self.image.width
                     h_scaling =  float (window.height) / self.image.height

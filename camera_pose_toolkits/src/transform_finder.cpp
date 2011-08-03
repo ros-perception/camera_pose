@@ -1,4 +1,8 @@
-// yliu 06/23/2011 for two cameras only.
+// yliu 
+// transform_finder
+// urdf_cam_frame | new_cam_frame | mounting_frame
+// 06/23/2011
+// 08/03/2011
 
 #include "ros/ros.h"
 #include "ros/topic.h"
@@ -21,8 +25,6 @@
 #include <time.h>
 #include <boost/bind.hpp>
 #include <math.h>
-#include <camera_pose_calibration/Reset.h>
-#include <camera_pose_calibration/FramePair.h>
 #include <iomanip>
 #include <vector>
 
@@ -30,7 +32,7 @@
 
 
 
-class Updater
+class T_Finder
 {
 public:
 
@@ -46,9 +48,9 @@ std::string new_cam_ns; //camera name space
 std::string urdf_cam_ns;
 std::string new_cam_id; //camera frame id
 std::string urdf_cam_id;
-std::string urdf_tree;
-std::string output_filename;
-KDL::Tree kdl_tree;
+// **
+// **
+// **
 std::string mounting_frame;
 tf::StampedTransform prev_s_transform;
 //int measurement_count;
@@ -76,15 +78,65 @@ double prev_p[3];
 double prev_rpy[3];
 int callback_count;
 
+//
+std::string prev_new_cam_id;
+std::string prev_urdf_cam_id;
+std::string prev_mounting_frame;
+
 
 void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 {
+
+
+	n.getParam("new_cam_ns", new_cam_ns);
+	n.getParam("urdf_cam_ns", urdf_cam_ns);
+
+	std::string tp1;
+	tp1 = new_cam_ns + "/camera_info";
+	sensor_msgs::CameraInfo::ConstPtr msg1 = ros::topic::waitForMessage<sensor_msgs::CameraInfo>(tp1,n);
+	new_cam_id = msg1->header.frame_id;
+
+	std::string tp2;
+	tp2 = urdf_cam_ns + "/camera_info";
+	sensor_msgs::CameraInfo::ConstPtr msg2 = ros::topic::waitForMessage<sensor_msgs::CameraInfo>(tp2, n);
+	urdf_cam_id = msg2->header.frame_id;
+	
+	n.getParam("mounting_frame", mounting_frame);
+
+	printf("New camera frame: %s\n", new_cam_id.c_str());
+	printf("New camera's mounting frame: %s\n", mounting_frame.c_str());
+	printf("Urdf camera frame: %s\n", urdf_cam_id.c_str());
+	
+        // ------------------------------------------------
+
+        // reset the lists if the target frames are found different from last time
+        if (callback_count > 0 )
+	{
+		if (  (prev_new_cam_id != new_cam_id) || (prev_mounting_frame != mounting_frame) || (prev_urdf_cam_id != urdf_cam_id) )
+		{
+			best_prev_twists.clear();
+			best_prev_frames.clear();
+			best_prev_twists_rel1.clear();
+			prev_weights.clear();
+		        callback_count = 0;
+                        is_1st_time = true;
+	                printOnce_f = 1;
+	                printOnce_t = 1;
+	                printOnce_a = 1;
+
+		        printf("Note: change of frames!\n ");
+		}
+	}
+
+
+
+
 	callback_count++;
 	printf("Calibration: \033[32;1m%d\033[0m\n", callback_count);	
 	
 	printf("--%f\n", msg->time_stamp[0].toSec());
 	printf("--%f\n", prev_stamp0.toSec());
-	if ( (msg->time_stamp[0].toSec() != prev_stamp0.toSec()) && (is_1st_time == false) )
+	if ( (msg->time_stamp[0].toSec() != prev_stamp0.toSec()) && (is_1st_time == false) )   // check if the cache for previous measurements has been cleared.
 	{
 		reset_flag = true;
 	}
@@ -243,15 +295,17 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
   	{
 		if (reset_flag == true)
 		{
-			fwriter<<"--measurement cache reset!--"<<std::endl;
+			fwriter<<"--urdf_cam_frame moved, measurement cache reset!--"<<std::endl;
 		}
-		if (printOnce_f == 1)
+
+		if ( 	printOnce_f == 1 )
 		{
 			fwriter<<"----------------------"<<std::endl;
 			fwriter<<"parent_frame: "<< mounting_frame <<std::endl;
 			fwriter<<"child_frame:  "<< new_cam_id <<std::endl;
 			printOnce_f = 0;
-		}	
+		}
+	
 		fwriter<< std::setw(3) << callback_count<<". " << timeinfo->tm_year+1900<<"-"
 	               << std::setfill('0') << std::setw(2) << timeinfo->tm_mon+1<<"-"
 	               << std::setfill('0') << std::setw(2) << timeinfo->tm_mday <<" "
@@ -278,15 +332,17 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
   	{
 		if (reset_flag == true)
 		{
-			twriter<<"measurement cache reset!"<<std::endl;
+			twriter<<"--urdf_cam_frame moved, measurement cache reset!--"<<std::endl;
 		}	
-		if (printOnce_t == 1)
+
+		if (  printOnce_t == 1  )
 		{
 			twriter<<"----------------------"<<std::endl;
 			twriter<<"parent_frame: "<< mounting_frame <<std::endl;
 			twriter<<"child_frame:  "<< new_cam_id <<std::endl;
-			printOnce_t = 0;
-		}	
+		        printOnce_t = 0;
+		}
+
 		twriter<< std::setw(3) << callback_count<<". "<< timeinfo->tm_year+1900<<"-"
 	               << std::setfill('0') << std::setw(2) << timeinfo->tm_mon+1<<"-"
 	               << std::setfill('0') << std::setw(2) << timeinfo->tm_mday <<" "
@@ -317,6 +373,9 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 	//--------------------------------------------------------
 	// Averaging 
 
+
+
+
 	if ( reset_flag == true)
 	{
 		best_prev_twists.push_back(prev_twist);
@@ -338,7 +397,7 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 		prev_weights.push_back(prev_weight);		
 
 	        std::ofstream iwriter("debug_info", std::ios::app); 
-		if (iwriter.is_open())
+		if (iwriter.is_open()) // i for intermediate
   		{
 
                         iwriter<<"F"<< best_prev_frames.size() <<":     "<<" p:"<< std::setw(15)<<px
@@ -357,6 +416,10 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 		iwriter.close();
 		
 	}
+
+
+
+
 
 	if ( best_prev_twists.size() > 0)
 	{	
@@ -409,7 +472,7 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
   	{
 		if (reset_flag == true)
 		{
-			awriter<<"measurement cache reset!"<<std::endl;
+			awriter<<"urdf_cam_frame movded, measurement cache reset!"<<std::endl;
 		}	
 		if (printOnce_a == 1)
 		{
@@ -445,130 +508,6 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 
 
 	//--------------------------------------------------------
-
-	std::string::const_iterator start, end; 
-
-	std::string snippet_to_remove_a = "((^)|(^ +))<joint name=\"" + msg->camera_id[new_cam_index] +  "_joint\"" + ".*" + "</joint>\n";
-	boost::regex re1a(snippet_to_remove_a.c_str());
-	std::string snippet_to_remove_b = "((^)|(^ +))<link name=\"" + msg->camera_id[new_cam_index]  + ".*" + "/>\n";
-	boost::regex re1b(snippet_to_remove_b.c_str());
-	std::string snippet_to_remove_c = "((^)|(^ +))<!-- added after running camera_pose_calibration -->\n";
-	boost::regex re1c(snippet_to_remove_c.c_str());
-
-	boost::match_results<std::string::const_iterator> match1;  
-	boost::match_flag_type flag1 = boost::match_default;
-
-	printf("\nRemoving xml snippets previously added by camera_pose_urdf_updater...\n");
-
-   	start = urdf_tree.begin(); 
-   	end = urdf_tree.end(); 
-	if (regex_search(start, end, match1, re1a, flag1)) 
-	{	
-		urdf_tree.erase(match1.position(), match1[0].second-match1[0].first);
-		// match1[0].first : The start of the sequence of characters that matched the regular expression
-		// match1[0].second : The end of the sequence of characters that matched the regular expression		
-		//printf("%d\n", match1[0].second-match1[0].first);
-		printf("...\n");
-	}
-
-   	start = urdf_tree.begin(); 
-   	end = urdf_tree.end(); 
-	if (regex_search(start, end, match1, re1b, flag1)) 
-	{	
-		urdf_tree.erase(match1.position(), match1[0].second-match1[0].first);
-		//printf("%d\n", match1[0].second-match1[0].first);
-		printf("...\n");
-	}
-
-   	start = urdf_tree.begin(); 
-   	end = urdf_tree.end();
-	if (regex_search(start, end, match1, re1c, flag1)) 
-	{	
-		urdf_tree.erase(match1.position(), match1[0].second-match1[0].first);
-		//printf("%d\n", match1[0].second-match1[0].first);
-		printf("...\n");
-	}
-
-	//
-	printf("Adding the xml snippet for the new camera frame to the urdf file ...\n\n");
-
-
-   	start = urdf_tree.begin(); 
-   	end = urdf_tree.end(); 
-
-	boost::match_results<std::string::const_iterator> match2;  //smatch
-	boost::match_flag_type flags = boost::match_default;
-
-	int location = 0;
-	boost::regex re2("</robot>");
-	if(regex_search(start, end, match2, re2, flags))   //since there is only one occurrence of </robot> in the .urdf file
-   	{
-		location =  match2.position();
-		//printf("location at: %d\n", location);
-		//urdf_tree.insert(match2[0].second-urdf_tree.begin()),"ddyy"); // y. d. :)
-	}
-
-
-	//--------------------------------------------------------
-	//creating xml snippet
-
-	std::ostringstream buffer1, buffer2;
-	buffer1 << kRoll <<" " << kPitch <<" "<< kYaw;
-	buffer2 << px << " " << py << " " << pz;  //
-	std::string urdf_snippet =
-	 "  <!-- added after running camera_pose_calibration -->\n"
-       	 "  <joint name=\""+ msg->camera_id[new_cam_index] +  "_joint\" type=\"fixed\">" + "\n" +
-	 "     <origin rpy=\"" + buffer1.str() +  "\" xyz=\"" + buffer2.str() + "\"/>" + "\n" +
-	 "     <parent link=\"" + mounting_frame + "\"/>" + "\n" +
-	 "     <child link=\"" + msg->camera_id[new_cam_index] + "\"/>" + "\n" +
-	 "  </joint>" + "\n" +
-	 "  <link name=\""+ msg->camera_id[new_cam_index] + "\" type=\"camera\"/>" + "\n";
-
-	urdf_tree.insert(location, urdf_snippet);
-
-	std::ofstream writer(output_filename.c_str(), std::ios::trunc); // in ~/.ros
-
-	if (writer.is_open())
-  	{
-		writer<<urdf_tree;
-		printf("New urdf file generated.\n");
-		printf("File path:  %s\n\n", output_filename.c_str());
-  	}
-	else
-  	{
-    		printf("Error opening file.\n\n");
- 	}
-
-	writer.close();
-
-
-
-	//--------------------------------------------------------
-
-	//checking if the tree is still OK. 
-	std::string ss="\"" + msg->camera_id[urdf_cam_index] +"\""; 
-	std::string::const_iterator s1,e1;
-	s1 = urdf_tree.begin();
-	e1 = urdf_tree.end();
-	boost::match_results<std::string::const_iterator> m;
-	boost::match_flag_type f = boost::match_default;
-
-	ss = "<link name=" + ss ;
-	//printf("%s\n", ss.c_str());
-	boost::regex pa(ss);  
-
-	if(regex_search(s1, e1, m, pa, f)) 
-	{
-		printf("The parent link of [%s_joint] is verifed in the updated .urdf file (at %d)\n", msg->camera_id[new_cam_index].c_str(), int(m.position()));
-	}
-	else
-	{
-    		ROS_WARN("The parent link of [%s_joint] seems missing in the updated .urdf file.\n You will receive an error if you do\n\n $ rosrun urdf check_urdf your_urdf.urdf\n\n", 
-				msg->camera_id[new_cam_index].c_str()  );
-	}	
-
-
-	//--------------------------------------------------------
 	// publish updated static transform information 
 		
 	geometry_msgs::TransformStamped T;
@@ -598,6 +537,12 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 
 
 	//----------------------------------------------------------------
+	prev_new_cam_id = new_cam_id;
+	prev_urdf_cam_id = urdf_cam_id;
+	prev_mounting_frame = mounting_frame;
+
+
+	//----------------------------------------------------------------
 	printf("Done.\n");
 
 }
@@ -612,98 +557,68 @@ void MyCallback(const camera_pose_calibration::CameraCalibration::ConstPtr& msg)
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "camera_pose_urdf_updater2");
+	ros::init(argc, argv, "transform_finder");
 	
-	Updater my_updater;
+	T_Finder my_finder;
 
-	//my_updater.measurement_count = 0;
-	my_updater.prev_s_transform.setOrigin(tf::Vector3(0.0, 0.0, 0.0));
-	my_updater.prev_s_transform.setRotation( tf::Quaternion(1.0, 0.0, 0.0, 0.0));
+	//my_finder.measurement_count = 0;
+	my_finder.prev_s_transform.setOrigin(tf::Vector3(0.0, 0.0, 0.0));
+	my_finder.prev_s_transform.setRotation( tf::Quaternion(1.0, 0.0, 0.0, 0.0));
 		
-	my_updater.n.getParam("new_cam_ns", my_updater.new_cam_ns);
-	my_updater.n.getParam("urdf_cam_ns", my_updater.urdf_cam_ns);
 
-	std::string tp1;
-	tp1 = my_updater.new_cam_ns + "/camera_info";
-	sensor_msgs::CameraInfo::ConstPtr msg1 = ros::topic::waitForMessage<sensor_msgs::CameraInfo>(tp1, my_updater.n);
-	my_updater.new_cam_id = msg1->header.frame_id;
 
-	std::string tp2;
-	tp2 = my_updater.urdf_cam_ns + "/camera_info";
-	sensor_msgs::CameraInfo::ConstPtr msg2 = ros::topic::waitForMessage<sensor_msgs::CameraInfo>(tp2, my_updater.n);
-	my_updater.urdf_cam_id = msg2->header.frame_id;
+	// ***
+
+
+	my_finder.prev_new_cam_id = "";
+	my_finder.prev_urdf_cam_id = "";
+	my_finder.prev_mounting_frame = "";
+
+	// ** 
+	// **
+
+	printf("\n\033[32;1m transform_finder ready...\033[0m\n\n");
+
+
+	my_finder.printOnce_f = 1;
+	my_finder.printOnce_t = 1;
+	my_finder.printOnce_a = 1;
+
+	my_finder.f_log_file = "calibration_log_frame";
+	my_finder.t_log_file = "calibration_log_twist";
+	my_finder.avg_res_file = "averaged_result";
 	
-	my_updater.n.getParam("mounting_frame", my_updater.mounting_frame);
-
-	printf("New camera frame: %s\n", my_updater.new_cam_id.c_str());
-	printf("New camera's mounting frame: %s\n", my_updater.mounting_frame.c_str());
-	printf("Urdf camera frame: %s\n", my_updater.urdf_cam_id.c_str());
-
-
-	my_updater.n.getParam("robot_description", my_updater.urdf_tree);
-	//my_updater.n.param("robot_description", urdf_tree, std::string() );  // string ( ) -- Construct string object, content is initialized to an empty string
-
-	my_updater.n.getParam("/camera_pose_urdf_updater/output_filename", my_updater.output_filename);
-
-	printf("\n\033[32;1m camera_pose_urdf_updater ready...\033[0m\n\n");
-
-
-	my_updater.printOnce_f = 1;
-	my_updater.printOnce_t = 1;
-	my_updater.printOnce_a = 1;
-
-	my_updater.f_log_file = "calibration_log_frame";
-	my_updater.t_log_file = "calibration_log_twist";
-	my_updater.avg_res_file = "averaged_result";
-	
-	my_updater.prev_stamp0 = ros::Time();
-	my_updater.is_1st_time = true;
-	my_updater.reset_flag = false;
+	my_finder.prev_stamp0 = ros::Time();
+	my_finder.is_1st_time = true;
+	my_finder.reset_flag = false;
 
 	       
         std::ofstream iwriter("debug_info", std::ios::out | std::ios::trunc); 
 	iwriter.close();
 
-        std::ofstream awriter(my_updater.avg_res_file.c_str(), std::ios::out | std::ios::trunc); 
+        std::ofstream awriter(my_finder.avg_res_file.c_str(), std::ios::out | std::ios::trunc); 
 	awriter.close();
 	
-	my_updater.callback_count = 0;
+	my_finder.callback_count = 0;
 
 
-//---------------------------------------------------
-   	
-	if (!kdl_parser::treeFromString(my_updater.urdf_tree, my_updater.kdl_tree)) //create a KDL Tree from parameter server
-	{
-	      ROS_ERROR("Failed to construct kdl tree");
-	      return false;
-	}
-//---------------------------------------------------
+	//---------------------------------------------------
+	// **
+
+
+	//---------------------------------------------------
 	//reset_pub = n.advertise<std_msgs::Empty>("reset", 10);
 
-	my_updater.monitor_client = my_updater.n.serviceClient<camera_pose_calibration::FramePair>("need_to_monitor_tf");
-	ros::Duration(0.2).sleep();
-	camera_pose_calibration::FramePair srv1;
-	srv1.request.frame1 = my_updater.mounting_frame;
-	srv1.request.frame2 = my_updater.urdf_cam_id;
-	
-	ros::service::waitForService("need_to_monitor_tf"); //wait until the service is available.
+        // ***
+        //my_finder.monitor_client = my_finder.n.serviceClient<camera_pose_calibration::FramePair>("need_to_monitor_tf");
+	//ros::Duration(0.2).sleep();
 
-	if (my_updater.monitor_client.call(srv1))
-	{
-		printf("The program will monitor tf change from the mounting frame to the urdf cam frame before doing optimization!\n\n");
-	}	
-	else
-	{
-		printf("\n\033[31;1m Request to monitor tf returns ERROR!\033[0m\n\n");
-	} 
+	//my_finder.reset_client = my_finder.n.serviceClient<camera_pose_calibration::Reset>("reset_measurement_history");
 
+ 	my_finder.pub = my_finder.n.advertise<geometry_msgs::TransformStamped>("camera_pose_static_transform_update", 10); // this is to provide an immediate way to examine the newly added frame. 
+	ros::Subscriber sub = my_finder.n.subscribe("camera_calibration", 1000, &T_Finder::MyCallback, &my_finder);
 
-	//my_updater.reset_client = my_updater.n.serviceClient<camera_pose_calibration::Reset>("reset_measurement_history");
-
- 	my_updater.pub = my_updater.n.advertise<geometry_msgs::TransformStamped>("camera_pose_static_transform_update", 10); // this is to provide an immediate way to examine the newly added frame. 
-	ros::Subscriber sub = my_updater.n.subscribe("camera_calibration", 1000, &Updater::MyCallback, &my_updater);
-
-	//ros::Subscriber sub = my_updater.n.subscribe<camera_pose_calibration::CameraCalibration>("camera_calibration", 1000, boost::bind(&Updater::MyCallback, &my_updater, _1));
+	//ros::Subscriber sub = my_finder.n.subscribe<camera_pose_calibration::CameraCalibration>("camera_calibration", 1000, boost::bind(&T_Finder::MyCallback, &my_finder, _1));
 	//// Note that you need to explicitly specify the template parameter here because it cannot be deduced from the value returned by bind()
 	//// For regular function pointers, it is optional to use the address-of operator (&) when taking the address of a function, but it is required for taking the address of member functions.
 	ros::spin();
