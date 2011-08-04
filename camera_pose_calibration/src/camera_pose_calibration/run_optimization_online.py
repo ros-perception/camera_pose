@@ -107,7 +107,7 @@ class Estimator:
 
 
 
-            if self.reset_flag == True :  
+            if self.reset_flag == True :  	        
                 urdf_cam_ns = rospy.get_param("urdf_cam_ns")
                 new_cam_ns = rospy.get_param("new_cam_ns")
                 u_info = rospy.wait_for_message(urdf_cam_ns+'/camera_info', CameraInfo)
@@ -115,6 +115,7 @@ class Estimator:
                 urdf_cam_frame = u_info.header.frame_id
                 new_cam_frame = n_info.header.frame_id
                 mounting_frame = rospy.get_param("mounting_frame")
+                
             
                 # if any of the frames has changed...
                 if self.prev_3_frames != () :
