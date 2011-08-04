@@ -31,7 +31,8 @@ class Estimator:
 
         self.prev_tf_transforms = {}
         self.tf_check_pairs = []
-        self.tf_listener = None
+        self.tf_listener = tf.TransformListener() 
+
 	self.measurement_count = 0
 	self.timestamps =[]
 
@@ -107,9 +108,6 @@ class Estimator:
 
 
             if self.reset_flag == True :  
-                if not self.tf_listener:
-                    self.tf_listener = tf.TransformListener() # upon service request, set up a new tf listener
-	        
                 urdf_cam_ns = rospy.get_param("urdf_cam_ns")
                 new_cam_ns = rospy.get_param("new_cam_ns")
                 u_info = rospy.wait_for_message(urdf_cam_ns+'/camera_info', CameraInfo)
@@ -135,7 +133,7 @@ class Estimator:
 
            
                 if len(self.tf_check_pairs) > 0 :
-                    self.prev_tf_pair = tf_check_pairs[0]    
+                    self.prev_tf_pair = self.tf_check_pairs[0]
                 self.tf_check_pairs = []
                 self.tf_check_pairs.append((mounting_frame, urdf_cam_frame)) # only keep one pair in the list at a time
 
