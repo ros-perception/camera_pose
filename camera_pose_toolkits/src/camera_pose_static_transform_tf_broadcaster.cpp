@@ -23,23 +23,35 @@ static std::list<geometry_msgs::TransformStamped> T_list;
 
 void MyCallback(const geometry_msgs::TransformStamped::ConstPtr& msg)
 {	
-	//printf("Current best available calibration result:\n");
 	//printf("From: %s\n", msg->header.frame_id.c_str());
 	//printf("To  : %s\n", msg->child_frame_id.c_str());
 	//printf("Q = [%f, %f , %f, %f]\n",msg->transform.rotation.x, msg->transform.rotation.y, msg->transform.rotation.z, msg->transform.rotation.w);
 	//printf("p = [%f, %f, %f]\n\n", msg->transform.translation.x, msg->transform.translation.y, msg->transform.translation.z);
 
-	for (std::list<geometry_msgs::TransformStamped>::iterator it = T_list.begin(); it != T_list.end(); ++it)
+        //printf("call back\n");
+
+
+	if (T_list.size() > 0)	
 	{
-		if ( msg->header.frame_id == it->header.frame_id &&  msg->child_frame_id == it->child_frame_id )
+		for (std::list<geometry_msgs::TransformStamped>::iterator it = T_list.begin(); it != T_list.end(); ++it)
 		{
-			// replace
-			it->transform = msg->transform;
+			if ( msg->header.frame_id == it->header.frame_id &&  msg->child_frame_id == it->child_frame_id )
+			{
+				// replace
+		                //printf("replacing\n");
+				it->transform = msg->transform;
+			}
+			else
+			{
+		                //printf("pushing back\n");
+				T_list.push_back( *msg );
+			}
 		}
-		else
-		{
-			T_list.push_back( *msg );
-		}
+	}
+	else
+	{
+                //printf("pushing back\n");
+		T_list.push_back( *msg );
 	}
 
 }
@@ -62,6 +74,7 @@ int main(int argc, char **argv)
 	// Is this a race condition ??  -- NO
 	while(n.ok() )  //to see whether it's yet time to exit.
 	{
+                //printf("looping\n");
 		ros::spinOnce();
 		for (std::list<geometry_msgs::TransformStamped>::iterator it = T_list.begin(); it != T_list.end(); ++it)
 		{
