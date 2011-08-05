@@ -1,0 +1,4 @@
+  <launch>
+    	<node pkg="camera_pose_toolkits" type="transform_playback_node" name="transform_playback" output="screen" >
+	</node>
+  </launch>
