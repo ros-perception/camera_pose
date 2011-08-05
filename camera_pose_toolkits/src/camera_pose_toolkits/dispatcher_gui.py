@@ -7,7 +7,6 @@ import rospy
 import rosservice
 import socket
 import wx
-from camera_pose_calibration.srv import *
 from camera_pose_toolkits.srv import *
 from std_msgs.msg import String
 
