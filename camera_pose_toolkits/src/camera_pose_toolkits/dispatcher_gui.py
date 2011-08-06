@@ -15,7 +15,7 @@ from calibration_msgs.msg import *
 class MainWindow(wx.Frame):
     def __init__(self, output_ns):
 	
-	# ..._dispatcher_gui on ... ?
+        # ..._dispatcher_gui on ... ?
     
    
         title = '[' + output_ns + ']' + ' dispatcher gui on %s' % socket.gethostname()
@@ -36,7 +36,7 @@ class MainWindow(wx.Frame):
 
         self.statusbar = self.CreateStatusBar()
         self.statusbar.SetStatusText('[' + self.output_ns + ']' +' now relays:  ')
-	#self.sub = None 
+        #self.sub = None 
         self.sub = rospy.Subscriber(self.output_ns+"/selected", String, self.cb_func)
         self.features_sub = rospy.Subscriber(self.output_ns+'/features', CalibrationPattern, self.features_cb)
         self.cb_in_sight = 0
@@ -59,7 +59,7 @@ class MainWindow(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.on_timer2, self.timer2)
         self.timer2.Start(1000, False)
 	
-	self.selected_cam_ns = ""
+        self.selected_cam_ns = ""
 
 
 
@@ -79,21 +79,21 @@ class MainWindow(wx.Frame):
         #print 'time out 1'
         #self.camera_ns_list = [  s[:-len('/image_rect')]  for s in rosservice.get_service_list() if s.endswith('/image_rect')] 
         topic_list=[ tn_tt[0]  for tn_tt in rospy.client.get_published_topics()]  #  [topic name, topic type]
-	self.camera_ns_list = [ tn[:-len('/image_rect')] for tn in topic_list if tn.endswith('/image_rect')]
+        self.camera_ns_list = [ tn[:-len('/image_rect')] for tn in topic_list if tn.endswith('/image_rect')]
         self.camera_ns_list = [ ns for ns in self.camera_ns_list if not ( ns.startswith(self.output_ns) or ns.startswith('/'+self.output_ns) ) ]
-	self.combobox.SetItems(self.camera_ns_list)
+        self.combobox.SetItems(self.camera_ns_list)
 
         for cam_ns in self.camera_ns_list:
             if cam_ns == self.selected_cam_ns:
                 #wx.CallAfter(self.statusbar.SetStatusText,  'current camera: ' + msg.data)
-		self.statusbar.SetStatusText('[' + self.output_ns + ']' + ' now relays:  ' + self.selected_cam_ns)
+                self.statusbar.SetStatusText('[' + self.output_ns + ']' + ' now relays:  ' + self.selected_cam_ns)
                 break
         else: 
             self.statusbar.SetStatusText('[' + self.output_ns + ']' + ' now relays:  ')        
             #wx.CallAfter(self.statusbar.SetStatusText, 'current camera: ')
        
         #print self.combobox.GetValue()
-	print self.camera_ns_list
+        print self.camera_ns_list
         print self.output_ns
         print self.selected_cam_ns
         
@@ -116,7 +116,7 @@ class MainWindow(wx.Frame):
         if self.cb_in_sight == 0 :
             print str(self.combobox.GetValue())
             #print rosservice.get_service_list()
-	    for s in rosservice.get_service_list(): 
+            for s in rosservice.get_service_list(): 
                 if s.endswith(self.output_ns+ '/switch'): #'camera_dispatcher/switch'
                     switch_cam = rospy.ServiceProxy(self.output_ns+ '/switch', Switch) # 'camera_dispatcher/switch' | camera_pose_toolkits.srv.Switch
                     resp = switch_cam ( str(self.combobox.GetValue()))
