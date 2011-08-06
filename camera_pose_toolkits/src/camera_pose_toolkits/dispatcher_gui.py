@@ -64,7 +64,7 @@ class MainWindow(wx.Frame):
 
 
     def cb_func(self, msg):
-	self.selected_cam_ns = msg.data
+        self.selected_cam_ns = msg.data
 
     def features_cb(self, msg):
         self.cb_in_sight = msg.success
@@ -111,10 +111,10 @@ class MainWindow(wx.Frame):
         self.Raise()
 
     def on_combobox(self, event):
-	print 'combobox event'
+        print 'combobox event'
 
         if self.cb_in_sight == 0 :
-	    print str(self.combobox.GetValue())
+            print str(self.combobox.GetValue())
             #print rosservice.get_service_list()
 	    for s in rosservice.get_service_list(): 
                 if s.endswith(self.output_ns+ '/switch'): #'camera_dispatcher/switch'
@@ -123,7 +123,7 @@ class MainWindow(wx.Frame):
                     break
             else:
                 wx.MessageBox('Service not ready. Try again later.', 'Info!')
-	else:
+        else:
             wx.MessageBox('Remove checkerboard from '+ self.output_ns +'\' field of view before switching camera', 'Info!') 
 	
         #rospy.wait_for_service('camera_dispatcher/switch')
