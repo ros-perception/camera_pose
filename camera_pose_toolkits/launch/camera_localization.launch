@@ -8,6 +8,7 @@
 	<arg name="checker_cols" default="5" />
 	<arg name="checker_size" default="0.0249"/>
 	<arg name="headless" default="true" />
+        <arg name="bag_file_name" default="/tmp/static_transforms.bag" />
 
         <param name="urdf_cam_ns" value ="$(arg urdf_cam_ns)" />
 	<param name="new_cam_ns" value="$(arg new_cam_ns)" />
@@ -31,6 +32,6 @@
     	<node pkg="camera_pose_toolkits" type="transform_finder_node" name="transform_finder" output="screen" >
 	</node>
 	<node pkg="camera_pose_toolkits" type="camera_pose_static_transform_tf_broadcaster_node" name="camera_pose_static_transform_tf_broadcaster" output="screen"/>
-
+        <node pkg="camera_pose_toolkits" type="transform_message_saver.py" name="transform_message_saver" args="$(arg bag_file_name)"  output="screen"/>
 
   </launch>

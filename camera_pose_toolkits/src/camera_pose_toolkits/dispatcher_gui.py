@@ -9,7 +9,7 @@ import socket
 import wx
 from camera_pose_toolkits.srv import *
 from std_msgs.msg import String
-
+from calibration_msgs.msg import *
 
 
 class MainWindow(wx.Frame):
@@ -38,7 +38,8 @@ class MainWindow(wx.Frame):
         self.statusbar.SetStatusText('[' + self.output_ns + ']' +' now relays:  ')
 	#self.sub = None 
         self.sub = rospy.Subscriber(self.output_ns+"/selected", String, self.cb_func)
-
+        self.features_sub = rospy.Subscriber(self.output_ns+'/features', CalibrationPattern, self.features_cb)
+        self.cb_in_sight = 0
 
         self.Bind(wx.EVT_COMBOBOX, self.on_combobox)
 
@@ -65,7 +66,8 @@ class MainWindow(wx.Frame):
     def cb_func(self, msg):
 	self.selected_cam_ns = msg.data
 
-
+    def features_cb(self, msg):
+        self.cb_in_sight = msg.success
 
     def on_timer2(self, event):
         #print 'time out 2'
@@ -87,10 +89,9 @@ class MainWindow(wx.Frame):
 		self.statusbar.SetStatusText('[' + self.output_ns + ']' + ' now relays:  ' + self.selected_cam_ns)
                 break
         else: 
-            self.statusbar.SetStatusText('[' + self.output_ns + ']' + ' now relays:  ')
+            self.statusbar.SetStatusText('[' + self.output_ns + ']' + ' now relays:  ')        
             #wx.CallAfter(self.statusbar.SetStatusText, 'current camera: ')
        
-	
         #print self.combobox.GetValue()
 	print self.camera_ns_list
         print self.output_ns
@@ -110,16 +111,20 @@ class MainWindow(wx.Frame):
         self.Raise()
 
     def on_combobox(self, event):
-	print 'event'
-	print str(self.combobox.GetValue())
-        #print rosservice.get_service_list()
-	for s in rosservice.get_service_list(): 
-            if s.endswith(self.output_ns+ '/switch'): #'camera_dispatcher/switch'
-                switch_cam = rospy.ServiceProxy(self.output_ns+ '/switch', Switch) # 'camera_dispatcher/switch' | camera_pose_toolkits.srv.Switch
-                resp = switch_cam ( str(self.combobox.GetValue()))
-                break
-        else:
-            wx.MessageBox('Service not ready. Try again later.', 'Info!')
+	print 'combobox event'
+
+        if self.cb_in_sight == 0 :
+	    print str(self.combobox.GetValue())
+            #print rosservice.get_service_list()
+	    for s in rosservice.get_service_list(): 
+                if s.endswith(self.output_ns+ '/switch'): #'camera_dispatcher/switch'
+                    switch_cam = rospy.ServiceProxy(self.output_ns+ '/switch', Switch) # 'camera_dispatcher/switch' | camera_pose_toolkits.srv.Switch
+                    resp = switch_cam ( str(self.combobox.GetValue()))
+                    break
+            else:
+                wx.MessageBox('Service not ready. Try again later.', 'Info!')
+	else:
+            wx.MessageBox('Remove checkerboard from '+ self.output_ns +'\' field of view before switching camera', 'Info!') 
 	
         #rospy.wait_for_service('camera_dispatcher/switch')
         
