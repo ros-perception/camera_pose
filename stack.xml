@@ -3,7 +3,7 @@
     This stack contains a set of tools to work with multiple rgb
     camera's simultaneoulsy.
   </description>
-  <author>Vijay Pradeep, Wim Meeussen</author>
+  <author>Vijay Pradeep, Wim Meeussen, Yiping Liu</author>
   <license>BSD</license>  
   <review status="Doc reviewed" notes=""/>
   <url>http://ros.org/wiki/camera_pose</url>
