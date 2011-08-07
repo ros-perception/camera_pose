@@ -27,12 +27,26 @@ static std::list<geometry_msgs::TransformStamped> T_list;
 
 int main(int argc, char **argv)
 {
+
 	ros::init(argc, argv, "transform_playback_node");
+        printf("%d\n", argc);
+        std::string bag_name; 
+        printf("transform_playback_node: play ");
+        if ( argc < 2)
+	{
+        	bag_name = "/transform_list.bag";  
+	}
+	else
+	{
+		bag_name = argv[1];
+		printf("%s\n", argv[1]);
+	}
+               
 	ros::NodeHandle n;
 	
 	// read the bag
 	rosbag::Bag bag;
-    	bag.open("transform_list.bag", rosbag::bagmode::Read);
+    	bag.open(bag_name, rosbag::bagmode::Read);
 
         std::vector<std::string> topics;
     	topics.push_back(std::string("camera_pose_static_transform_update"));
