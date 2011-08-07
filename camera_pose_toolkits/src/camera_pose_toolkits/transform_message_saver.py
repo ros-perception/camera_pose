@@ -78,8 +78,19 @@ if bag_filename:
             print "Couldn't find any messages on topic [%s]" % topic_name
         bag.close()
 
-        while pub.get_num_connections() == 0:
+        count = 0
+        
+        while pub.get_num_connections() == 0 and count < 700 :  # get number of connections to other ROS nodes for this topic
             time.sleep(0.01)
+            count += 1
+      
+        if count == 700 :
+            print 'trasform_message_saver :'
+            print 'Waiting for subscriber(s) to topic [camera_pose_static_transform_update] has timed out.'
+            print 'The on-start publishing starts without further waiting.'
+            print 'If your bag file [%s] contains multiple previously saved messages, only the latest message is likely to be received.' % bag_filename
+            print 'Just a heads-up.'
+   
         for b in best_list:
             pub.publish(b)
             time.sleep(0.01)
