@@ -17,7 +17,7 @@ def get_target_pose(cam):
                                    [ cam.cam_info.P[8], cam.cam_info.P[9], cam.cam_info.P[10] ] ] )
     rot = cv.CreateMat(3, 1, cv.CV_32FC1)
     trans = cv.CreateMat(3, 1, cv.CV_32FC1)
-    cv.FindExtrinsicCameraParams2(object_points, image_points, camera_matrix, dist_coeffs, rot, trans)
+    cv.FindExtrinsicCameraParams2(object_points, image_points, cv.fromarray(camera_matrix), dist_coeffs, rot, trans)
     # print "Rot: %f, %f, %f" % ( rot[0,0], rot[1,0], rot[2,0] )
     # print "Trans: %f, %f, %f" % ( trans[0,0], trans[1,0], trans[2,0] )
     rot3x3 = cv.CreateMat(3, 3, cv.CV_32FC1)
