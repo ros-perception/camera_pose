@@ -26,7 +26,7 @@ class TestCameraPose(unittest.TestCase):
         #self.assertAlmostEqual(diff.rot.Norm(), 0.0, 1)
         #self.assertAlmostEqual(diff.vel.Norm(), 0.0, 1)
 
-        tf_listener.waitForTransform(fr1, fr2, rospy.Time(0))
+        tf_listener.waitForTransform(fr1, fr2, rospy.Time(0), rospy.Duration(0))
         ((x, y, z), (rx, ry, rz, rw)) = tf_listener.lookupTransform(fr1, fr2, rospy.Time(0))
         self.assertAlmostEqual(x, -0.011, 1)
         self.assertAlmostEqual(y, 0.027, 1)
