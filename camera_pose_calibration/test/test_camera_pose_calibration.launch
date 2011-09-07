@@ -13,5 +13,5 @@
      <arg name="headless" value="true" />
    </include>
 
-   <test test-name="test_camera_pose_calibration" pkg="camera_pose_calibration" type="test_camera_pose_calibration.py" time-limit="60" />
+   <test test-name="test_camera_pose_calibration" pkg="camera_pose_calibration" type="test_camera_pose_calibration.py" time-limit="120" />
 </launch>
