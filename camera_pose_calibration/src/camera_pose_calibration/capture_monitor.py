@@ -173,7 +173,10 @@ class Aggregator:
         beep_time = rospy.Time(0)
 
         while not rospy.is_shutdown():
-            r.sleep()
+            try:
+                r.sleep()
+            except:
+                print "Shutting down"
             with self.lock:
                 for window, render in zip(self.windows, self.renderer_list):
                     render.render(window)

@@ -62,7 +62,10 @@ def main():
     c = CalibrationPublishManager()
     while not rospy.is_shutdown():
         c.publish()
-        r.sleep()
+        try:
+            r.sleep()
+        except:
+            print "Shutting down"
 
 
 if __name__ == '__main__':
