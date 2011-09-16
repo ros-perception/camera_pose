@@ -29,6 +29,6 @@ rosbuild_gensrv()
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
 
-rosbuild_download_test_data(http://pr.willowgarage.com/data/camera_pose_calibration/camera_pose_cal_regression_data.bag test/camera_pose_cal_regression_data.bag fcd96a5c7a74a064640753fd9d82fff3)
-rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_camera_pose_calibration.launch)
+#rosbuild_download_test_data(http://pr.willowgarage.com/data/camera_pose_calibration/camera_pose_cal_regression_data.bag test/camera_pose_cal_regression_data.bag fcd96a5c7a74a064640753fd9d82fff3)
+#rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_camera_pose_calibration.launch)
 
