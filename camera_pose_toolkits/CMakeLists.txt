@@ -29,9 +29,11 @@ rosbuild_gensrv()
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
 
+rosbuild_add_boost_directories()
 
 rosbuild_add_executable(transform_finder_node src/transform_finder.cpp)
 rosbuild_add_executable(camera_pose_static_transform_tf_broadcaster_node src/camera_pose_static_transform_tf_broadcaster.cpp)
 rosbuild_add_executable(urdf_writer_node src/urdf_writer.cpp)
+rosbuild_link_boost(urdf_writer_node regex)
 rosbuild_add_executable(camera_dispatcher_node src/camera_dispatcher.cpp)
 rosbuild_add_executable(transform_playback_node src/transform_playback.cpp)
