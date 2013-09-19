@@ -15,9 +15,9 @@ if __name__ == '__main__':
 
     goal = ConfigGoal()
     # Fill in the goal here
-    goal.tolerance = 1.5;
+    goal.tolerance = 1.0;
     goal.ignore_failures = 1;
-    goal.max_step = rospy.Duration(1.0)
+    goal.max_step = rospy.Duration(15.0)
     goal.cache_size = 100;
     client.send_goal_and_wait(goal)
     print "Done sending goal"

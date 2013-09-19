@@ -1,0 +1,27 @@
+<launch>
+  <arg name="ns" />
+  <arg name="checker_rows" />
+  <arg name="checker_cols" />
+  <arg name="checker_size" />
+
+
+  <group ns="$(arg ns)">
+    <!-- Trigger images -->
+    <node type="trigger_one_image.py" pkg="camera_pose_calibration" name="image_trigger" output="screen">
+      <remap from="input" to="image_rect" />
+      <remap from="output" to="image_throttle" />
+    </node>
+
+    <!-- Checkerboard detector -->
+    <node pkg="image_cb_detector" type="image_cb_detector_action_old" name="stereo_cb_detector" output="screen">
+      <remap from="image" to="image_throttle" />
+      <remap from="camera_info" to="camera_info" />
+    </node>
+    <node pkg="camera_pose_calibration" type="start_cb_detector_action_old.py" name="start_cb_detector_action_old" 
+          args="$(arg checker_rows) $(arg checker_cols) $(arg checker_size)"  output="screen"/>
+
+    <!-- image settler -->
+    <node type="monocam_settler_action" pkg="monocam_settler" name="monocam_settler" output="screen"/>
+    <node pkg="camera_pose_calibration" type="start_monocam_settler_action.py" name="start_monocam_settler_action" />
+  </group>
+</launch>
