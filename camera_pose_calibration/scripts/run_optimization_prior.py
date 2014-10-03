@@ -4,8 +4,6 @@ import sys, time, optparse
 import itertools
 import collections
 
-import roslib
-roslib.load_manifest('camera_pose_calibration')
 import PyKDL
 from tf_conversions import posemath
 from calibration_msgs.msg import *

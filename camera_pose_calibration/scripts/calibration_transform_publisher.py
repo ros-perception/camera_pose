@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import roslib; roslib.load_manifest('camera_pose_calibration')
 import tf2_ros
 import rospy
 import PyKDL

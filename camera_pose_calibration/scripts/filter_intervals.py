@@ -2,7 +2,6 @@
 
 
 
-import roslib; roslib.load_manifest('camera_pose_calibration')
 import rospy
 import threading
 from calibration_msgs.msg import Interval, CalibrationPattern
@@ -30,8 +29,10 @@ class FilterIntervals:
 
     def interval_cb(self, msg):
         with self.lock:
+            print "got interval!"
             duration = msg.end - msg.start
             if self.feature and diff(self.feature, self.last_feature) > self.min_motion and duration > self.min_duration:
+                print "interval not good enough!"
                 self.last_feature = self.feature
                 self.pub.publish(msg)
 

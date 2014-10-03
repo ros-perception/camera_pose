@@ -31,7 +31,6 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import roslib; roslib.load_manifest('camera_pose_calibration')
 import rospy
 import yaml
 import sys
@@ -59,7 +58,7 @@ class CameraCaptureExecutive:
 
         # Construct a manager for each sensor stream (Don't enable any of them)
         cam_info_topic = rospy.get_param('~cam_info_topic', 'camera_info')
-	#print "cam_ids"
+        #print "cam_ids"
         self.cam_managers   = [ (cam_id,   CamManager(  cam_id,  cam_info_topic, 
                                                         self.add_cam_measurement) )   for cam_id   in cam_ids ]
 

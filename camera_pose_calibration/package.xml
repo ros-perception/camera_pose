@@ -1,0 +1,66 @@
+<package>
+  <name>camera_pose_calibration</name>
+  <version>0.5.0</version>
+  <description>This package provides the pipeline to calibrate the relative 6D
+    poses between multiple camera's. The calibration can be preformed
+    online, and the results are published to tf in realtime.</description>
+  <maintainer email="todo@todo.com">Vijay Pradeep</maintainer>
+  <maintainer email="todo@todo.com">Wim Meeussen</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/wiki/camera_pose_calibration</url>
+  <!-- <url type="bugtracker"></url> -->
+
+  <author>Vijay Pradeep</author>
+  <author>Wim Meeussen</author>
+
+  <!-- Dependencies which this package needs to build itself. -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Dependencies needed to compile this package. -->
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>calibration_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>image_cb_detector</build_depend>
+  <build_depend>monocam_settler</build_depend>
+  <build_depend>interval_intersection</build_depend>
+  <build_depend>joint_states_settler</build_depend>
+  <build_depend>kdl</build_depend>
+  <build_depend>tf_conversions</build_depend>
+  <build_depend>tf2_ros</build_depend>
+  <build_depend>tf2_kdl</build_depend>
+  <build_depend>message_filters</build_depend>
+  <build_depend>opencv2</build_depend>
+
+  <!-- Dependencies needed after this package is compiled. -->
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>calibration_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>image_cb_detector</run_depend>
+  <run_depend>monocam_settler</run_depend>
+  <run_depend>interval_intersection</run_depend>
+  <run_depend>joint_states_settler</run_depend>
+  <run_depend>kdl</run_depend>
+  <run_depend>tf_conversions</run_depend>
+  <run_depend>tf2_ros</run_depend>
+  <run_depend>tf2_kdl</run_depend>
+  <run_depend>message_filters</run_depend>
+  <run_depend>opencv2</run_depend>
+
+  <!-- Dependencies needed only for running tests. -->
+  <!-- <test_depend>geometry_msgs</test_depend> -->
+  <!-- <test_depend>calibration_msgs</test_depend> -->
+  <!-- <test_depend>sensor_msgs</test_depend> -->
+  <!-- <test_depend>image_cb_detector</test_depend> -->
+  <!-- <test_depend>monocam_settler</test_depend> -->
+  <!-- <test_depend>interval_intersection</test_depend> -->
+  <!-- <test_depend>joint_states_settler</test_depend> -->
+  <!-- <test_depend>kdl</test_depend> -->
+  <!-- <test_depend>tf_conversions</test_depend> -->
+  <!-- <test_depend>tf2_ros</test_depend> -->
+  <!-- <test_depend>tf2_kdl</test_depend> -->
+  <!-- <test_depend>message_filters</test_depend> -->
+  <!-- <test_depend>opencv2</test_depend> -->
+
+</package>

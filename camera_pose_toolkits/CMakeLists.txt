@@ -1,39 +1,47 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+# Catkin User Guide: http://www.ros.org/doc/groovy/api/catkin/html/user_guide/user_guide.html
+# Catkin CMake Standard: http://www.ros.org/doc/groovy/api/catkin/html/user_guide/standards.html
+cmake_minimum_required(VERSION 2.8.3)
+project(camera_pose_toolkits)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+find_package(Boost REQUIRED COMPONENTS regex thread)
 
-rosbuild_init()
+find_package(catkin REQUIRED COMPONENTS std_msgs rospy roscpp tf geometry_msgs
+  sensor_msgs camera_pose_calibration kdl_parser robot_state_publisher
+  dynamic_reconfigure rosbag)
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-#uncomment if you have defined messages
-#rosbuild_genmsg()
 #uncomment if you have defined services
-rosbuild_gensrv()
+add_service_files(
+  FILES
+  Switch.srv
+)
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
+## Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES std_msgs
+)
 
-rosbuild_add_boost_directories()
+# catkin_package parameters: http://ros.org/doc/groovy/api/catkin/html/dev_guide/generated_cmake_api.html#catkin-package
+# TODO: fill in what other packages will need to use this package
+catkin_package(
+    DEPENDS std_msgs rospy roscpp tf geometry_msgs sensor_msgs camera_pose_calibration kdl kdl_parser robot_state_publisher dynamic_reconfigure
+    CATKIN_DEPENDS # TODO
+    INCLUDE_DIRS # TODO include
+    LIBRARIES # TODO
+)
 
-rosbuild_add_executable(transform_finder_node src/transform_finder.cpp)
-rosbuild_add_executable(camera_pose_static_transform_tf_broadcaster_node src/camera_pose_static_transform_tf_broadcaster.cpp)
-rosbuild_add_executable(urdf_writer_node src/urdf_writer.cpp)
-rosbuild_link_boost(urdf_writer_node regex)
-rosbuild_add_executable(camera_dispatcher_node src/camera_dispatcher.cpp)
-rosbuild_add_executable(transform_playback_node src/transform_playback.cpp)
+add_executable(transform_finder_node src/transform_finder.cpp)
+target_link_libraries(transform_finder_node ${catkin_LIBRARIES})
+
+add_executable(camera_pose_static_transform_tf_broadcaster_node src/camera_pose_static_transform_tf_broadcaster.cpp)
+target_link_libraries(camera_pose_static_transform_tf_broadcaster_node ${catkin_LIBRARIES})
+
+add_executable(urdf_writer_node src/urdf_writer.cpp)
+target_link_libraries(urdf_writer_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_executable(camera_dispatcher_node src/camera_dispatcher.cpp)
+target_link_libraries(camera_dispatcher_node ${catkin_LIBRARIES})
+
+add_executable(transform_playback_node src/transform_playback.cpp)
+target_link_libraries(transform_playback_node ${catkin_LIBRARIES})
+
