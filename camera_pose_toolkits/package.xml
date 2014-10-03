@@ -1,0 +1,59 @@
+<package>
+  <name>camera_pose_toolkits</name>
+  <version>0.5.0</version>
+  <description>The camera_pose_toolkits is a set of tools built around camera_pose_calibration package that allows the user to easily add new camera frame to existed tf tree. 
+
+     We assume that the target tf tree already has (at least) one camera frame (let's call it urdf camera frame). The new camera frame has to be rigidly mounted on one of the frames in the tf tree, but there can be joints between the urdf camera frame and the frame on which the new camera is mounted. This package will find out the static transform between the new camera frame and its mounting frame. The package will publish that transform to tf. It can also convert that transform into a xml snippet and insert it into the existed urdf description file.</description>
+   <maintainer email="todo@todo.com"> Yiping Liu</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/wiki/camera_pose_toolkits</url>
+  <!-- <url type="bugtracker"></url> -->
+
+  <author> Yiping Liu</author>
+
+  <!-- Dependencies which this package needs to build itself. -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Dependencies needed to compile this package. -->
+  <build_depend>std_msgs</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>rosbag</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>camera_pose_calibration</build_depend>
+  <build_depend>kdl</build_depend>
+  <build_depend>kdl_parser</build_depend>
+  <build_depend>robot_state_publisher</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+
+  <!-- Dependencies needed after this package is compiled. -->
+  <run_depend>std_msgs</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>camera_pose_calibration</run_depend>
+  <run_depend>kdl</run_depend>
+  <run_depend>kdl_parser</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+
+  <!-- Dependencies needed only for running tests. -->
+  <!-- <test_depend>std_msgs</test_depend> -->
+  <!-- <test_depend>rospy</test_depend> -->
+  <!-- <test_depend>roscpp</test_depend> -->
+  <!-- <test_depend>tf</test_depend> -->
+  <!-- <test_depend>geometry_msgs</test_depend> -->
+  <!-- <test_depend>sensor_msgs</test_depend> -->
+  <!-- <test_depend>camera_pose_calibration</test_depend> -->
+  <!-- <test_depend>kdl</test_depend> -->
+  <!-- <test_depend>kdl_parser</test_depend> -->
+  <!-- <test_depend>robot_state_publisher</test_depend> -->
+  <!-- <test_depend>dynamic_reconfigure</test_depend> -->
+
+</package>

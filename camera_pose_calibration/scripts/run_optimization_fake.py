@@ -6,8 +6,6 @@ import collections
 from numpy import *
 import random
 
-import roslib
-roslib.load_manifest('camera_pose_calibration')
 import PyKDL
 from tf_conversions import posemath
 

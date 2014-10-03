@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import roslib; roslib.load_manifest('camera_pose_calibration')
 import rospy
 from camera_pose_calibration.srv import TriggerOne, TriggerOneRequest
 

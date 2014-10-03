@@ -41,7 +41,7 @@ pose_width = 6
 feature_width = 2
 
 
-def enhance(cal_samples, prior_estimate, num_iterations = 20, step_size = 0.5):
+def enhance(cal_samples, prior_estimate, num_iterations = 200, step_size = 0.2):
     set_printoptions(linewidth=4000, precision=4, threshold=5000000000000000000000000000, suppress=True)
     next_estimate = deepcopy(prior_estimate)
     lam = 1.0  # lambda
