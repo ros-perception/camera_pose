@@ -1,37 +1,45 @@
 #!/usr/bin/python
 
-import tf2_ros
+import tf
 import rospy
-import PyKDL
 import threading
-from tf_conversions import posemath
-from geometry_msgs.msg import TransformStamped, Pose
 from camera_pose_calibration.msg import CameraCalibration
 
+class Transform:
+    def __init__(self):
+	self.parent_frame_id = 'world'
+        self.child_frame_id = 'link'
+        self.translation = (0,0,0)
+        self.rotation = (0,0,0,0)
+        self.stamp = rospy.Time.now()
 
 class CameraPublisher:
     def __init__(self, pose, child_frame_id):
         self.lock = threading.Lock()
-        self.pub = tf2_ros.TransformBroadcaster()
+        self.pub = tf.TransformBroadcaster()
         self.set_pose(pose, child_frame_id)
 
     def set_pose(self, pose, child_frame_id):
         with self.lock:
-            self.transform = TransformStamped()
-            self.transform.header.frame_id = 'world'
+            self.transform = Transform()
+            self.transform.parent_frame_id = 'world'
             self.transform.child_frame_id = child_frame_id
-            self.transform.transform.translation.x = pose.position.x
-            self.transform.transform.translation.y = pose.position.y
-            self.transform.transform.translation.z = pose.position.z
-            self.transform.transform.rotation.x = pose.orientation.x
-            self.transform.transform.rotation.y = pose.orientation.y
-            self.transform.transform.rotation.z = pose.orientation.z
-            self.transform.transform.rotation.w = pose.orientation.w
+            self.transform.translation = (pose.position.x, 
+                                          pose.position.y, 
+                                          pose.position.z)
+            self.transform.rotation = (pose.orientation.x, 
+                                       pose.orientation.y, 
+                                       pose.orientation.z, 
+                                       pose.orientation.w)
 
     def publish(self):
         with self.lock:
-            self.transform.header.stamp = rospy.Time.now() + rospy.Duration(0.5)
-            self.pub.sendTransform(self.transform)
+            self.transform.stamp = rospy.Time.now() + rospy.Duration(0.5)
+            self.pub.sendTransform(self.transform.translation,
+				   self.transform.rotation,
+				   self.transform.stamp,
+				   self.transform.child_frame_id,
+                                   self.transform.parent_frame_id)
 
 
 
@@ -69,3 +77,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
