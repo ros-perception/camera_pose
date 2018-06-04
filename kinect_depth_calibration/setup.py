@@ -1,5 +1,6 @@
 from distutils.core import setup
 import glob
+import os
 
 scripts = glob.glob(os.path.join('scripts', '*.py'))
 
