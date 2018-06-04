@@ -65,7 +65,7 @@ generate_messages(
 # catkin_package parameters: http://ros.org/doc/groovy/api/catkin/html/dev_guide/generated_cmake_api.html#catkin-package
 # TODO: fill in what other packages will need to use this package
 catkin_package(
-    DEPENDS geometry_msgs calibration_msgs sensor_msgs image_cb_detector monocam_settler interval_intersection joint_states_settler kdl tf_conversions tf2_ros tf2_kdl message_filters opencv2
+    DEPENDS geometry_msgs calibration_msgs sensor_msgs image_cb_detector monocam_settler interval_intersection joint_states_settler tf_conversions tf2_ros tf2_kdl message_filters opencv3
     CATKIN_DEPENDS # TODO
     INCLUDE_DIRS # TODO include
     LIBRARIES # TODO

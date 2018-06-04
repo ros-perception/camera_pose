@@ -25,7 +25,7 @@ generate_messages(
 # catkin_package parameters: http://ros.org/doc/groovy/api/catkin/html/dev_guide/generated_cmake_api.html#catkin-package
 # TODO: fill in what other packages will need to use this package
 catkin_package(
-    DEPENDS rospy roslib opencv2 cv_bridge geometry_msgs sensor_msgs stereo_msgs tf_conversions tf kdl
+    DEPENDS rospy roslib opencv3 cv_bridge geometry_msgs sensor_msgs stereo_msgs tf_conversions tf
     CATKIN_DEPENDS # TODO
     INCLUDE_DIRS # TODO include
     LIBRARIES # TODO

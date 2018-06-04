@@ -21,11 +21,13 @@ generate_messages(
   DEPENDENCIES std_msgs
 )
 
+include_directories(${catkin_INCLUDE_DIRS})
+
 # catkin_package parameters: http://ros.org/doc/groovy/api/catkin/html/dev_guide/generated_cmake_api.html#catkin-package
 # TODO: fill in what other packages will need to use this package
 catkin_package(
-    DEPENDS std_msgs rospy roscpp tf geometry_msgs sensor_msgs camera_pose_calibration kdl kdl_parser robot_state_publisher dynamic_reconfigure
-    CATKIN_DEPENDS # TODO
+    DEPENDS
+    CATKIN_DEPENDS std_msgs rospy roscpp tf geometry_msgs sensor_msgs camera_pose_calibration kdl_parser robot_state_publisher dynamic_reconfigure
     INCLUDE_DIRS # TODO include
     LIBRARIES # TODO
 )

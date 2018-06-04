@@ -17,37 +17,34 @@
   <!-- Dependencies needed to compile this package. -->
   <build_depend>rospy</build_depend>
   <build_depend>roslib</build_depend>
-  <build_depend>opencv2</build_depend>
+  <build_depend>opencv3</build_depend>
   <build_depend>cv_bridge</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>stereo_msgs</build_depend>
   <build_depend>tf_conversions</build_depend>
   <build_depend>tf</build_depend>
-  <build_depend>kdl</build_depend>
 
   <!-- Dependencies needed after this package is compiled. -->
   <run_depend>rospy</run_depend>
   <run_depend>roslib</run_depend>
-  <run_depend>opencv2</run_depend>
+  <run_depend>opencv3</run_depend>
   <run_depend>cv_bridge</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>stereo_msgs</run_depend>
   <run_depend>tf_conversions</run_depend>
   <run_depend>tf</run_depend>
-  <run_depend>kdl</run_depend>
 
   <!-- Dependencies needed only for running tests. -->
   <!-- <test_depend>rospy</test_depend> -->
   <!-- <test_depend>roslib</test_depend> -->
-  <!-- <test_depend>opencv2</test_depend> -->
+  <!-- <test_depend>opencv3</test_depend> -->
   <!-- <test_depend>cv_bridge</test_depend> -->
   <!-- <test_depend>geometry_msgs</test_depend> -->
   <!-- <test_depend>sensor_msgs</test_depend> -->
   <!-- <test_depend>stereo_msgs</test_depend> -->
   <!-- <test_depend>tf_conversions</test_depend> -->
   <!-- <test_depend>tf</test_depend> -->
-  <!-- <test_depend>kdl</test_depend> -->
 
 </package>

@@ -26,12 +26,11 @@
   <build_depend>monocam_settler</build_depend>
   <build_depend>interval_intersection</build_depend>
   <build_depend>joint_states_settler</build_depend>
-  <build_depend>kdl</build_depend>
   <build_depend>tf_conversions</build_depend>
   <build_depend>tf2_ros</build_depend>
   <build_depend>tf2_kdl</build_depend>
   <build_depend>message_filters</build_depend>
-  <build_depend>opencv2</build_depend>
+  <build_depend>opencv3</build_depend>
 
   <!-- Dependencies needed after this package is compiled. -->
   <run_depend>geometry_msgs</run_depend>
@@ -41,12 +40,11 @@
   <run_depend>monocam_settler</run_depend>
   <run_depend>interval_intersection</run_depend>
   <run_depend>joint_states_settler</run_depend>
-  <run_depend>kdl</run_depend>
   <run_depend>tf_conversions</run_depend>
   <run_depend>tf2_ros</run_depend>
   <run_depend>tf2_kdl</run_depend>
   <run_depend>message_filters</run_depend>
-  <run_depend>opencv2</run_depend>
+  <run_depend>opencv3</run_depend>
 
   <!-- Dependencies needed only for running tests. -->
   <!-- <test_depend>geometry_msgs</test_depend> -->
@@ -56,11 +54,10 @@
   <!-- <test_depend>monocam_settler</test_depend> -->
   <!-- <test_depend>interval_intersection</test_depend> -->
   <!-- <test_depend>joint_states_settler</test_depend> -->
-  <!-- <test_depend>kdl</test_depend> -->
   <!-- <test_depend>tf_conversions</test_depend> -->
   <!-- <test_depend>tf2_ros</test_depend> -->
   <!-- <test_depend>tf2_kdl</test_depend> -->
   <!-- <test_depend>message_filters</test_depend> -->
-  <!-- <test_depend>opencv2</test_depend> -->
+  <!-- <test_depend>opencv3</test_depend> -->
 
 </package>
