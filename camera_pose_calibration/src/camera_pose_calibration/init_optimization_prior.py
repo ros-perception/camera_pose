@@ -1,26 +1,27 @@
 import itertools
 import numpy
 import collections
-import cv
+import cv2
 import PyKDL
 from tf_conversions import posemath
 
 
 def get_target_pose(cam):
     # Populate object_points
-    object_points = cv.fromarray(numpy.array([ [p.x, p.y, p.z ] for p in cam.features.object_points]))
-    image_points = cv.fromarray(numpy.array([[p.x, p.y] for p in cam.features.image_points]))
-    dist_coeffs = cv.fromarray(numpy.array([ [0.0, 0.0, 0.0, 0.0] ]))
+    object_points = numpy.array([[p.x, p.y, p.z] for p in cam.features.object_points])
+    image_points = numpy.array([[p.x, p.y] for p in cam.features.image_points])
+    dist_coeffs = numpy.array([[0.0, 0.0, 0.0, 0.0]])
     camera_matrix = numpy.array([[cam.cam_info.P[0], cam.cam_info.P[1], cam.cam_info.P[2]],
                                  [cam.cam_info.P[4], cam.cam_info.P[5], cam.cam_info.P[6]],
                                  [cam.cam_info.P[8], cam.cam_info.P[9], cam.cam_info.P[10]]])
-    rot = cv.CreateMat(3, 1, cv.CV_32FC1)
-    trans = cv.CreateMat(3, 1, cv.CV_32FC1)
-    cv.FindExtrinsicCameraParams2(object_points, image_points, cv.fromarray(camera_matrix), dist_coeffs, rot, trans)
+    success, rot, trans = cv2.solvePnP(object_points, image_points, camera_matrix, dist_coeffs)
+    if not success:
+        print "solvePnP failed!"
+        return PyKDL.Frame()
     # print "Rot: %f, %f, %f" % ( rot[0,0], rot[1,0], rot[2,0] )
     # print "Trans: %f, %f, %f" % ( trans[0,0], trans[1,0], trans[2,0] )
-    rot3x3 = cv.CreateMat(3, 3, cv.CV_32FC1)
-    cv.Rodrigues2(rot, rot3x3)
+    rot3x3 = numpy.zeros((3, 3), numpy.float32)
+    rot3x3, _ = cv2.Rodrigues(rot)
     frame = PyKDL.Frame()
     for i in range(3):
         frame.p[i] = trans[i, 0]
