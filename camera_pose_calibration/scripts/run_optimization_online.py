@@ -33,7 +33,7 @@ class Estimator:
         self.measurement_count = 0
         self.timestamps =[]
 
-        self.pub = rospy.Publisher('camera_calibration', CameraCalibration)
+        self.pub = rospy.Publisher('camera_calibration', CameraCalibration, queue_size=10)
         self.sub_reset = rospy.Subscriber('reset', Empty, self.reset_cb)
         self.sub_meas  = rospy.Subscriber('robot_measurement', RobotMeasurement, self.meas_cb)
 

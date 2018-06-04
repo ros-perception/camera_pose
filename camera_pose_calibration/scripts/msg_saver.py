@@ -35,7 +35,7 @@ else:
 
 
 print "Topic Name: %s" % topic_name
-#pub = rospy.Publisher(topic_name, msg_type, latch=True)
+#pub = rospy.Publisher(topic_name, msg_type, queue_size=10, latch=True)
 
 # Figure out the message class, and then create the publisher
 try:
@@ -48,7 +48,7 @@ if msg_class is None:
 # disable /rosout and /rostime as this causes blips in the pubsub network due to rostopic pub often exiting quickly
 rospy.init_node("msg_saver", disable_rosout=True, disable_rostime=True)
 
-pub = rospy.Publisher(topic_name, msg_class, latch=True)
+pub = rospy.Publisher(topic_name, msg_class, queue_size=10, latch=True)
 
 # Get the last message on the topic of interest
 

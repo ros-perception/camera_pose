@@ -67,7 +67,7 @@ class CameraCaptureExecutive:
             cam_manager.enable(verbose=True)
 
         # Subscribe to topic containing stable intervals
-        self.measurement_pub = rospy.Publisher("robot_measurement", RobotMeasurement)
+        self.measurement_pub = rospy.Publisher("robot_measurement", RobotMeasurement, queue_size=10)
         self.request_interval_sub = rospy.Subscriber("request_interval", Interval, self.request_callback)
 
         # Set up the cache with only the sensors we care about

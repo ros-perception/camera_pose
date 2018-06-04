@@ -7,7 +7,7 @@ from sensor_msgs.msg import Image
 class TriggerOneMessageServer:
     def __init__(self):
         self.srv = rospy.Service('trigger_one', TriggerOne, self.srv_cb)
-        self.pub = rospy.Publisher('output', Image)
+        self.pub = rospy.Publisher('output', Image, queue_size=10)
 
 
     def srv_cb(self, req):

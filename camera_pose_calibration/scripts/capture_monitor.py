@@ -128,7 +128,7 @@ class Aggregator:
         w = 640
         h = 480
         self.image_out = cv.CreateMat(h, w, cv.CV_8UC3)
-        self.pub = rospy.Publisher('aggregated_image', Image)
+        self.pub = rospy.Publisher('aggregated_image', Image, queue_size=10)
         self.bridge = CvBridge()
 
         self.image_captured = get_image(["Successfully captured checkerboard"])

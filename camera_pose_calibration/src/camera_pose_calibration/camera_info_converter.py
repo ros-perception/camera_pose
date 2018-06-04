@@ -58,7 +58,7 @@ class CameraInfoConverter:
         self.lock = threading.Lock()
         self.pub_interval = rospy.Duration(rospy.get_param('~publish_interval', 0.0))
         self.last_pub = rospy.Time()
-        self.pub = rospy.Publisher('camera_info_out', CameraInfo)
+        self.pub = rospy.Publisher('camera_info_out', CameraInfo, queue_size=10)
         self.sub = rospy.Subscriber('camera_info_in', CameraInfo, self.cam_info_cb)
 
     def cam_info_cb(self, msg):

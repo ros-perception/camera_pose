@@ -22,7 +22,7 @@ class FilterIntervals:
         self.feature = None
         self.last_feature = None
 
-        self.pub = rospy.Publisher('interval_filtered', Interval)
+        self.pub = rospy.Publisher('interval_filtered', Interval, queue_size=10)
         self.sub_intervals = rospy.Subscriber('interval', Interval, self.interval_cb)
         self.sub_features = rospy.Subscriber('features', CalibrationPattern, self.feature_cb)
 
