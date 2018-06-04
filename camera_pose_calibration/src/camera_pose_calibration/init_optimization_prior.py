@@ -1,4 +1,3 @@
-import roslib; roslib.load_manifest('camera_pose_calibration')
 import itertools
 import numpy
 import collections
