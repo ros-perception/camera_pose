@@ -114,7 +114,7 @@ def add_text(image, text, good=True):
 
 
 def get_image(text, good=True, h=480, w=640):
-    image = cv.CreateMat(h, w, cv.CV_8UC3)
+    image = numpy.zeros((h, w, 3), numpy.uint8)
     return add_text(image, text, good)
 
 
@@ -127,7 +127,7 @@ class Aggregator:
         # image
         w = 640
         h = 480
-        self.image_out = cv.CreateMat(h, w, cv.CV_8UC3)
+        self.image_out = numpy.zeros((h, w, 3), numpy.uint8)
         self.pub = rospy.Publisher('aggregated_image', Image, queue_size=10)
         self.bridge = CvBridge()
 
