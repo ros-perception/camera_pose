@@ -18,13 +18,12 @@ def beep(conf):
         with file('/dev/audio', 'wb') as audio:
             for (frequency, amplitude, duration) in conf:
                 sample = 8000
-                half_period = int(sample/frequency/2)
-                beep = chr(amplitude)*half_period+chr(0)*half_period
-                beep *= int(duration*frequency)
+                half_period = int(sample / frequency / 2)
+                beep = chr(amplitude) * half_period + chr(0) * half_period
+                beep *= int(duration * frequency)
                 audio.write(beep)
     except:
         print "Beep beep"
-
 
 
 class ImageRenderer:
@@ -41,10 +40,10 @@ class ImageRenderer:
 
         self.font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, 1.5, thickness = 2)
         self.font1 = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.10, 1, thickness = 1)
-        self.info_sub = rospy.Subscriber(ns+'/camera_info', CameraInfo, self.info_cb)
-        self.image_sub = rospy.Subscriber(ns+'/image_throttle', Image, self.image_cb)
-        self.interval_sub = rospy.Subscriber(ns+'/settled_interval', Interval, self.interval_cb)
-        self.features_sub = rospy.Subscriber(ns+'/features', CalibrationPattern, self.features_cb)
+        self.info_sub = rospy.Subscriber(ns + '/camera_info', CameraInfo, self.info_cb)
+        self.image_sub = rospy.Subscriber(ns + '/image_throttle', Image, self.image_cb)
+        self.interval_sub = rospy.Subscriber(ns + '/settled_interval', Interval, self.interval_cb)
+        self.features_sub = rospy.Subscriber(ns + '/features', CalibrationPattern, self.features_cb)
 
     def info_cb(self, msg):
         with self.lock:
@@ -68,7 +67,7 @@ class ImageRenderer:
             if self.image and self.image_time + rospy.Duration(8.0) > rospy.Time.now() and self.info_time + rospy.Duration(8.0) > rospy.Time.now():
                 cv.Resize(self.bridge.imgmsg_to_cv(self.image, 'rgb8'), window)
                 # render progress bar
-                interval = min(1,(self.interval / self.max_interval))
+                interval = min(1, (self.interval / self.max_interval))
                 cv.Rectangle(window,
                              (int(0.05*window.width), int(window.height*0.9)),
                              (int(interval*window.width*0.9+0.05*window.width), int(window.height*0.95)),
@@ -78,11 +77,12 @@ class ImageRenderer:
                              (int(window.width*0.9+0.05*window.width), int(window.height*0.95)),
                              (0, interval*255, (1-interval)*255))
                 cv.PutText(window, self.ns, (int(window.width * .05), int(window.height * 0.1)), self.font1, (0,0,255))
+
                 if self.features and self.features.header.stamp + rospy.Duration(4.0) > self.image.header.stamp:
                     w_scaling =  float (window.width) / self.image.width
                     h_scaling =  float (window.height) / self.image.height
                     if self.features.success:
-                        corner_color = (0,255,0)
+                        corner_color = (0, 255, 0)
                         for cur_pt in self.features.image_points:
                             cv.Circle(window, (int(cur_pt.x*w_scaling), int(cur_pt.y*h_scaling)), int(w_scaling*5), corner_color)
                     else:
@@ -93,13 +93,13 @@ class ImageRenderer:
             else:
                 # Generate random white noise (for fun)
                 noise = numpy.random.rand(window.height, window.width)*256
-                numpy.asarray(window)[:,:,0] = noise;
-                numpy.asarray(window)[:,:,1] = noise;
-                numpy.asarray(window)[:,:,2] = noise;
+                numpy.asarray(window)[:, :, 0] = noise
+                numpy.asarray(window)[:, :, 1] = noise
+                numpy.asarray(window)[:, :, 2] = noise
                 cv.PutText(window, self.ns, (int(window.width * .05), int(window.height * .95)), self.font, (0,0,255))
 
 
-def add_text(image, text, good = True):
+def add_text(image, text, good=True):
     if good:
         color = (0, 255, 0)
     else:
@@ -111,7 +111,6 @@ def add_text(image, text, good = True):
         ((text_w, text_h), _) = cv.GetTextSize(text[i], font)
         cv.PutText(image, text[i], (w/2-text_w/2, h/2-text_h/2 + i*text_h*2), font, color)
     return image
-
 
 
 def get_image(text, good=True, h=480, w=640):
@@ -137,8 +136,8 @@ class Aggregator:
         self.image_failed = get_image(["Failed to run optimization"], False)
 
         # create render windows
-        layouts = [ (1,1), (2,2), (2,2), (2,2), (3,3), (3,3), (3,3), (3,3), (3,3) ]
-        layout = layouts[len(ns_list)-1]
+        layouts = [(1, 1), (2, 2), (2, 2), (2, 2), (3, 3), (3, 3), (3, 3), (3, 3), (3, 3)]
+        layout = layouts[len(ns_list) - 1]
         sub_w = w / layout[0]
         sub_h = h / layout[1]
         self.windows = []
@@ -157,7 +156,6 @@ class Aggregator:
         self.captured_sub = rospy.Subscriber('robot_measurement', RobotMeasurement, self.captured_cb)
         self.optimized_sub = rospy.Subscriber('camera_calibration', CameraCalibration, self.calibrated_cb)
 
-
     def captured_cb(self, msg):
         with self.lock:
             self.capture_time = rospy.Time.now()
@@ -166,7 +164,6 @@ class Aggregator:
     def calibrated_cb(self, msg):
         with self.lock:
             self.calibrate_time = rospy.Time.now()
-
 
     def loop(self):
         r = rospy.Rate(20)
@@ -181,26 +178,25 @@ class Aggregator:
                 for window, render in zip(self.windows, self.renderer_list):
                     render.render(window)
 
-                if self.capture_time+rospy.Duration(4.0) > rospy.Time.now():
-                    if self.capture_time+rospy.Duration(2.0) > rospy.Time.now():
+                if self.capture_time + rospy.Duration(4.0) > rospy.Time.now():
+                    if self.capture_time + rospy.Duration(2.0) > rospy.Time.now():
                         # Captured checkerboards
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_captured, encoding="rgb8"))
-                    elif self.calibrate_time+rospy.Duration(20.0) > rospy.Time.now():
+                    elif self.calibrate_time + rospy.Duration(20.0) > rospy.Time.now():
                         # Succeeded optimization
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_optimized, encoding="rgb8"))
-                        if beep_time+rospy.Duration(8.0) < rospy.Time.now():
+                        if beep_time + rospy.Duration(8.0) < rospy.Time.now():
                             beep_time = rospy.Time.now()
                             beep([(600, 63, 0.1), (800, 63, 0.1), (1000, 63, 0.3)])
                     else:
                         # Failed optimization
                         self.pub.publish(self.bridge.cv_to_imgmsg(self.image_failed, encoding="rgb8"))
-                        if beep_time+rospy.Duration(4.0) < rospy.Time.now():
+                        if beep_time + rospy.Duration(4.0) < rospy.Time.now():
                             beep_time = rospy.Time.now()
                             beep([(400, 63, 0.1), (200, 63, 0.1), (100, 63, 0.6)])
 
                 else:
                     self.pub.publish(self.bridge.cv_to_imgmsg(self.image_out, encoding="rgb8"))
-
 
 
 def main():
@@ -209,7 +205,6 @@ def main():
 
     a = Aggregator(args[1:])
     a.loop()
-
 
 
 if __name__ == '__main__':

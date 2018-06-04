@@ -42,7 +42,7 @@ new_cal_estimate = estimate.enhance(cal_samples, cal_estimate)
 cam_dict_list = dump_estimate.to_dict_list(new_cal_estimate.cameras)
 
 # For now, hardcode what transforms we care about
-tf_config = dict();
+tf_config = dict()
 tf_config['camera_a'] = {'calibrated_frame':'camera_a/openni_rgb_optical_frame',
                          'parent_frame': 'world_frame',
                          'child_frame': 'camera_a/openni_camera'}
