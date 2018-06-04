@@ -63,27 +63,29 @@ class ImageRenderer:
     def render(self, window):
         with self.lock:
             if self.image and self.image_time + rospy.Duration(8.0) > rospy.Time.now() and self.info_time + rospy.Duration(8.0) > rospy.Time.now():
-                cv.Resize(self.bridge.imgmsg_to_cv(self.image, 'rgb8'), window)
+                window[:, :, :] = cv2.resize(self.bridge.imgmsg_to_cv2(self.image, 'rgb8'), (window.shape[1], window.shape[0]))
                 # render progress bar
                 interval = min(1, (self.interval / self.max_interval))
-                cv.Rectangle(window,
-                             (int(0.05*window.width), int(window.height*0.9)),
-                             (int(interval*window.width*0.9+0.05*window.width), int(window.height*0.95)),
-                             (0, interval*255, (1-interval)*255), thickness=-1)
-                cv.Rectangle(window,
-                             (int(0.05*window.width), int(window.height*0.9)),
-                             (int(window.width*0.9+0.05*window.width), int(window.height*0.95)),
-                             (0, interval*255, (1-interval)*255))
+                cv2.rectangle(window,
+                              (int(0.05 * window.shape[1]), int(window.shape[0] * 0.9)),
+                              (int(interval * window.shape[1] * 0.9 + 0.05 * window.shape[1]),
+                               int(window.shape[0] * 0.95)),
+                              (0, interval * 255, (1 - interval) * 255), thickness=-1)
+                cv2.rectangle(window,
+                              (int(0.05 * window.shape[1]), int(window.shape[0] * 0.9)),
+                              (int(window.shape[1] * 0.9 + 0.05 * window.shape[1]), int(window.shape[0] * 0.95)),
+                              (0, interval * 255, (1 - interval) * 255))
                 cv2.putText(window, self.ns, (int(window.shape[1] * .05), int(window.shape[0] * 0.1)),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), thickness=1)
 
                 if self.features and self.features.header.stamp + rospy.Duration(4.0) > self.image.header.stamp:
-                    w_scaling =  float (window.width) / self.image.width
-                    h_scaling =  float (window.height) / self.image.height
+                    w_scaling = float(window.shape[1]) / self.image.width
+                    h_scaling = float(window.shape[0]) / self.image.height
                     if self.features.success:
                         corner_color = (0, 255, 0)
                         for cur_pt in self.features.image_points:
-                            cv.Circle(window, (int(cur_pt.x*w_scaling), int(cur_pt.y*h_scaling)), int(w_scaling*5), corner_color)
+                            cv2.circle(window, (int(cur_pt.x * w_scaling), int(cur_pt.y * h_scaling)),
+                                       int(w_scaling * 5), corner_color)
                     else:
                         window = add_text(window, ["Could not detect", "checkerboard"], False)
                 else:
@@ -91,7 +93,7 @@ class ImageRenderer:
 
             else:
                 # Generate random white noise (for fun)
-                noise = numpy.random.rand(window.height, window.width)*256
+                noise = numpy.random.rand(window.shape[0], window.shape[1]) * 256
                 numpy.asarray(window)[:, :, 0] = noise
                 numpy.asarray(window)[:, :, 1] = noise
                 numpy.asarray(window)[:, :, 2] = noise
@@ -104,8 +106,8 @@ def add_text(image, text, good=True):
         color = (0, 255, 0)
     else:
         color = (0, 0, 255)
-    w = image.cols
-    h = image.rows
+    h = image.shape[0]
+    w = image.shape[1]
     for i in range(len(text)):
         ((text_w, text_h), _) = cv2.getTextSize(text[i], cv2.FONT_HERSHEY_SIMPLEX, 1.0, 1)
         cv2.putText(image, text[i], (w / 2 - text_w / 2, h / 2 - text_h / 2 + i * text_h * 2), cv2.FONT_HERSHEY_SIMPLEX,
@@ -143,7 +145,9 @@ class Aggregator:
         self.windows = []
         for j in range(layout[1]):
             for i in range(layout[0]):
-                self.windows.append( cv.GetSubRect(self.image_out, (i*sub_w, j*sub_h, sub_w, sub_h) ) )
+                x = i * sub_w
+                y = j * sub_h
+                self.windows.append(self.image_out[y:y + sub_h, x:x + sub_w])
 
         # create renderers
         self.renderer_list = []
