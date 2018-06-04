@@ -147,8 +147,8 @@ if __name__ == '__main__':
 
     # get list of camera's from arguments
     if len(args) < 2:
-        rospy.logfatal("multicam_capture_exec.py needs camera's as arguments")
-        raise
+        rospy.logfatal("multicam_capture_exec.py needs cameras as arguments")
+        sys.exit(1)
     camera_list = args[1:]
     executive = CameraCaptureExecutive(camera_list)
     rospy.spin()
