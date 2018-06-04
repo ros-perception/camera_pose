@@ -38,8 +38,6 @@ class ImageRenderer:
         self.ns = ns
         self.max_interval = rospy.get_param('filter_intervals/min_duration')
 
-        self.font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, 1.5, thickness = 2)
-        self.font1 = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.10, 1, thickness = 1)
         self.info_sub = rospy.Subscriber(ns + '/camera_info', CameraInfo, self.info_cb)
         self.image_sub = rospy.Subscriber(ns + '/image_throttle', Image, self.image_cb)
         self.interval_sub = rospy.Subscriber(ns + '/settled_interval', Interval, self.interval_cb)
@@ -76,7 +74,8 @@ class ImageRenderer:
                              (int(0.05*window.width), int(window.height*0.9)),
                              (int(window.width*0.9+0.05*window.width), int(window.height*0.95)),
                              (0, interval*255, (1-interval)*255))
-                cv.PutText(window, self.ns, (int(window.width * .05), int(window.height * 0.1)), self.font1, (0,0,255))
+                cv2.putText(window, self.ns, (int(window.shape[1] * .05), int(window.shape[0] * 0.1)),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), thickness=1)
 
                 if self.features and self.features.header.stamp + rospy.Duration(4.0) > self.image.header.stamp:
                     w_scaling =  float (window.width) / self.image.width
@@ -96,7 +95,8 @@ class ImageRenderer:
                 numpy.asarray(window)[:, :, 0] = noise
                 numpy.asarray(window)[:, :, 1] = noise
                 numpy.asarray(window)[:, :, 2] = noise
-                cv.PutText(window, self.ns, (int(window.width * .05), int(window.height * .95)), self.font, (0,0,255))
+                cv2.putText(window, self.ns, (int(window.shape[1] * .05), int(window.shape[0] * .95)),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), thickness=2)
 
 
 def add_text(image, text, good=True):
@@ -107,9 +107,9 @@ def add_text(image, text, good=True):
     w = image.cols
     h = image.rows
     for i in range(len(text)):
-        font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 0.30, float(w)/350, thickness = 1)
-        ((text_w, text_h), _) = cv.GetTextSize(text[i], font)
-        cv.PutText(image, text[i], (w/2-text_w/2, h/2-text_h/2 + i*text_h*2), font, color)
+        ((text_w, text_h), _) = cv2.getTextSize(text[i], cv2.FONT_HERSHEY_SIMPLEX, 1.0, 1)
+        cv2.putText(image, text[i], (w / 2 - text_w / 2, h / 2 - text_h / 2 + i * text_h * 2), cv2.FONT_HERSHEY_SIMPLEX,
+                    1.0, color, thickness=2)
     return image
 
 
