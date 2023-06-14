@@ -116,25 +116,25 @@ def depth_calibrator_main(argv=None):
 
     listener = tf.TransformListener()
 
-    print("Waiting to receive camera info for the depth camera...")
+    print "Waiting to receive camera info for the depth camera..."
     depth_info = rospy.wait_for_message('depth_camera_info', CameraInfo)
     depth_proj = numpy.reshape(numpy.array(depth_info.P), (3,4))[:3, :3]
     depth_frame_id = depth_info.header.frame_id
-    print("Got camera info, the depth camera operates in frame %s" % depth_frame_id)
+    print "Got camera info, the depth camera operates in frame %s" % depth_frame_id
 
     run = True
     while run:
 
-        while(input("Is a checkerboard visible for your image producing camera? (y/n): ") != 'y'):
-            print("For the Kinect, you may need to cover the IR projector for the CB to be detected.")
+        while(raw_input("Is a checkerboard visible for your image producing camera? (y/n): ") != 'y'):
+            print "For the Kinect, you may need to cover the IR projector for the CB to be detected."
 
-        print("OK, thanks! Checking for the 'get_checkerboard_pose' service.")
+        print "OK, thanks! Checking for the 'get_checkerboard_pose' service."
 
         rospy.wait_for_service('get_checkerboard_pose')
 
-        print("Found the checkerboard service.")
+        print "Found the checkerboard service."
 
-        print("Looking for a %d x %d checkerboard, with %.4f spacing...." % (corners_x, corners_y, spacing))
+        print "Looking for a %d x %d checkerboard, with %.4f spacing...." % (corners_x, corners_y, spacing)
 
         cb_detector = rospy.ServiceProxy('get_checkerboard_pose', GetCheckerboardPose)
         cb = cb_detector.call(GetCheckerboardPoseRequest(corners_x, corners_y, spacing, spacing))
@@ -150,7 +150,7 @@ def depth_calibrator_main(argv=None):
             img_min = PoseStamped(cb.board_pose.header, find_board_min(cb.board_pose, corners_x, corners_y, spacing))
             img_max = PoseStamped(cb.board_pose.header, find_board_max(cb.board_pose, corners_x, corners_y, spacing))
 
-            print("Waiting for the transform between %s and %s" % (img_msg.header.frame_id, depth_frame_id))
+            print "Waiting for the transform between %s and %s" % (img_msg.header.frame_id, depth_frame_id)
             listener.waitForTransform(depth_frame_id, img_msg.header.frame_id, img_msg.header.stamp, rospy.Duration(2.0))
             depth_pose = listener.transformPose(depth_frame_id, img_msg)
             depth_min = listener.transformPose(depth_frame_id, img_min)
@@ -168,30 +168,30 @@ def depth_calibrator_main(argv=None):
         else:
             depth_center = img_center
 
-        print("Successfully found a checkerboard, with depth %.4f, noise_vel: %f, noise_rot: %f in frame %s" % (depth_center.position.z, 
+        print "Successfully found a checkerboard, with depth %.4f, noise_vel: %f, noise_rot: %f in frame %s" % (depth_center.position.z, 
                                                                                                                     cb.noise_vel, cb.noise_rot, 
-                                                                                                                    depth_frame_id))
+                                                                                                                    depth_frame_id)
 
 
-        print("Now we want to look for the center of the checkerboard in the depth image.")
-        while(input("Have you uncovered the IR projector and turned off any other IR light source? (y/n): ") != 'y'):
-            print("Don't be difficult, just do it.")
+        print "Now we want to look for the center of the checkerboard in the depth image."
+        while(raw_input("Have you uncovered the IR projector and turned off any other IR light source? (y/n): ") != 'y'):
+            print "Don't be difficult, just do it."
 
-        print("OK, thanks! Waiting for the 'get_checkerboard_center' service.")
+        print "OK, thanks! Waiting for the 'get_checkerboard_center' service."
 
         rospy.wait_for_service('get_checkerboard_center')
 
-        print("Found the service, looking for the center of the checkerboard bounded by the rectangle (%.2f, %.2f), (%.2f, %.2f)." % (
-            cb.min_x, cb.min_y, cb.max_x, cb.max_y))
+        print "Found the service, looking for the center of the checkerboard bounded by the rectangle (%.2f, %.2f), (%.2f, %.2f)." % (
+            cb.min_x, cb.min_y, cb.max_x, cb.max_y)
 
         center_detector = rospy.ServiceProxy('get_checkerboard_center', GetCheckerboardCenter)
         center_depth = center_detector.call(GetCheckerboardCenterRequest(cb.min_x, cb.max_x, cb.min_y, cb.max_y, depth_center.position.z))
 
-        print("Found the center of the board at depth %.4f in the pointcloud" % (center_depth.depth))
+        print "Found the center of the board at depth %.4f in the pointcloud" % (center_depth.depth)
 
-        print("The offset between the img and the point cloud is: %.4f" % (depth_center.position.z - center_depth.depth))
+        print "The offset between the img and the point cloud is: %.4f" % (depth_center.position.z - center_depth.depth)
 
-        run = input("Would you like to run again? (y/n): ") == 'y'
+        run = raw_input("Would you like to run again? (y/n): ") == 'y'
 
 if __name__ == '__main__':
     depth_calibrator_main()

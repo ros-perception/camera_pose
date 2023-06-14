@@ -1,0 +1,38 @@
+<package>
+  <name>camera_pose</name>
+  <version>0.5.0</version>
+  <description>This stack contains a set of tools to work with multiple rgb
+    camera's simultaneoulsy.</description>
+  <maintainer email="todo@todo.com">Vijay Pradeep</maintainer>
+  <maintainer email="todo@todo.com">Wim Meeussen</maintainer>
+  <maintainer email="todo@todo.com">Yiping Liu</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/wiki/camera_pose</url>
+  <!-- <url type="bugtracker"></url> -->
+
+  <author>Vijay Pradeep</author>
+  <author>Wim Meeussen</author>
+  <author>Yiping Liu</author>
+
+  <!-- Dependencies which this package needs to build itself. -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Dependencies needed to compile this package. -->
+
+
+  <!-- Dependencies needed after this package is compiled. -->
+  <run_depend>camera_pose_calibration</run_depend>
+  <run_depend>camera_pose_toolkits</run_depend>
+  <run_depend>kinect_depth_calibration</run_depend>
+
+  <!-- Dependencies needed only for running tests. -->
+
+
+
+
+
+
+
+</package>

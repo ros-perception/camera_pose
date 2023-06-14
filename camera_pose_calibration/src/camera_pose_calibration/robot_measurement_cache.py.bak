@@ -33,20 +33,13 @@
 
 import roslib; roslib.load_manifest('camera_pose_calibration')
 import sys
-from functools import cmp_to_key
+
 import rospy
 from camera_pose_calibration.msg import RobotMeasurement 
 from bisect import bisect
 
-#def stamped_cmp(x,y):
-#    return cmp(x.header.stamp, y.header.stamp)
-def stamped_cmp(x, y):
-    if x.header.stamp < y.header.stamp:
-        return -1
-    elif x.header.stamp > y.header.stamp:
-        return 1
-    else:
-        return 0
+def stamped_cmp(x,y):
+    return cmp(x.header.stamp, y.header.stamp)
 
 def laser_cmp(x,y):
     return cmp(x[0].header.stamp, y[0].header.stamp)
@@ -91,7 +84,7 @@ class RobotMeasurementCache:
     def add_cam_measurement(self, cam_id, m):
         cur_cache = self._cam_caches[cam_id]  # list
         cur_cache.append( m )
-        cur_cache.sort(key=cmp_to_key(stamped_cmp))
+        cur_cache.sort(stamped_cmp)
         while len(cur_cache) > self._cam_sizes[cam_id]:
             cur_cache.pop(0)
 
@@ -109,7 +102,7 @@ class RobotMeasurementCache:
             cur_cache.pop(0)
 
     def add_laser_measurement(self, laser_id, m, interval_start, interval_end):
-        print(list(self._laser_caches.keys()))
+        print self._laser_caches.keys()
         #print "Trying to add [%s] elem to laser_caches" % laser_id
         cur_cache = self._laser_caches[laser_id]
         cur_cache.append( [m, interval_start, interval_end] )
@@ -129,8 +122,8 @@ class RobotMeasurementCache:
             return None
 
         # Extract the cam measurements closest to the center of the interval
-        cam_measurements = dict( [ (x, None) for x in list(self._cam_caches.keys()) ] )
-        for cam_id in list(self._cam_caches.keys()):
+        cam_measurements = dict( [ (x, None) for x in self._cam_caches.keys() ] )
+        for cam_id in self._cam_caches.keys():
             #print "On %s" % cam_id
             # Get the index elem that is [approx] closest to the center of the interval
             cur_cache = self._cam_caches[cam_id]
@@ -157,8 +150,8 @@ class RobotMeasurementCache:
 
         # Extract the chain measurements closest to the center of the interval
         #print "Extracting chain measurements"
-        chain_measurements = dict( [ (x, None) for x in list(self._chain_caches.keys()) ] )
-        for chain_id in list(self._chain_caches.keys()):
+        chain_measurements = dict( [ (x, None) for x in self._chain_caches.keys() ] )
+        for chain_id in self._chain_caches.keys():
             #print "On %s" % chain_id
             # Get the index elem that is [approx] closest to the center of the interval
             cur_cache = self._chain_caches[chain_id]
@@ -182,8 +175,8 @@ class RobotMeasurementCache:
                 chain_measurements[chain_id] = cur_cache[right_center_index]
 
         # Use a slightly different strategy for the laser. Get all of them, and then choose the first one
-        laser_measurements = dict( [ (x, None) for x in list(self._laser_caches.keys()) ] )
-        for laser_id in list(self._laser_caches.keys()):
+        laser_measurements = dict( [ (x, None) for x in self._laser_caches.keys() ] )
+        for laser_id in self._laser_caches.keys():
             cur_cache = self._laser_caches[laser_id]
             sub_list = [x for x in cur_cache if x[2] <= interval_end and x[1] >= interval_start]
             if len(sub_list) > 0:
@@ -194,26 +187,26 @@ class RobotMeasurementCache:
         #print "Got laser and cam measurements"
 
         # See if we got everything that we needed
-        for cam_id, m in list(cam_measurements.items()):
+        for cam_id, m in cam_measurements.items():
             if m is None:
                 #print "Didn't get a valid [%s]" % cam_id
                 return None
 
-        for chain_id, m in list(chain_measurements.items()):
+        for chain_id, m in chain_measurements.items():
             if m is None:
                 #print "Didn't get a chain [%s]" % chain_id
                 return None
 
-        for laser_id, m in list(laser_measurements.items()):
+        for laser_id, m in laser_measurements.items():
             if m is None:
                 #print "Didn't get a laser [%s]" % laser_id
                 return None
 
-        print("Received everything!")
+        print "Received everything!"
 
         # Push everything into a RobotMeasurement message
         m_robot = RobotMeasurement()
-        m_robot.M_cam   = list(cam_measurements.values())
+        m_robot.M_cam   = cam_measurements.values()
 
         return m_robot
 

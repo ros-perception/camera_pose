@@ -1,6 +1,8 @@
 <launch>
   <arg name="camera1_ns" default="camera_a/rgb" />
+  <arg name="camera1_image" default="image_rect" />
   <arg name="camera2_ns" default="camera_b/rgb" />
+  <arg name="camera2_image" default="image_rect" />
   <arg name="checker_rows" default="4"/>
   <arg name="checker_cols" default="5"/>
   <arg name="checker_size" default="0.0245"/>
@@ -9,12 +11,14 @@
   <!-- checkerboard detector for each camera -->
   <include file="$(find camera_pose_calibration)/blocks/rgb_block.launch">
     <arg name="ns" value="$(arg camera1_ns)" />
+    <arg name="image_topic" value="$(arg camera1_image)" />
     <arg name="checker_rows" value="$(arg checker_rows)" />
     <arg name="checker_cols" value="$(arg checker_cols)" />
     <arg name="checker_size" value="$(arg checker_size)" />
   </include>
   <include file="$(find camera_pose_calibration)/blocks/rgb_block.launch">
     <arg name="ns" value="$(arg camera2_ns)" />
+    <arg name="image_topic" value="$(arg camera2_image)" />
     <arg name="checker_rows" value="$(arg checker_rows)" />
     <arg name="checker_cols" value="$(arg checker_cols)" />
     <arg name="checker_size" value="$(arg checker_size)" />
@@ -28,6 +32,7 @@
   <node pkg="camera_pose_calibration" type="filter_intervals.py" name="filter_intervals">
      <param name="min_duration" value="1.0" />
      <remap from="features" to="$(arg camera1_ns)/features" />
+     <remap from="interval" to="intersected_interval"/>
   </node>
 
 

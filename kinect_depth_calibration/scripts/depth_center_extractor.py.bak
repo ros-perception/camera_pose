@@ -58,7 +58,7 @@ class DepthCenterExtractor:
             res.depth = depth_sum / depth_nr
         else:
             res.depth = 0.0
-            print("Could not find enough depth points: expected %f points but only found %f"%((req.max_x - req.min_x)*(req.max_y - req.min_y)*0.75, depth_nr))
+            print "Could not find enough depth points: expected %f points but only found %f"%((req.max_x - req.min_x)*(req.max_y - req.min_y)*0.75, depth_nr)
             
         return res
     

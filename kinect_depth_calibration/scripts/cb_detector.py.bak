@@ -88,7 +88,7 @@ class ImageCbDetector:
       corners = cv.FindCornerSubPix(image_scaled, corners, (radius, radius), (-1, -1), (cv.CV_TERMCRIT_EPS | cv.CV_TERMCRIT_ITER, 30, 0.1))
 
       #uncomment to debug chessboard detection
-      print('Chessboard found')
+      print 'Chessboard found'
       #cv.DrawChessboardCorners(image_scaled, (corners_x, corners_y), corners, 1)
       #cv.NamedWindow("image_scaled")
       #cv.ShowImage("image_scaled", image_scaled)
@@ -236,7 +236,7 @@ class ImageCbDetectorNode:
     #we need to convert the ros image to an opencv image
     try:
       image = self.bridge.imgmsg_to_cv(ros_image, "mono8")
-    except CvBridgeError as e:
+    except CvBridgeError, e:
       rospy.logerror("Error importing image %s" % e)
       return
 
