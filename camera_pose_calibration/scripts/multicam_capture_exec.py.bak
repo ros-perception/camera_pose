@@ -63,7 +63,7 @@ class CameraCaptureExecutive:
                                                         self.add_cam_measurement) )   for cam_id   in cam_ids ]
 
         # Turn on all of the camera modes into verbose model, since we want the CalibrationPattern data
-        for cam_manager in list(zip(*self.cam_managers))[1]:
+        for cam_manager in zip(*self.cam_managers)[1]:
             cam_manager.enable(verbose=True)
 
         # Subscribe to topic containing stable intervals
@@ -77,7 +77,7 @@ class CameraCaptureExecutive:
 
     def request_callback(self, msg):
 
-        print("\n\n\n\n\033[34;1m------\n\033[0mGot a request callback")
+        print "\n\n\n\n\033[34;1m------\n\033[0mGot a request callback"
 
         # See if the interval is big enough to care
         #if (msg.end - msg.start) < rospy.Duration(1,0):
@@ -95,7 +95,7 @@ class CameraCaptureExecutive:
                     m_robot.header.stamp = cam.cam_info.header.stamp
                 self.measurement_pub.publish(m_robot)
             else:
-                print("Couldn't get measurement in interval")
+                print "Couldn't get measurement in interval"
 
 
     def add_cam_measurement(self, cam_id, msg):

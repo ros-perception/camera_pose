@@ -45,7 +45,7 @@ target_2 = posemath.toMsg(PyKDL.Frame(PyKDL.Vector(0, 2, 1)))
 
 cal_estimate.cameras = [camera_a, camera_b]
 cal_estimate.targets = [target_1, target_2]
-print(cal_estimate)
+print cal_estimate
 
 
 # generate samples
@@ -82,7 +82,7 @@ for target in cal_estimate.targets:
         meas.features = cal_pattern
         cal_sample.M_cam.append(meas)
     cal_samples.append(cal_sample)
-print(cal_samples)
+print cal_samples
 
 
 # add offset

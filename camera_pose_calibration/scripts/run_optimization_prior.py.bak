@@ -34,7 +34,7 @@ cal_samples = [msg for topic, msg, t in bag]
 camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(cal_samples)
 cal_estimate = CalibrationEstimate()
 cal_estimate.targets = [ posemath.toMsg(checkerboard_poses[i]) for i in range(len(checkerboard_poses)) ]
-cal_estimate.cameras = [ CameraPose(camera_id, posemath.toMsg(camera_pose)) for camera_id, camera_pose in camera_poses.items()]
+cal_estimate.cameras = [ CameraPose(camera_id, posemath.toMsg(camera_pose)) for camera_id, camera_pose in camera_poses.iteritems()]
 
 
 # Run optimization

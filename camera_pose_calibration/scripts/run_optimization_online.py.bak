@@ -53,11 +53,11 @@ class Estimator:
             self.meas = []
             self.timestamps = []
             rospy.loginfo('Reset calibration state')
-            print("\033[33;1m%ld\033[0m previous measurements in the cache are deleted.\n\n" % count)
+            print "\033[33;1m%ld\033[0m previous measurements in the cache are deleted.\n\n" % count
 
     def getAngle(self, quaternion): 
         if (math.fabs(quaternion[3])>1):
-            print("quaternion[3] out of range")  # send out a notice only
+            print "quaternion[3] out of range"  # send out a notice only
         s = 2.* math.acos(quaternion[3])
         return s
                    
@@ -112,7 +112,7 @@ class Estimator:
                     self.measurement_count = 0
                     self.prev_tf_transforms = {}
                     rospy.loginfo('Reset calibration state')
-                    print("\033[43;1mTarget frames have changed. Clean up everything and start over! \033[0m\n\n")
+                    print "\033[43;1mTarget frames have changed. Clean up everything and start over! \033[0m\n\n"
                     self.frames_changed = False
 
            
@@ -129,15 +129,15 @@ class Estimator:
             # check for tf transform changes
             for (frame1, frame2) in self.tf_check_pairs:
                 transform = None
-                print("\nLooking up transformation \033[34;1mfrom\033[0m %s \033[34;1mto\033[0m %s ..." % (frame1, frame2))
+                print "\nLooking up transformation \033[34;1mfrom\033[0m %s \033[34;1mto\033[0m %s ..." % (frame1, frame2)
                 while not rospy.is_shutdown():
                     try:                
                         self.tf_listener.waitForTransform(frame1, frame2, TheMoment, rospy.Duration(10))
                         transform = self.tf_listener.lookupTransform(frame1, frame2, TheMoment)  #((),())
-                        print("found\n")
+                        print "found\n"
                         break
                     except (tf.LookupException, tf.ConnectivityException):
-                        print("transform lookup failed, retrying...")
+                        print "transform lookup failed, retrying..."
 
                 if self.measurement_count > 0:
                     prev_transform = self.prev_tf_transforms[(frame1, frame2)]
@@ -151,17 +151,17 @@ class Estimator:
                 
                     #print "\n"
                     #print "\033[34;1m-- Debug Info --\033[0m"
-                    print("checking for pose change...")
-                    print("measurement_count = %d" % self.measurement_count)
-                    print("    dx = %10f | < 0.0002 m" % dx)
-                    print("    dy = %10f | < 0.0002 m" % dy)
-                    print("    dz = %10f | < 0.0002 m" % dz)
-                    print("dAngle = %10f | < 0.00174 rad" % dAngle)
-                    print(" dAxis = %10f | > 0.99999\n" % dAxis)
+                    print "checking for pose change..."
+                    print "measurement_count = %d" % self.measurement_count
+                    print "    dx = %10f | < 0.0002 m" % dx
+                    print "    dy = %10f | < 0.0002 m" % dy
+                    print "    dz = %10f | < 0.0002 m" % dz
+                    print "dAngle = %10f | < 0.00174 rad" % dAngle
+                    print " dAxis = %10f | > 0.99999\n" % dAxis
 
                     if ( (math.fabs(dx) > 0.0002) or (math.fabs(dy) > 0.0002) or (math.fabs(dz) > 0.0002) or
                             (math.fabs(dAngle)>0.00174) or (math.fabs(dAxis) < 0.99999) ) :  # if transform != previous_transform:
-                        print("\033[44;1mDetect pose change: %s has changed pose relative to %s since last time!\033[0m\n\n" % (frame1, frame2))
+                        print "\033[44;1mDetect pose change: %s has changed pose relative to %s since last time!\033[0m\n\n" % (frame1, frame2)
                                 ###self.reset()  # no, you cannot call reset() here.
                         
                         self.state = None  
@@ -169,7 +169,7 @@ class Estimator:
                         self.meas = []  # clear cache
                         self.timestamps = []
                         rospy.loginfo('Reset calibration state')
-                        print("\033[33;1m%ld\033[0m previous measurements in the cache are deleted.\n\n" % count)
+                        print "\033[33;1m%ld\033[0m previous measurements in the cache are deleted.\n\n" % count
                     self.measurement_count = 0
 
                 self.prev_tf_transforms[(frame1, frame2)] = transform
@@ -179,15 +179,15 @@ class Estimator:
 
             # add measurements to list
             self.meas.append(msg)
-            print("MEAS", len(self.meas))
+            print "MEAS", len(self.meas)
             for m in self.meas:
-                print(" - stamp: %f"%m.header.stamp.to_sec())
+                print " - stamp: %f"%m.header.stamp.to_sec()
             
-            print("\n")
+            print "\n"
             
             self.measurement_count += 1
 
-            print("\nNo. of measurements fed to optimizer: %d\n\n" %  self.measurement_count)
+            print "\nNo. of measurements fed to optimizer: %d\n\n" %  self.measurement_count
 
             ## self.last_stamp_pub.publish(self.meas[-1].header.stamp)
 
@@ -196,14 +196,14 @@ class Estimator:
                 self.state = CalibrationEstimate()
                 camera_poses, checkerboard_poses = init_optimization_prior.find_initial_poses(self.meas)
                 self.state.targets = [ posemath.toMsg(checkerboard_poses[i]) for i in range(len(checkerboard_poses)) ]
-                self.state.cameras = [ CameraPose(camera_id, posemath.toMsg(camera_pose)) for camera_id, camera_pose in camera_poses.items()]
+                self.state.cameras = [ CameraPose(camera_id, posemath.toMsg(camera_pose)) for camera_id, camera_pose in camera_poses.iteritems()]
 
-            print("Proceed to optimization...\n")
+            print "Proceed to optimization...\n"
 
             # run optimization
-            #self.state = estimate.enhance(self.meas, self.state)
+            self.state = estimate.enhance(self.meas, self.state)
 
-            print("\nOptimized!\n")
+            print "\nOptimized!\n"
 
             # publish calibration state
             res = CameraCalibration()  ## initialize a new Message instance

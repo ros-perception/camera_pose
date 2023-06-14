@@ -8,8 +8,8 @@ from image_cb_detector.msg import *
 
 
 def usage():
-    print("Usage:")
-    print("   start_cb_detector_action_old.py num_x num_y spacing [image_scaling]")
+    print "Usage:"
+    print "   start_cb_detector_action_old.py num_x num_y spacing [image_scaling]"
 
 
 if __name__ == '__main__':
@@ -23,12 +23,12 @@ if __name__ == '__main__':
     else:
         scaling = rospy.myargv()[4]
 
-    print("Configuring checkerboard size %sx%s, checker size %s"%(rospy.myargv()[1], rospy.myargv()[2], rospy.myargv()[3]))
+    print "Configuring checkerboard size %sx%s, checker size %s"%(rospy.myargv()[1], rospy.myargv()[2], rospy.myargv()[3])
 
     client = actionlib.SimpleActionClient('cb_detector_config', ConfigAction)
-    print("Waiting for Server")
+    print "Waiting for Server"
     client.wait_for_server()
-    print("Found Server")
+    print "Found Server"
 
     goal = ConfigGoal()
     # Fill in the goal here
@@ -41,4 +41,4 @@ if __name__ == '__main__':
     goal.subpixel_window = 5
     goal.subpixel_zero_zone = 1
     client.send_goal_and_wait(goal)
-    print("Done sending goal")
+    print "Done sending goal"

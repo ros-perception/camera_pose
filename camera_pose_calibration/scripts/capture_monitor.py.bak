@@ -23,7 +23,7 @@ def beep(conf):
                 beep *= int(duration * frequency)
                 audio.write(beep)
     except:
-        print("Beep beep")
+        print "Beep beep"
 
 
 class ImageRenderer:
@@ -110,7 +110,7 @@ def add_text(image, text, good=True):
     w = image.shape[1]
     for i in range(len(text)):
         ((text_w, text_h), _) = cv2.getTextSize(text[i], cv2.FONT_HERSHEY_SIMPLEX, 1.0, 1)
-        cv2.putText(image, text[i], (int(w / 2 - text_w / 2),int( h / 2 - text_h / 2 + i * text_h * 2)), cv2.FONT_HERSHEY_SIMPLEX,
+        cv2.putText(image, text[i], (w / 2 - text_w / 2, h / 2 - text_h / 2 + i * text_h * 2), cv2.FONT_HERSHEY_SIMPLEX,
                     1.0, color, thickness=2)
     return image
 
@@ -122,7 +122,7 @@ def get_image(text, good=True, h=480, w=640):
 
 class Aggregator:
     def __init__(self, ns_list):
-        print("Creating aggregator for ", ns_list)
+        print "Creating aggregator for ", ns_list
 
         self.lock = threading.Lock()
 
@@ -147,7 +147,7 @@ class Aggregator:
             for i in range(layout[0]):
                 x = i * sub_w
                 y = j * sub_h
-                self.windows.append(self.image_out[int(y):int(y) + int(sub_h), int(x):int(x) + int(sub_w)])
+                self.windows.append(self.image_out[y:y + sub_h, x:x + sub_w])
 
         # create renderers
         self.renderer_list = []
@@ -177,7 +177,7 @@ class Aggregator:
             try:
                 r.sleep()
             except:
-                print("Shutting down")
+                print "Shutting down"
             with self.lock:
                 for window, render in zip(self.windows, self.renderer_list):
                     render.render(window)

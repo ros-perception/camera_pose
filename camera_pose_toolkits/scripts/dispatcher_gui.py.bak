@@ -93,9 +93,9 @@ class MainWindow(wx.Frame):
             #wx.CallAfter(self.statusbar.SetStatusText, 'current camera: ')
        
         #print self.combobox.GetValue()
-        print(self.camera_ns_list)
-        print(self.output_ns)
-        print(self.selected_cam_ns)
+        print self.camera_ns_list
+        print self.output_ns
+        print self.selected_cam_ns
         
 
     def on_timer(self, event):
@@ -111,10 +111,10 @@ class MainWindow(wx.Frame):
         self.Raise()
 
     def on_combobox(self, event):
-        print('combobox event')
+        print 'combobox event'
 
         if self.cb_in_sight == 0 :
-            print(str(self.combobox.GetValue()))
+            print str(self.combobox.GetValue())
             #print rosservice.get_service_list()
             for s in rosservice.get_service_list(): 
                 if s.endswith(self.output_ns+ '/switch'): #'camera_dispatcher/switch'
@@ -135,11 +135,11 @@ class MainWindow(wx.Frame):
 if __name__ == '__main__':
     argv = rospy.myargv()
     if len(argv) <2:
-        print('Usage:  ')
+        print 'Usage:  '
         exit(1)
     
-    print(argv[0])
-    print(argv[1])
+    print argv[0]
+    print argv[1]
 
 
 
@@ -149,10 +149,10 @@ if __name__ == '__main__':
     frame = MainWindow(argv[1])
     frame.Show()
 
-    print('dispatcher_gui started')
+    print 'dispatcher_gui started'
 
     try:
         app.MainLoop()
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt, e:
         pass
-    print('exiting')
+    print 'exiting'

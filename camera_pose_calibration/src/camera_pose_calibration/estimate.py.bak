@@ -80,7 +80,7 @@ def to_tf(estimate):
     msg = tfMessage()
     for camera in estimate.cameras:
         msg.transforms.append(pose_to_transform(camera.pose, camera.camera_id, time))
-    for target, target_id in zip(estimate.targets, list(range(len(estimate.targets)))):
+    for target, target_id in zip(estimate.targets, range(len(estimate.targets))):
         msg.transforms.append(pose_to_transform(target, 'target_%d'%target_id, time))
     return msg
 
@@ -140,21 +140,21 @@ def calculate_residual_and_jacobian(cal_samples, cur_estimate):
     residual = matrix(zeros([num_rows, 1]))
 
     cam_pose_dict  = dict( [ (cur_camera.camera_id, posemath.fromMsg(cur_camera.pose))  for cur_camera in cur_estimate.cameras] )
-    cam_index_dict = dict( [ (cur_camera.camera_id, cur_index)        for cur_camera, cur_index  in zip ( cur_estimate.cameras, list(range(len(cur_estimate.cameras))) )] )
+    cam_index_dict = dict( [ (cur_camera.camera_id, cur_index)        for cur_camera, cur_index  in zip ( cur_estimate.cameras, range(len(cur_estimate.cameras)) )] )
 
     # Start filling in the jacobian
     cur_row = 0;
     # Loop over each observation
-    for cur_sample, target_pose_msg, target_index in zip(cal_samples, cur_estimate.targets, list(range(len(cur_estimate.targets)))):
+    for cur_sample, target_pose_msg, target_index in zip(cal_samples, cur_estimate.targets, range(len(cur_estimate.targets))):
         for cam_measurement in cur_sample.M_cam:
             # Find the index of this camera
             try:
                 cam_pose = cam_pose_dict[cam_measurement.camera_id]
                 cam_index     = cam_index_dict[cam_measurement.camera_id]
             except KeyError:
-                print("Couldn't find current camera_id in cam_pose dictionary")
-                print("  camera_id = %s", cam_measurement.camera_id)
-                print("  %s", list(cam_pose_dict.keys()))
+                print "Couldn't find current camera_id in cam_pose dictionary"
+                print "  camera_id = %s", cam_measurement.camera_id
+                print "  %s", cam_pose_dict.keys()
                 raise
 
             # ROS Poses  -> KDL Poses

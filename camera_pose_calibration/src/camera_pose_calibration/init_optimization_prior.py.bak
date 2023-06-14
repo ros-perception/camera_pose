@@ -16,7 +16,7 @@ def get_target_pose(cam):
                                  [cam.cam_info.P[8], cam.cam_info.P[9], cam.cam_info.P[10]]])
     success, rot, trans = cv2.solvePnP(object_points, image_points, camera_matrix, dist_coeffs)
     if not success:
-        print("solvePnP failed!")
+        print "solvePnP failed!"
         return PyKDL.Frame()
     # print "Rot: %f, %f, %f" % ( rot[0,0], rot[1,0], rot[2,0] )
     # print "Trans: %f, %f, %f" % ( trans[0,0], trans[1,0], trans[2,0] )
@@ -63,7 +63,7 @@ def bfs(root_cam, observations, cameras_seen, checkerboards_seen):
         cam1, q = q[0], q[1:]  # pop
         cam1_pose = cameras_seen[cam1]
 
-        for cam2, checkerboards in observations[cam1].items():
+        for cam2, checkerboards in observations[cam1].iteritems():
             assert checkerboards
             if cam2 not in cameras_seen:
                 q.append(cam2)
@@ -80,7 +80,7 @@ def find_initial_poses(meas, root_cam=None):
     mutual_observations = read_observations(meas)
 
     if not root_cam:
-        root_cam = list(mutual_observations.keys())[0]
+        root_cam = mutual_observations.keys()[0]
     camera_poses = {}
     checkerboard_poses = {}
     bfs(root_cam, mutual_observations, camera_poses, checkerboard_poses)

@@ -58,7 +58,7 @@ class CalibrationPublishManager:
 
     def publish(self):
         with self.lock:
-            for name, pub in self.publish_list.items():
+            for name, pub in self.publish_list.iteritems():
                 pub.publish()
 
 
@@ -72,7 +72,7 @@ def main():
         try:
             r.sleep()
         except:
-            print("Shutting down")
+            print "Shutting down"
 
 
 if __name__ == '__main__':

@@ -16,12 +16,12 @@ if __name__ == '__main__':
 
     rospy.init_node('start_interval_intersection')
     client = actionlib.SimpleActionClient('interval_intersection_config', ConfigAction) # ConfigAction, message in pr2_calibration stack, interval_intersection pkg
-    print("Waiting for Server")
+    print "Waiting for Server"
     client.wait_for_server()
-    print("Found Server")
+    print "Found Server"
 
     # Fill in the goal here
     goal = ConfigGoal()
     goal.topics = [ a+'/settled_interval' for a in args[1:]]
     client.send_goal_and_wait(goal)
-    print("Done sending goal")
+    print "Done sending goal"
